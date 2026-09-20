@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aryavarta Automation - Voice FAT & Digital Commissioning App</title>
+  <title>Aryavarta Automation - FAT & E&I Site Commissioning Suite</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -11,7 +11,7 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   
-  <!-- jsPDF and AutoTable for Instant PDF Generation -->
+  <!-- jsPDF & AutoTable for Instant PDF Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   
@@ -26,7 +26,9 @@
               orange: '#ff6500',
               accent: '#008170',
               card: '#162840',
-              darker: '#070f1e'
+              darker: '#070f1e',
+              amber: '#d97706',
+              cyan: '#0891b2'
             }
           },
           animation: {
@@ -36,7 +38,7 @@
           keyframes: {
             waveBar: {
               '0%': { height: '8px' },
-              '100%': { height: '36px' }
+              '100%': { height: '34px' }
             }
           }
         }
@@ -59,7 +61,6 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Custom scrollbar for shop-floor touch screens */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -72,14 +73,12 @@
       border-radius: 4px;
     }
 
-    /* Signature canvas styling */
     .signature-canvas {
       touch-action: none;
       background: #f8fafc;
       cursor: crosshair;
     }
 
-    /* Audio wave bars */
     .wave-bar:nth-child(1) { animation-delay: 0.1s; }
     .wave-bar:nth-child(2) { animation-delay: 0.25s; }
     .wave-bar:nth-child(3) { animation-delay: 0.4s; }
@@ -91,22 +90,38 @@
 
   <!-- Header Bar -->
   <header class="bg-brand-navy border-b border-brand-steel/60 sticky top-0 z-40 shadow-xl">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
+      
+      <!-- Brand Logo & Identity -->
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-orange to-orange-600 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-orange-500/20">
+        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-orange to-orange-600 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-orange-500/20 flex-shrink-0">
           A
         </div>
         <div>
           <div class="flex items-center space-x-2">
             <h1 class="font-bold text-base sm:text-lg tracking-tight text-white flex items-center gap-1.5">
               ARYAVARTA AUTOMATION
-              <span class="text-xs px-2 py-0.5 rounded bg-brand-orange/20 text-brand-orange font-semibold border border-brand-orange/30">FAT PRO</span>
+              <span id="headerModePill" class="text-xs px-2 py-0.5 rounded bg-brand-orange/20 text-brand-orange font-semibold border border-brand-orange/30">
+                FAT PRO
+              </span>
             </h1>
           </div>
-          <p class="text-[11px] sm:text-xs text-slate-400 truncate max-w-[210px] sm:max-w-none">
-            ISO 9001:2015 & ISO 14001:2015 Certified Panels • Pune Works
+          <p class="text-[11px] sm:text-xs text-slate-400 truncate max-w-[220px] sm:max-w-none">
+            Electrical, Automation & Site Instrumentation Services • Pune
           </p>
         </div>
+      </div>
+
+      <!-- Service Mode Selector (FAT vs Site Commissioning) -->
+      <div class="flex items-center bg-brand-darker p-1 rounded-xl border border-brand-steel/80 shadow-inner">
+        <button id="modeBtnFat" onclick="setServiceMode('fat')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition bg-brand-orange text-white shadow-md">
+          <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
+          <span>Shop Floor FAT</span>
+        </button>
+        <button id="modeBtnSite" onclick="setServiceMode('site')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">
+          <i data-lucide="hard-hat" class="w-3.5 h-3.5"></i>
+          <span>E&I Site Commissioning</span>
+        </button>
       </div>
 
       <!-- Live Status Badges -->
@@ -118,7 +133,7 @@
 
         <div id="micStatusBadge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
           <i data-lucide="mic-off" class="w-3.5 h-3.5"></i>
-          <span class="hidden md:inline font-medium" id="micStatusText">Mic Idle</span>
+          <span class="hidden lg:inline font-medium" id="micStatusText">Mic Idle</span>
         </div>
 
         <div id="cloudSyncBadge" onclick="switchTab('settings')" class="cursor-pointer flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition">
@@ -130,32 +145,37 @@
     
     <!-- Navigation Tabs -->
     <nav class="flex border-t border-brand-steel/40 bg-brand-navy/95 overflow-x-auto text-xs sm:text-sm font-medium">
-      <button onclick="switchTab('inspection')" id="tab-inspection" class="tab-btn flex-1 min-w-[100px] py-3 px-3 text-center border-b-2 border-brand-orange text-brand-orange flex items-center justify-center gap-1.5 transition">
+      <button onclick="switchTab('inspection')" id="tab-inspection" class="tab-btn flex-1 min-w-[110px] py-3 px-3 text-center border-b-2 border-brand-orange text-brand-orange flex items-center justify-center gap-1.5 transition font-semibold">
         <i data-lucide="clipboard-check" class="w-4 h-4"></i>
-        <span>FAT Checklist</span>
+        <span id="tabLabelInspection">Inspection & Tests</span>
       </button>
       <button onclick="switchTab('voice')" id="tab-voice" class="tab-btn flex-1 min-w-[100px] py-3 px-3 text-center border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition">
         <i data-lucide="mic" class="w-4 h-4"></i>
         <span>Voice HUD</span>
       </button>
-      <button onclick="switchTab('evidence')" id="tab-evidence" class="tab-btn flex-1 min-w-[100px] py-3 px-3 text-center border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition">
+      <button onclick="switchTab('snags')" id="tab-snags" class="tab-btn flex-1 min-w-[110px] py-3 px-3 text-center border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition">
+        <i data-lucide="alert-circle" class="w-4 h-4"></i>
+        <span>Site Snags</span>
+        <span id="snagsCountPill" class="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 ml-0.5">0</span>
+      </button>
+      <button onclick="switchTab('evidence')" id="tab-evidence" class="tab-btn flex-1 min-w-[110px] py-3 px-3 text-center border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition">
         <i data-lucide="camera" class="w-4 h-4"></i>
-        <span>Sign & Proof</span>
+        <span>Proof & Sign-Off</span>
       </button>
       <button onclick="switchTab('reports')" id="tab-reports" class="tab-btn flex-1 min-w-[100px] py-3 px-3 text-center border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition">
         <i data-lucide="file-text" class="w-4 h-4"></i>
-        <span>Reports & Logs</span>
+        <span>Dossier</span>
       </button>
       <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn flex-1 min-w-[100px] py-3 px-3 text-center border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition">
         <i data-lucide="settings" class="w-4 h-4"></i>
-        <span>Google Cloud</span>
+        <span>Cloud Sync</span>
       </button>
     </nav>
   </header>
 
-  <!-- Main Content Body -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6">
-    <!-- Toast Notification Banner -->
+    
+    <!-- Non-blocking Toast Notification Banner -->
     <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none max-w-md w-full px-4">
       <div id="toastInner" class="flex items-center gap-3 p-4 rounded-xl shadow-2xl border text-sm backdrop-blur-md">
         <i id="toastIcon" data-lucide="info" class="w-5 h-5 flex-shrink-0"></i>
@@ -163,71 +183,97 @@
       </div>
     </div>
 
-    <!-- TAB 1: NEW INSPECTION / CHECKLIST -->
+    <!-- Confirmation Modal (Zero Native Alerts) -->
+    <div id="customConfirmModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4">
+      <div class="bg-brand-card border border-brand-steel rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+        <div class="flex items-center gap-3 text-brand-orange">
+          <i data-lucide="help-circle" class="w-6 h-6"></i>
+          <h3 class="text-base font-bold text-white" id="confirmModalTitle">Confirm Action</h3>
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed" id="confirmModalMsg">Are you sure you want to proceed?</p>
+        <div class="flex justify-end gap-2 pt-2">
+          <button onclick="resolveCustomConfirm(false)" class="px-4 py-2 rounded-xl bg-brand-navy hover:bg-slate-800 text-slate-300 text-xs font-semibold border border-brand-steel transition">
+            Cancel
+          </button>
+          <button onclick="resolveCustomConfirm(true)" class="px-4 py-2 rounded-xl bg-brand-orange hover:bg-orange-600 text-white text-xs font-bold transition">
+            Proceed
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         TAB 1: INSPECTION PROTOCOL & CHECKLIST (FAT OR SITE)
+         ========================================================= -->
     <section id="pane-inspection" class="space-y-6">
       
-      <!-- Panel Information & Setup Card -->
+      <!-- Project Context Specification Card -->
       <div class="bg-brand-card/70 backdrop-blur border border-brand-steel/60 rounded-2xl p-4 sm:p-6 shadow-xl">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-brand-steel/50">
           <div>
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-              <i data-lucide="cpu" class="w-5 h-5 text-brand-orange"></i>
-              Panel Project Specification
-            </h2>
-            <p class="text-xs text-slate-400">Select standard Aryavarta panel type to load factory test criteria.</p>
+            <div class="flex items-center gap-2">
+              <h2 id="projectCardTitle" class="text-lg font-bold text-white flex items-center gap-2">
+                <i data-lucide="cpu" class="w-5 h-5 text-brand-orange"></i>
+                Panel Project Specification (FAT Mode)
+              </h2>
+              <span id="serviceModeBadge" class="text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-brand-orange/20 text-brand-orange border border-brand-orange/30">
+                Shop Floor QC
+              </span>
+            </div>
+            <p id="projectCardSubtitle" class="text-xs text-slate-400 mt-0.5">
+              Testing protocols for manufactured MCC, PCC, APFC, VFD, and PLC Automation Panels.
+            </p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="resetInspectionForm()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5 transition">
+            <button onclick="promptResetInspection()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5 transition">
               <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-              New Inspection
+              Reset Protocol
             </button>
             <button onclick="startVoiceHUDDirectly()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-brand-orange to-amber-600 hover:opacity-90 text-white shadow-md shadow-orange-500/20 flex items-center gap-1.5 transition">
               <i data-lucide="headphones" class="w-3.5 h-3.5"></i>
-              Launch Hands-Free Voice
+              Voice Co-Pilot
             </button>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 text-xs">
+        <!-- Dynamic Metadata Inputs (Swapped by Service Mode) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 text-xs" id="metaFieldsGrid">
+          <!-- Fields will be dynamically injected or re-labeled based on mode -->
           <div>
-            <label class="block font-medium text-slate-300 mb-1.5">Panel Category / Product Line</label>
-            <select id="panelTypeSelect" onchange="loadChecklistTemplate(this.value)" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-brand-orange transition">
-              <option value="vfd">VFD Control Panel (Speed, Ramp, Modbus, 4-20mA)</option>
-              <option value="mcc">MCC Panel (Motor Control Center - Busbar, Star-Delta)</option>
-              <option value="pcc">PCC Panel (Power Control Center - ACB, Shunt, Clearance)</option>
-              <option value="apfc">APFC Panel (Automatic Power Factor Correction)</option>
-              <option value="plc">PLC & SCADA Automation Panel (SMPS, DI/DO, 4-20mA)</option>
+            <label class="block font-medium text-slate-300 mb-1.5" id="lblCategory">Equipment / Panel Category</label>
+            <select id="protocolSelect" onchange="handleProtocolSelectChange(this.value)" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-brand-orange transition">
+              <!-- Populated by JS based on Active Mode -->
             </select>
           </div>
 
           <div>
-            <label class="block font-medium text-slate-300 mb-1.5">Panel Serial Number</label>
-            <input type="text" id="panelSerialNo" value="AA-2026-VFD-108" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2.5 text-white font-mono-code focus:outline-none focus:border-brand-orange transition" placeholder="e.g. AA-2026-MCC-042">
+            <label class="block font-medium text-slate-300 mb-1.5" id="lblIdentifier">Panel Serial Number / Tag No.</label>
+            <input type="text" id="equipmentIdentifier" value="AA-2026-VFD-108" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2.5 text-white font-mono-code focus:outline-none focus:border-brand-orange transition" placeholder="e.g. AA-2026-VFD-042 or PT-101">
           </div>
 
           <div>
-            <label class="block font-medium text-slate-300 mb-1.5">Client / Plant Name</label>
+            <label class="block font-medium text-slate-300 mb-1.5" id="lblClient">Client / Plant Name</label>
             <input type="text" id="clientName" value="Kalyani Ethanol & Bio-Refinery Ltd." class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-brand-orange transition" placeholder="e.g. Baramati Agro Sugar Division">
           </div>
 
           <div>
-            <label class="block font-medium text-slate-300 mb-1.5">PO / Work Order Number</label>
-            <input type="text" id="poNumber" value="PO-IND-9942/26" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2.5 text-white font-mono-code focus:outline-none focus:border-brand-orange transition">
+            <label class="block font-medium text-slate-300 mb-1.5" id="lblLocationSection">Factory Bay / Plant Section</label>
+            <input type="text" id="facilityLocation" value="Chikhali Works (Bay 2), Pune" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-brand-orange transition" placeholder="e.g. Boiler House or Fermentation Section">
           </div>
 
           <div>
-            <label class="block font-medium text-slate-300 mb-1.5">Testing Engineer Name / ID</label>
+            <label class="block font-medium text-slate-300 mb-1.5" id="lblPoScope">Work Order / Commissioning Scope</label>
+            <input type="text" id="workScope" value="PO-IND-9942/26 (VFD Supply & Testing)" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2.5 text-white font-mono-code focus:outline-none focus:border-brand-orange transition">
+          </div>
+
+          <div>
+            <label class="block font-medium text-slate-300 mb-1.5">Aryavarta Lead Testing Engineer</label>
             <input type="text" id="engineerName" value="Er. Rohit Sawant (ID: AA-QC-09)" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-brand-orange transition">
-          </div>
-
-          <div>
-            <label class="block font-medium text-slate-300 mb-1.5">Testing Facility Location</label>
-            <input type="text" id="inspectionLocation" value="Chikhali Works (Bay 2), Pune" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-brand-orange transition">
           </div>
         </div>
       </div>
 
-      <!-- Checklist Progress Tracker -->
+      <!-- Progress Bar & Quick Status -->
       <div class="bg-brand-navy/80 border border-brand-steel/50 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-4">
           <div class="text-sm">
@@ -255,20 +301,20 @@
         </div>
 
         <div class="flex items-center gap-2">
-          <button onclick="markAllPassed()" class="px-3 py-1.5 rounded-lg text-xs bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/30 transition">
+          <button onclick="autoPassDefaults()" class="px-3 py-1.5 rounded-lg text-xs bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/30 transition">
             Auto-Verify Defaults
           </button>
         </div>
       </div>
 
-      <!-- Interactive Checklist Table -->
+      <!-- Interactive Protocol Table -->
       <div class="bg-brand-card/90 border border-brand-steel/60 rounded-2xl overflow-hidden shadow-xl">
-        <div class="p-4 border-b border-brand-steel/50 flex items-center justify-between">
+        <div class="p-4 border-b border-brand-steel/50 flex flex-wrap items-center justify-between gap-2">
           <h3 class="font-bold text-sm text-white flex items-center gap-2">
             <i data-lucide="list-checks" class="w-4 h-4 text-brand-orange"></i>
-            Mandatory QC Test Protocol
+            <span id="tableHeaderTitle">Testing Protocol Verification Steps</span>
           </h3>
-          <span class="text-xs text-slate-400">Click any reading to edit manually, or switch to Voice Mode.</span>
+          <span class="text-xs text-slate-400">Tap readings to edit or run voice co-pilot for hands-free audio entry.</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -276,10 +322,10 @@
             <thead class="bg-brand-navy/90 text-slate-400 font-semibold border-b border-brand-steel/50 uppercase tracking-wider">
               <tr>
                 <th class="py-3 px-3 w-12 text-center">#</th>
-                <th class="py-3 px-4 min-w-[180px]">Test Parameter</th>
-                <th class="py-3 px-3 min-w-[150px]">Nominal Criterion</th>
-                <th class="py-3 px-3 min-w-[150px]">Multimeter / Logged Value</th>
-                <th class="py-3 px-3 text-center min-w-[110px]">Status</th>
+                <th class="py-3 px-4 min-w-[200px]">Parameter / Service Item</th>
+                <th class="py-3 px-3 min-w-[160px]">Engineering Criteria</th>
+                <th class="py-3 px-3 min-w-[160px]">Measured / Spoken Reading</th>
+                <th class="py-3 px-3 text-center min-w-[110px]">Verdict</th>
                 <th class="py-3 px-3 text-right w-28">Quick Action</th>
               </tr>
             </thead>
@@ -290,24 +336,30 @@
         </div>
       </div>
 
-      <!-- Bottom Step Navigation to Photo/Signature -->
+      <!-- Navigation to Next Steps -->
       <div class="flex justify-end gap-3 pt-2">
         <button onclick="switchTab('voice')" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-2 transition">
           <i data-lucide="mic" class="w-4 h-4 text-brand-orange"></i>
           Test via Voice HUD
         </button>
+        <button onclick="switchTab('snags')" class="px-5 py-2.5 rounded-xl bg-brand-steel hover:bg-brand-steel/80 text-white text-xs font-semibold flex items-center gap-2 transition">
+          <i data-lucide="alert-circle" class="w-4 h-4 text-amber-400"></i>
+          Review Site Snags
+        </button>
         <button onclick="switchTab('evidence')" class="px-6 py-2.5 rounded-xl bg-brand-orange hover:bg-orange-600 text-white text-xs font-bold shadow-lg shadow-orange-500/20 flex items-center gap-2 transition">
-          <span>Proceed to Evidence & Sign-Off</span>
+          <span>Proceed to Proof & Sign-Off</span>
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
       </div>
 
     </section>
 
-    <!-- TAB 2: HANDS-FREE VOICE ASSISTANT HUD -->
+    <!-- =========================================================
+         TAB 2: HANDS-FREE VOICE ASSISTANT HUD
+         ========================================================= -->
     <section id="pane-voice" class="hidden space-y-6">
       
-      <!-- Voice HUD Top Control Banner -->
+      <!-- Top Voice Co-Pilot Control Card -->
       <div class="bg-gradient-to-r from-brand-card to-brand-navy border border-brand-steel/80 rounded-2xl p-4 sm:p-6 shadow-2xl relative overflow-hidden">
         <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-brand-orange/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -318,18 +370,18 @@
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <h2 class="text-xl font-black text-white tracking-tight">VOICE-GUIDED FAT CO-PILOT</h2>
+                <h2 class="text-xl font-black text-white tracking-tight">VOICE-GUIDED CO-PILOT</h2>
                 <span id="voiceStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700">
                   STANDBY
                 </span>
               </div>
               <p class="text-xs text-slate-400 mt-1">
-                Audio instructions stream into your Bluetooth headset. Speak multimeter readings hands-free.
+                Audio instructions stream into your Bluetooth headset. Speak multimeter, calibrator, and rotation readings hands-free.
               </p>
             </div>
           </div>
 
-          <!-- Audio Waveform (Visible during listening/speaking) -->
+          <!-- Animated Audio Waveform -->
           <div id="audioWaveBars" class="hidden flex items-end gap-1.5 h-10 px-4 py-1 bg-brand-navy/60 rounded-xl border border-brand-steel/40">
             <div class="wave-bar w-1.5 bg-brand-orange rounded-full h-2 animate-wave"></div>
             <div class="wave-bar w-1.5 bg-brand-orange rounded-full h-5 animate-wave"></div>
@@ -338,7 +390,7 @@
             <div class="wave-bar w-1.5 bg-brand-orange rounded-full h-7 animate-wave"></div>
           </div>
 
-          <!-- Main Start/Stop Voice Button -->
+          <!-- Start/Stop Voice Button -->
           <div class="flex items-center gap-3">
             <button id="toggleVoiceBtn" onclick="toggleVoiceAssistant()" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-brand-orange to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold text-sm shadow-xl shadow-orange-500/25 flex items-center gap-2.5 transition transform active:scale-95">
               <i data-lucide="play" id="voiceBtnIcon" class="w-5 h-5 fill-current"></i>
@@ -348,7 +400,7 @@
         </div>
       </div>
 
-      <!-- Active Step Spotlight Card -->
+      <!-- Active Testing Step Spotlight -->
       <div class="bg-brand-card/90 border-2 border-brand-steel/80 rounded-2xl p-6 shadow-2xl relative">
         <div class="flex items-center justify-between pb-3 border-b border-brand-steel/50">
           <div class="flex items-center gap-2">
@@ -367,28 +419,28 @@
 
           <div class="flex flex-wrap gap-4 text-xs font-mono-code">
             <div class="bg-brand-navy/90 border border-brand-steel px-3 py-2 rounded-xl">
-              <span class="text-slate-400 block text-[10px] uppercase">Acceptable Range</span>
-              <span id="voiceActiveNominal" class="text-brand-orange font-bold text-sm">400V - 425V AC ±2%</span>
+              <span class="text-slate-400 block text-[10px] uppercase">Engineering Standard</span>
+              <span id="voiceActiveNominal" class="text-brand-orange font-bold text-sm">415V AC ±5%</span>
             </div>
             <div class="bg-brand-navy/90 border border-brand-steel px-3 py-2 rounded-xl">
-              <span class="text-slate-400 block text-[10px] uppercase">Last Spoken / Logged</span>
-              <span id="voiceActiveValue" class="text-emerald-400 font-bold text-sm">Pending Reading...</span>
+              <span class="text-slate-400 block text-[10px] uppercase">Logged Reading</span>
+              <span id="voiceActiveValue" class="text-emerald-400 font-bold text-sm">Awaiting Spoken Reading...</span>
             </div>
           </div>
 
-          <!-- Spoken Transcript Feedback Bubble -->
+          <!-- Live Audio Speech Transcript -->
           <div class="bg-brand-navy/70 border border-brand-steel/60 rounded-xl p-3.5 flex items-start gap-3">
             <i data-lucide="message-square" class="w-4 h-4 text-brand-orange mt-0.5 flex-shrink-0"></i>
             <div>
-              <span class="text-[11px] uppercase tracking-wider text-slate-400 font-bold block">Live Audio Transcript:</span>
+              <span class="text-[11px] uppercase tracking-wider text-slate-400 font-bold block">Live Audio Recognition:</span>
               <p id="liveTranscript" class="text-sm font-medium text-slate-200 italic mt-0.5">
-                "Listening for your command... (e.g. '415 volts' or 'pass')"
+                "Listening for your multimeter readings or commands... (e.g. '415 volts', '4.02 milliamps', 'clockwise', or 'pass')"
               </p>
             </div>
           </div>
         </div>
 
-        <!-- Controls: Repeat, Next, Previous, Manual Override -->
+        <!-- Touch Controls & Navigation -->
         <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-brand-steel/50">
           <div class="flex items-center gap-2">
             <button onclick="voiceNavigate(-1)" class="p-2.5 rounded-xl bg-brand-navy hover:bg-slate-800 border border-brand-steel text-slate-300 transition" title="Previous Step">
@@ -403,7 +455,6 @@
             </button>
           </div>
 
-          <!-- Touch Override Shortcuts -->
           <div class="flex items-center gap-2">
             <button onclick="recordSpokenResult('PASSED')" class="px-4 py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 transition">
               <i data-lucide="check" class="w-4 h-4"></i>
@@ -417,35 +468,122 @@
         </div>
       </div>
 
-      <!-- Voice Commands Cheatsheet -->
+      <!-- Vocabulary Guide Card -->
       <div class="bg-brand-card/60 border border-brand-steel/40 rounded-2xl p-5">
         <h4 class="font-bold text-xs uppercase tracking-wider text-slate-300 mb-3 flex items-center gap-2">
           <i data-lucide="mic-2" class="w-4 h-4 text-brand-orange"></i>
-          Spoken Command Vocabulary Guide (Shop-Floor Optimized)
+          Industrial Spoken Vocabulary Engine (Field-Tuned)
         </h4>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
           <div class="p-2.5 rounded-xl bg-brand-navy/80 border border-brand-steel/40">
-            <span class="text-brand-orange font-bold block">"415 Volts" / "0.8 Ohms"</span>
-            <span class="text-slate-400 text-[11px]">Automatically records the reading and validates nominal range.</span>
+            <span class="text-brand-orange font-bold block">"415 Volts" / "4.02 mA"</span>
+            <span class="text-slate-400 text-[11px]">Records numeric multimeter & 4-20mA process values automatically.</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-brand-navy/80 border border-brand-steel/40">
+            <span class="text-cyan-400 font-bold block">"Clockwise" / "0.8 Ohms"</span>
+            <span class="text-slate-400 text-[11px]">Understands motor bump direction and cable earth resistance.</span>
           </div>
           <div class="p-2.5 rounded-xl bg-brand-navy/80 border border-brand-steel/40">
             <span class="text-emerald-400 font-bold block">"Pass" / "Check" / "OK"</span>
-            <span class="text-slate-400 text-[11px]">Marks parameter as Passed and auto-advances to next step.</span>
+            <span class="text-slate-400 text-[11px]">Marks verification as compliant and speaks the subsequent step.</span>
           </div>
           <div class="p-2.5 rounded-xl bg-brand-navy/80 border border-brand-steel/40">
-            <span class="text-rose-400 font-bold block">"Fail" / "Defective"</span>
-            <span class="text-slate-400 text-[11px]">Flags parameter as Non-Compliant/Failed for rework.</span>
-          </div>
-          <div class="p-2.5 rounded-xl bg-brand-navy/80 border border-brand-steel/40">
-            <span class="text-blue-400 font-bold block">"Repeat" / "Test Complete"</span>
-            <span class="text-slate-400 text-[11px]">Re-reads the step or finishes inspection & compiles dossier.</span>
+            <span class="text-amber-400 font-bold block">"Repeat" / "Test Complete"</span>
+            <span class="text-slate-400 text-[11px]">Re-reads instructions or wraps up the session into reports.</span>
           </div>
         </div>
       </div>
 
     </section>
 
-    <!-- TAB 3: PHOTO EVIDENCE & CLIENT SIGN-OFF -->
+    <!-- =========================================================
+         TAB 3: SITE SNAGS & PUNCH LIST TRACKER
+         ========================================================= -->
+    <section id="pane-snags" class="hidden space-y-6">
+      
+      <div class="bg-brand-card/80 border border-brand-steel/60 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-brand-steel/50">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="alert-circle" class="w-5 h-5 text-amber-400"></i>
+              Site Punch Points & Commissioning Snag Tracker
+            </h2>
+            <p class="text-xs text-slate-400">
+              Track open electrical issues before final plant handover: Category A (Critical Holds) vs Category B (Minor Post-Handover).
+            </p>
+          </div>
+          <button onclick="toggleAddSnagModal(true)" class="px-4 py-2 rounded-xl bg-brand-orange hover:bg-orange-600 text-white text-xs font-bold shadow-md flex items-center gap-2 transition">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Log New Snag / Punch Point</span>
+          </button>
+        </div>
+
+        <!-- Snag Items Table / Cards -->
+        <div id="snagsContainer" class="space-y-3">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Add Snag Modal Form -->
+      <div id="addSnagModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm hidden p-4">
+        <div class="bg-brand-card border border-brand-steel rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-brand-steel/50">
+            <h3 class="font-bold text-white text-sm flex items-center gap-2">
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i>
+              Log Site Commissioning Punch Point
+            </h3>
+            <button onclick="toggleAddSnagModal(false)" class="text-slate-400 hover:text-white">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-slate-300 font-medium mb-1">Issue Description / Defect</label>
+              <textarea id="snagDescInput" rows="2" class="w-full bg-brand-navy border border-brand-steel rounded-xl p-2.5 text-white focus:outline-none focus:border-brand-orange" placeholder="e.g. Field cable gland loose on Fermentation Pump 2 motor terminal box."></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-slate-300 font-medium mb-1">Severity Category</label>
+                <select id="snagCatInput" class="w-full bg-brand-navy border border-brand-steel rounded-xl p-2.5 text-white focus:outline-none focus:border-brand-orange">
+                  <option value="CAT_A">Category A (Critical Hold - Unsafe to Charge)</option>
+                  <option value="CAT_B" selected>Category B (Minor - Complete within 14 Days)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-slate-300 font-medium mb-1">Responsible Party</label>
+                <select id="snagPartyInput" class="w-full bg-brand-navy border border-brand-steel rounded-xl p-2.5 text-white focus:outline-none focus:border-brand-orange">
+                  <option value="Aryavarta">Aryavarta Automation</option>
+                  <option value="Client">Client Site Team</option>
+                  <option value="Contractor">Civil / Mechanical Contractor</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-slate-300 font-medium mb-1">Equipment Tag / Location</label>
+              <input type="text" id="snagTagInput" placeholder="e.g. MTR-PUMP-02 / Bay 3" class="w-full bg-brand-navy border border-brand-steel rounded-xl p-2.5 text-white focus:outline-none focus:border-brand-orange">
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2 pt-3 border-t border-brand-steel/50">
+            <button onclick="toggleAddSnagModal(false)" class="px-4 py-2 rounded-xl bg-brand-navy hover:bg-slate-800 text-slate-300 text-xs font-semibold">
+              Cancel
+            </button>
+            <button onclick="saveNewSnagItem()" class="px-5 py-2 rounded-xl bg-brand-orange hover:bg-orange-600 text-white text-xs font-bold">
+              Save Punch Point
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =========================================================
+         TAB 4: PHOTO EVIDENCE & DUAL SIGN-OFF
+         ========================================================= -->
     <section id="pane-evidence" class="hidden space-y-6">
       
       <!-- Photo Attachment with Geo-Watermark -->
@@ -454,89 +592,113 @@
           <div>
             <h2 class="text-lg font-bold text-white flex items-center gap-2">
               <i data-lucide="camera" class="w-5 h-5 text-brand-orange"></i>
-              Visual Proof & Panel Photos
+              Visual Proof & Field Photographs
             </h2>
             <p class="text-xs text-slate-400">
-              Photographs are automatically stamped with panel serial number, Pune Works GPS, and inspection timestamp.
+              Photos are stamped indelibly with Equipment Tag, Service Mode, Engineer Name, GPS Coordinates, and Timestamp.
             </p>
           </div>
           <div>
             <label class="cursor-pointer px-4 py-2 rounded-xl bg-brand-steel hover:bg-brand-steel/80 text-white font-semibold text-xs flex items-center gap-2 border border-brand-steel/80 shadow-md transition">
               <i data-lucide="plus" class="w-4 h-4 text-brand-orange"></i>
-              <span>Attach Panel Photo</span>
+              <span>Attach Stamped Photo</span>
               <input type="file" id="panelPhotoInput" accept="image/*" capture="environment" onchange="handlePhotoUpload(event)" class="hidden">
             </label>
           </div>
         </div>
 
-        <!-- Photos Grid Gallery -->
         <div id="photosGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-          <!-- Fallback empty state -->
           <div id="noPhotosPrompt" class="col-span-full py-8 text-center border-2 border-dashed border-brand-steel/50 rounded-xl">
             <i data-lucide="image" class="w-10 h-10 text-slate-500 mx-auto mb-2"></i>
-            <p class="text-xs text-slate-400 font-medium">No photos attached yet. Take pictures of ferrule wiring, VFD display, and busbar clearance.</p>
+            <p class="text-xs text-slate-400 font-medium">No site photographs attached yet. Capture cable glands, transmitter displays, or panel interior.</p>
           </div>
         </div>
       </div>
 
-      <!-- Client / Third-Party Inspector Sign-Off -->
-      <div class="bg-brand-card/80 border border-brand-steel/60 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
+      <!-- Dual Digital Signature & Official Sign-Off -->
+      <div class="bg-brand-card/80 border border-brand-steel/60 rounded-2xl p-4 sm:p-6 shadow-xl space-y-6">
         <div class="pb-3 border-b border-brand-steel/50">
           <h2 class="text-lg font-bold text-white flex items-center gap-2">
             <i data-lucide="pen-tool" class="w-5 h-5 text-brand-orange"></i>
-            Client Acceptance & Official Sign-Off
+            Joint Inspection & Handover Sign-Off
           </h2>
-          <p class="text-xs text-slate-400">Client Representative or Third Party Inspector signs directly on the screen.</p>
+          <p class="text-xs text-slate-400">Dual digital signatures for both Aryavarta Engineer and Client Site Representative / TPI.</p>
         </div>
 
+        <!-- Signee Metadata -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
           <div>
-            <label class="block font-medium text-slate-300 mb-1">Client Representative Name</label>
+            <label class="block font-medium text-slate-300 mb-1" id="lblSigneeClient">Client In-Charge / TPI Name</label>
             <input type="text" id="clientRepName" value="Mr. Vikram Deshmukh" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2 text-white focus:border-brand-orange focus:outline-none">
           </div>
           <div>
-            <label class="block font-medium text-slate-300 mb-1">Designation / Department</label>
-            <input type="text" id="clientRepDesignation" value="Chief Electrical Engineer (E&I)" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2 text-white focus:border-brand-orange focus:outline-none">
+            <label class="block font-medium text-slate-300 mb-1">Designation & Department</label>
+            <input type="text" id="clientRepDesignation" value="Chief Electrical Engineer (Plant E&I)" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2 text-white focus:border-brand-orange focus:outline-none">
           </div>
           <div>
-            <label class="block font-medium text-slate-300 mb-1">Inspection Verdict</label>
+            <label class="block font-medium text-slate-300 mb-1">Official Handover Verdict</label>
             <select id="inspectionVerdict" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2 text-white focus:border-brand-orange focus:outline-none font-bold text-emerald-400">
-              <option value="ACCEPTED">ACCEPTED - Approved for Dispatch</option>
-              <option value="CONDITIONALLY_ACCEPTED">CONDITIONALLY ACCEPTED (Minor Punch Points)</option>
-              <option value="REJECTED">REJECTED - Rework Required</option>
+              <option value="ACCEPTED">ACCEPTED / HANDED OVER (Cleared for Energization)</option>
+              <option value="CONDITIONALLY_ACCEPTED">CONDITIONALLY ACCEPTED (Cat B Snags Pending)</option>
+              <option value="REJECTED">REJECTED (Cat A Hold Points)</option>
             </select>
           </div>
         </div>
 
-        <!-- Touchscreen Signature Canvas -->
-        <div>
-          <div class="flex items-center justify-between mb-1.5">
-            <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <i data-lucide="signature" class="w-3.5 h-3.5 text-brand-orange"></i>
-              Digital Signature (Draw with finger or stylus):
-            </label>
-            <button onclick="clearSignatureCanvas()" class="text-xs text-slate-400 hover:text-rose-400 flex items-center gap-1 transition">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-              Clear Pad
-            </button>
-          </div>
-          <div class="w-full h-44 bg-white rounded-xl overflow-hidden border-2 border-brand-steel/80 relative shadow-inner">
-            <canvas id="signaturePad" class="signature-canvas w-full h-full"></canvas>
-            <div id="sigPlaceholder" class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-400 text-xs font-medium">
-              Sign here using touch, stylus, or mouse pointer
+        <!-- Dual Signature Canvases -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Signature Pad 1: Aryavarta Lead Engineer -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-orange"></i>
+                1. Aryavarta Testing Engineer Signature:
+              </label>
+              <button onclick="clearSigPad(1)" class="text-xs text-slate-400 hover:text-rose-400 flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                Clear
+              </button>
+            </div>
+            <div class="w-full h-36 bg-white rounded-xl overflow-hidden border-2 border-brand-steel/80 relative shadow-inner">
+              <canvas id="sigPad1" class="signature-canvas w-full h-full"></canvas>
+              <div id="sigPlaceholder1" class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-400 text-xs">
+                Aryavarta Engineer Signature
+              </div>
             </div>
           </div>
+
+          <!-- Signature Pad 2: Client Representative / TPI -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                <i data-lucide="user-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                2. Client / Site In-Charge Signature:
+              </label>
+              <button onclick="clearSigPad(2)" class="text-xs text-slate-400 hover:text-rose-400 flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                Clear
+              </button>
+            </div>
+            <div class="w-full h-36 bg-white rounded-xl overflow-hidden border-2 border-brand-steel/80 relative shadow-inner">
+              <canvas id="sigPad2" class="signature-canvas w-full h-full"></canvas>
+              <div id="sigPlaceholder2" class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-400 text-xs">
+                Client Representative Signature
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <!-- Final Action Bar -->
-        <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <!-- Action Bar -->
+        <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-brand-steel/50">
           <div class="text-xs text-slate-400">
-            Ready to seal the inspection document and transmit records.
+            Certificates are compiled entirely client-side with no cloud processing delay.
           </div>
           <div class="flex items-center gap-3 w-full sm:w-auto">
             <button onclick="generateOfficialPDF()" class="flex-1 sm:flex-none px-6 py-3 rounded-xl bg-gradient-to-r from-brand-orange to-amber-600 hover:opacity-95 text-white font-bold text-xs shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 transition">
               <i data-lucide="file-down" class="w-4 h-4"></i>
-              Download FAT Certificate (PDF)
+              <span id="btnPdfLabel">Download FAT Certificate (PDF)</span>
             </button>
             <button onclick="saveAndSyncToGoogleSheets()" class="flex-1 sm:flex-none px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 transition">
               <i data-lucide="cloud-upload" class="w-4 h-4"></i>
@@ -549,7 +711,9 @@
 
     </section>
 
-    <!-- TAB 4: INSPECTION REPORTS & HISTORY -->
+    <!-- =========================================================
+         TAB 5: LOCAL & CLOUD DOSSIER
+         ========================================================= -->
     <section id="pane-reports" class="hidden space-y-6">
       
       <div class="bg-brand-card/80 border border-brand-steel/60 rounded-2xl p-4 sm:p-6 shadow-xl">
@@ -557,9 +721,9 @@
           <div>
             <h2 class="text-lg font-bold text-white flex items-center gap-2">
               <i data-lucide="archive" class="w-5 h-5 text-brand-orange"></i>
-              Local & Cloud Inspection Dossier
+              Inspection & Site Handover Dossier
             </h2>
-            <p class="text-xs text-slate-400">Past factory acceptance tests stored offline on this device.</p>
+            <p class="text-xs text-slate-400">Past factory acceptance tests and site commissioning logs stored on device.</p>
           </div>
           <div class="flex items-center gap-2">
             <button onclick="syncAllPendingRecords()" class="px-4 py-2 rounded-xl bg-brand-steel hover:bg-brand-steel/80 text-white text-xs font-semibold flex items-center gap-2 transition">
@@ -568,7 +732,7 @@
             </button>
             <button onclick="exportAllAsJSON()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition">
               <i data-lucide="download" class="w-3.5 h-3.5"></i>
-              Backup JSON
+              Export JSON
             </button>
           </div>
         </div>
@@ -580,23 +744,24 @@
 
     </section>
 
-    <!-- TAB 5: GOOGLE SHEETS & SYSTEM CONFIG -->
+    <!-- =========================================================
+         TAB 6: GOOGLE SHEETS & SYSTEM CONFIGURATION
+         ========================================================= -->
     <section id="pane-settings" class="hidden space-y-6">
       
-      <!-- Google Sheets Connection Setup -->
       <div class="bg-brand-card/80 border border-brand-steel/60 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
         <div class="pb-3 border-b border-brand-steel/50">
           <div class="flex items-center justify-between">
             <h2 class="text-lg font-bold text-white flex items-center gap-2">
               <i data-lucide="sheet" class="w-5 h-5 text-emerald-400"></i>
-              Google Sheets 100% Free Cloud Backend
+              Google Sheets 100% Free Cloud Integration
             </h2>
             <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">
               Zero Cost Architecture
             </span>
           </div>
           <p class="text-xs text-slate-400 mt-1">
-            Data is submitted directly to your company Google Spreadsheet via Google Apps Script (No paid database or server required).
+            Data is submitted securely into your company Google Spreadsheet via Google Apps Script (No paid database required).
           </p>
         </div>
 
@@ -610,11 +775,10 @@
               </button>
             </div>
             <p class="text-[11px] text-slate-400 mt-1">
-              If left blank, the app runs in Offline/Mock mode and stores all reports safely in your device storage.
+              If left blank, the app operates in offline mode and caches records locally on this phone or tablet.
             </p>
           </div>
 
-          <!-- Quick Test Button -->
           <div class="pt-2 flex items-center gap-3">
             <button onclick="testGoogleSheetsConnection()" class="px-4 py-2 rounded-xl bg-brand-steel hover:bg-slate-700 text-slate-200 font-semibold flex items-center gap-2 transition">
               <i data-lucide="send" class="w-3.5 h-3.5 text-brand-orange"></i>
@@ -624,50 +788,21 @@
           </div>
         </div>
 
-        <!-- Step-by-Step Instructions & Copy Script -->
+        <!-- Setup Instructions & Code Copy -->
         <div class="mt-4 p-4 rounded-xl bg-brand-navy/90 border border-brand-steel/60 space-y-3 text-xs">
           <div class="flex items-center justify-between">
             <h3 class="font-bold text-white flex items-center gap-2">
               <i data-lucide="code" class="w-4 h-4 text-brand-orange"></i>
-              Free 2-Minute Google Sheet Setup Instructions:
+              Google Apps Script Code (Ready to Copy):
             </h3>
             <button onclick="copyAppsScriptCode()" class="px-3 py-1 rounded-lg bg-brand-steel hover:bg-slate-700 text-slate-200 font-semibold flex items-center gap-1.5 transition text-[11px]">
               <i data-lucide="copy" class="w-3 h-3"></i>
               Copy Google Script Code
             </button>
           </div>
-          <ol class="list-decimal list-inside space-y-1.5 text-slate-300 text-[11px] leading-relaxed">
-            <li>Open a new spreadsheet at <a href="https://sheets.new" target="_blank" class="text-brand-orange underline">sheets.new</a> and name it <b>Aryavarta Automation FAT Logs</b>.</li>
-            <li>In the top menu, click <b>Extensions &gt; Apps Script</b>.</li>
-            <li>Paste the copied script code into the editor and click <b>Deploy &gt; New deployment</b>.</li>
-            <li>Select type <b>Web app</b>. Set Execute as: <b>Me</b>, and Who has access: <b>Anyone</b>.</li>
-            <li>Click <b>Deploy</b>, authorize permissions, copy the resulting <code>/exec</code> Web App URL, and paste it into the box above.</li>
-          </ol>
-        </div>
-      </div>
-
-      <!-- Engineer PIN Security -->
-      <div class="bg-brand-card/80 border border-brand-steel/60 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
-        <div class="pb-3 border-b border-brand-steel/50">
-          <h2 class="text-lg font-bold text-white flex items-center gap-2">
-            <i data-lucide="shield-check" class="w-5 h-5 text-brand-orange"></i>
-            Technician & QC Security PIN
-          </h2>
-          <p class="text-xs text-slate-400">Restrict report sign-off and certificate modifications with a 4-digit PIN.</p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div>
-            <label class="block font-medium text-slate-300 mb-1">Current Engineer Passcode</label>
-            <input type="password" id="engineerPinInput" value="1234" maxlength="4" class="w-full bg-brand-navy border border-brand-steel rounded-xl px-3 py-2 text-white font-mono-code focus:border-brand-orange focus:outline-none text-center tracking-widest text-lg">
-            <span class="text-[11px] text-slate-500 mt-1 block">Default factory PIN is <code>1234</code>.</span>
-          </div>
-          <div class="flex items-end">
-            <button onclick="updateEngineerPIN()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-brand-steel hover:bg-slate-700 text-white font-semibold flex items-center justify-center gap-2 transition">
-              <i data-lucide="lock" class="w-4 h-4 text-brand-orange"></i>
-              Update Engineer PIN
-            </button>
-          </div>
+          <p class="text-slate-300 text-[11px] leading-relaxed">
+            Create a sheet at <a href="https://sheets.new" target="_blank" class="text-brand-orange underline">sheets.new</a> named <b>Aryavarta FAT & Site Commissioning Logs</b>. In Extensions &gt; Apps Script, paste the code, deploy as Web App (Execute as: <i>Me</i>, Access: <i>Anyone</i>), and paste the resulting URL above.
+          </p>
         </div>
       </div>
 
@@ -679,23 +814,26 @@
   <footer class="bg-brand-navy border-t border-brand-steel/50 py-4 px-4 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
       <div>
-        Aryavarta Automation Works • Gat No. 1610, Dehu Alandi Road, Chikhali, Pune - 411062
+        Aryavarta Automation Works • Gat No. 1610, Dehu Alandi Road, Chikhali, Pune - 411062, India
       </div>
       <div class="flex items-center gap-3">
         <a href="https://www.aryavartaautomation.in/" target="_blank" class="text-brand-orange hover:underline">www.aryavartaautomation.in</a>
         <span>•</span>
-        <span>+91 9766037466</span>
+        <span>QC & Site Engineering Desk</span>
       </div>
     </div>
   </footer>
 
   <script>
     /* =========================================================
-     * ARYAVARTA AUTOMATION - FAT SYSTEM APPLICATION STATE
+     * ARYAVARTA AUTOMATION - FAT & E&I COMMISSIONING ENGINE
      * ========================================================= */
 
-    // Pre-configured testing templates for Aryavarta product catalog
-    const CHECKLIST_TEMPLATES = {
+    // Active service mode: 'fat' or 'site'
+    let activeServiceMode = 'fat';
+
+    // SHOP FLOOR FAT TESTING TEMPLATES
+    const FAT_TEMPLATES = {
       vfd: [
         { id: 1, name: "Incoming Voltage R-Y", nominal: "415V AC ±5%", spokenPrompt: "Measure incoming voltage between R and Y phase.", value: "", status: "PENDING", unit: "V" },
         { id: 2, name: "Incoming Voltage Y-B", nominal: "415V AC ±5%", spokenPrompt: "Measure incoming voltage between Y and B phase.", value: "", status: "PENDING", unit: "V" },
@@ -703,15 +841,15 @@
         { id: 4, name: "Earth Busbar Continuity", nominal: "< 1.0 Ohm", spokenPrompt: "Measure earth continuity between panel body and ground busbar.", value: "", status: "PENDING", unit: "Ω" },
         { id: 5, name: "VFD Keypad Display & Modbus", nominal: "Communication OK", spokenPrompt: "Check VFD keypad display and RS-485 Modbus communication.", value: "", status: "PENDING", unit: "" },
         { id: 6, name: "Analog Speed Reference 4-20mA", nominal: "4.0mA = 0Hz, 20mA = 50Hz", spokenPrompt: "Simulate 4 to 20 milliamp speed input and verify frequency response.", value: "", status: "PENDING", unit: "mA" },
-        { id: 7, name: "Ramp-Up Acceleration Test", nominal: "10.0 Seconds", spokenPrompt: "Verify drive acceleration ramp-up time setting.", value: "", status: "PENDING", unit: "s" },
+        { id: 7, name: "Ramp-Up Acceleration Setting", nominal: "10.0 Seconds", spokenPrompt: "Verify drive acceleration ramp-up time setting.", value: "", status: "PENDING", unit: "s" },
         { id: 8, name: "Emergency Stop Tripping Interlock", nominal: "Instant Drive Trip", spokenPrompt: "Press emergency stop pushbutton and verify instant drive trip.", value: "", status: "PENDING", unit: "" }
       ],
       mcc: [
         { id: 1, name: "Busbar Clearance Phase-to-Phase", nominal: "≥ 25 mm", spokenPrompt: "Verify clearance distance between live copper busbar phases.", value: "", status: "PENDING", unit: "mm" },
-        { id: 2, name: "Insulation Resistance (1000V Megger)", nominal: "> 50 Mega-Ohms", spokenPrompt: "Perform 1000 Volt DC insulation megger test on main busbar.", value: "", status: "PENDING", unit: "MΩ" },
+        { id: 2, name: "Insulation Resistance (1000V Megger)", nominal: "> 50 MΩ", spokenPrompt: "Perform 1000 Volt DC insulation megger test on main busbar.", value: "", status: "PENDING", unit: "MΩ" },
         { id: 3, name: "Star-Delta Contactor Interlock", nominal: "Mechanical & Electrical Interlock OK", spokenPrompt: "Inspect mechanical interlock between star and delta contactors.", value: "", status: "PENDING", unit: "" },
-        { id: 4, name: "Thermal Overload Relay Current Tuning", nominal: "Set to Motor Full Load Amps", spokenPrompt: "Check thermal overload relay current dial setting.", value: "", status: "PENDING", unit: "A" },
-        { id: 5, name: "Control Circuit 110V/230V AC", nominal: "230V AC ±2%", spokenPrompt: "Measure control transformer output voltage.", value: "", status: "PENDING", unit: "V" },
+        { id: 4, name: "Thermal Overload Relay Setting", nominal: "Set to Motor Full Load Amps", spokenPrompt: "Check thermal overload relay current dial setting.", value: "", status: "PENDING", unit: "A" },
+        { id: 5, name: "Control Circuit 230V AC", nominal: "230V AC ±2%", spokenPrompt: "Measure control transformer output voltage.", value: "", status: "PENDING", unit: "V" },
         { id: 6, name: "Door Interlock Isolator Function", nominal: "Door Padlocked when ON", spokenPrompt: "Test door interlock mechanism when main switch is ON.", value: "", status: "PENDING", unit: "" }
       ],
       pcc: [
@@ -719,13 +857,13 @@
         { id: 2, name: "ACB Shunt Trip & Undervoltage", nominal: "Trips under 50ms", spokenPrompt: "Verify electrical operation of ACB shunt trip release.", value: "", status: "PENDING", unit: "ms" },
         { id: 3, name: "CT / PT Ratio & Polarity", nominal: "Ratio Verified as per SLD", spokenPrompt: "Verify Current Transformer ratio and polarity.", value: "", status: "PENDING", unit: "" },
         { id: 4, name: "Multifunction Meter (MFM) Calibration", nominal: "Class 0.5s Accuracy", spokenPrompt: "Check digital meter voltage, current, and frequency readings.", value: "", status: "PENDING", unit: "" },
-        { id: 5, name: "Neutral Busbar 100% Sizing", nominal: "Equal to Phase Busbar Width", spokenPrompt: "Verify neutral busbar cross-sectional area against drawings.", value: "", status: "PENDING", unit: "" }
+        { id: 5, name: "Neutral Busbar Sizing", nominal: "100% Phase Cross Section", spokenPrompt: "Verify neutral busbar cross-sectional area against drawings.", value: "", status: "PENDING", unit: "" }
       ],
       apfc: [
         { id: 1, name: "Capacitor Step Switching Sequence", nominal: "Steps 1 through 12 Sequential", spokenPrompt: "Verify sequential stepping of capacitor banks.", value: "", status: "PENDING", unit: "" },
         { id: 2, name: "Target Power Factor Setting", nominal: "0.99 Lagging", spokenPrompt: "Check Automatic Power Factor Controller target parameter.", value: "", status: "PENDING", unit: "PF" },
         { id: 3, name: "Discharge Resistor Verification", nominal: "< 50V within 60 seconds", spokenPrompt: "Test capacitor terminal discharge voltage after turn-off.", value: "", status: "PENDING", unit: "V" },
-        { id: 4, name: "Detuned Reactor Harmonic Tuning", nominal: "7% Harmonic Filter Resonance OK", spokenPrompt: "Check detuned filter reactor temperature and connection.", value: "", status: "PENDING", unit: "°C" }
+        { id: 4, name: "Detuned Reactor Harmonic Tuning", nominal: "7% Harmonic Filter Resonant OK", spokenPrompt: "Check detuned filter reactor temperature and connection.", value: "", status: "PENDING", unit: "°C" }
       ],
       plc: [
         { id: 1, name: "24V SMPS DC Output Ripple", nominal: "< 50 mV Peak-to-Peak", spokenPrompt: "Measure DC voltage ripple on PLC main 24V power supply.", value: "", status: "PENDING", unit: "mV" },
@@ -736,104 +874,165 @@
       ]
     };
 
+    // E&I SITE COMMISSIONING TEMPLATES
+    const SITE_TEMPLATES = {
+      cold_checks: [
+        { id: 1, name: "Field Cable Insulation (1000V Megger R-Y)", nominal: "> 50 MΩ", spokenPrompt: "Perform 1000 Volt DC insulation test on cable between R and Y phase.", value: "", status: "PENDING", unit: "MΩ" },
+        { id: 2, name: "Field Cable Insulation (Megger R-Earth)", nominal: "> 50 MΩ", spokenPrompt: "Measure insulation resistance between R phase and cable armor earth.", value: "", status: "PENDING", unit: "MΩ" },
+        { id: 3, name: "Earth Pit Resistance Value", nominal: "< 2.0 Ohms (Target < 1Ω)", spokenPrompt: "Measure earth pit electrode resistance value.", value: "", status: "PENDING", unit: "Ω" },
+        { id: 4, name: "Cable Glanding & Armor Earthing", nominal: "Double Compression Glands Tight", spokenPrompt: "Verify cable glanding tightness and armoring earth continuity.", value: "", status: "PENDING", unit: "" },
+        { id: 5, name: "Signal Shield Grounding", nominal: "Grounded at Panel End Only", spokenPrompt: "Inspect analog shield wire grounding at panel marshaling cabinet.", value: "", status: "PENDING", unit: "" }
+      ],
+      loop_checking: [
+        { id: 1, name: "Transmitter Zero Check (0% Span)", nominal: "4.00 mA ±0.05mA", spokenPrompt: "Inject 0 percent signal and verify loop calibrator reads 4 milliamp.", value: "", status: "PENDING", unit: "mA" },
+        { id: 2, name: "Loop Mid-Low Calibration (25% Span)", nominal: "8.00 mA ±0.05mA", spokenPrompt: "Inject 25 percent signal and verify reading is 8 milliamp.", value: "", status: "PENDING", unit: "mA" },
+        { id: 3, name: "Loop Mid-Point Calibration (50% Span)", nominal: "12.00 mA ±0.05mA", spokenPrompt: "Inject 50 percent signal and verify reading is 12 milliamp.", value: "", status: "PENDING", unit: "mA" },
+        { id: 4, name: "Loop Mid-High Calibration (75% Span)", nominal: "16.00 mA ±0.05mA", spokenPrompt: "Inject 75 percent signal and verify reading is 16 milliamp.", value: "", status: "PENDING", unit: "mA" },
+        { id: 5, name: "Transmitter Full Scale (100% Span)", nominal: "20.00 mA ±0.05mA", spokenPrompt: "Inject 100 percent signal and verify reading is 20 milliamp.", value: "", status: "PENDING", unit: "mA" },
+        { id: 6, name: "SCADA Screen Engineering Value Match", nominal: "HMI Value Matches Field Transmitter", spokenPrompt: "Verify HMI or SCADA graphics match field transmitter display.", value: "", status: "PENDING", unit: "" }
+      ],
+      motor_trials: [
+        { id: 1, name: "Motor Direction of Rotation (Bump Test)", nominal: "Clockwise as per Arrow", spokenPrompt: "Bump motor uncoupled and verify direction of rotation.", value: "", status: "PENDING", unit: "" },
+        { id: 2, name: "Motor No-Load Current (Phase R)", nominal: "30-40% of Full Load Amps", spokenPrompt: "Measure R phase running current under no-load condition.", value: "", status: "PENDING", unit: "A" },
+        { id: 3, name: "Motor No-Load Current (Phase Y)", nominal: "Balanced with Phase R", spokenPrompt: "Measure Y phase running current under no-load condition.", value: "", status: "PENDING", unit: "A" },
+        { id: 4, name: "Motor No-Load Current (Phase B)", nominal: "Balanced with Phase R", spokenPrompt: "Measure B phase running current under no-load condition.", value: "", status: "PENDING", unit: "A" },
+        { id: 5, name: "Field Emergency Stop Tripping", nominal: "Hardwired Interlock Instant Trip", spokenPrompt: "Activate field local emergency stop push button and verify instantaneous motor shutdown.", value: "", status: "PENDING", unit: "" },
+        { id: 6, name: "Bearing Temperature & Vibration", nominal: "< 65°C / Normal Vibration", spokenPrompt: "Measure motor drive-end bearing surface temperature.", value: "", status: "PENDING", unit: "°C" }
+      ]
+    };
+
     // State Variables
     let currentChecklist = [];
+    let siteSnags = [];
     let activeVoiceIndex = 0;
     let isVoiceActive = false;
     let recognition = null;
     let synth = window.speechSynthesis;
     let attachedPhotos = [];
-    let signatureCanvas = null;
-    let signaturePadCtx = null;
-    let isDrawingSignature = false;
-    let engineerPIN = localStorage.getItem('aryavarta_pin') || '1234';
-    let googleScriptUrl = localStorage.getItem('aryavarta_google_script') || '';
+    let sigCanvas1 = null, sigCtx1 = null;
+    let sigCanvas2 = null, sigCtx2 = null;
+    let isDrawingSig1 = false, isDrawingSig2 = false;
+    let customConfirmCallback = null;
 
     window.addEventListener('DOMContentLoaded', () => {
-      // Initialize icons
       if (window.lucide) lucide.createIcons();
 
-      // Load initial checklist
-      loadChecklistTemplate('vfd');
+      // Initialize default mode
+      setServiceMode('fat');
 
-      // Initialize Signature Pad
-      initSignatureCanvas();
+      // Initialize Dual Signature Canvases
+      initSignaturePads();
 
       // Load saved Google Script URL
-      if (googleScriptUrl) {
-        document.getElementById('googleScriptUrl').value = googleScriptUrl;
-      }
+      const savedUrl = localStorage.getItem('aryavarta_google_script') || '';
+      if (savedUrl) document.getElementById('googleScriptUrl').value = savedUrl;
 
-      // Network online/offline monitoring
+      // Online/Offline listener
       window.addEventListener('online', updateNetworkStatus);
       window.addEventListener('offline', updateNetworkStatus);
       updateNetworkStatus();
 
-      // Load offline report counter
+      // Render Snags & History
+      loadSavedSnags();
       updateSyncCounter();
 
-      // Setup Web Speech Recognition
-      initSpeechRecognition();
+      // Speech Recognition Setup
+      initSpeechEngine();
     });
 
-    // Network status updater
-    function updateNetworkStatus() {
-      const badge = document.getElementById('netStatusBadge');
-      if (navigator.onLine) {
-        badge.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span class="hidden md:inline font-medium">Online</span>`;
+    function setServiceMode(mode) {
+      activeServiceMode = mode;
+      const btnFat = document.getElementById('modeBtnFat');
+      const btnSite = document.getElementById('modeBtnSite');
+      const headerPill = document.getElementById('headerModePill');
+      const modeBadge = document.getElementById('serviceModeBadge');
+      const cardTitle = document.getElementById('projectCardTitle');
+      const cardSub = document.getElementById('projectCardSubtitle');
+      const tableTitle = document.getElementById('tableHeaderTitle');
+      const btnPdfLabel = document.getElementById('btnPdfLabel');
+
+      const lblCat = document.getElementById('lblCategory');
+      const lblId = document.getElementById('lblIdentifier');
+      const lblLoc = document.getElementById('lblLocationSection');
+      const lblPo = document.getElementById('lblPoScope');
+      const protoSelect = document.getElementById('protocolSelect');
+
+      if (mode === 'fat') {
+        btnFat.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition bg-brand-orange text-white shadow-md";
+        btnSite.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition";
+        headerPill.innerText = "FAT PRO";
+        modeBadge.innerText = "Shop Floor QC";
+        modeBadge.className = "text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-brand-orange/20 text-brand-orange border border-brand-orange/30";
+
+        cardTitle.innerHTML = `<i data-lucide="cpu" class="w-5 h-5 text-brand-orange"></i> Panel Project Specification (FAT Mode)`;
+        cardSub.innerText = "Factory testing protocols for manufactured MCC, PCC, APFC, VFD, and PLC Panels.";
+        tableTitle.innerText = "Shop Floor Panel QC Protocol Steps";
+        btnPdfLabel.innerText = "Download FAT Certificate (PDF)";
+
+        lblCat.innerText = "Panel Product Line / Category";
+        lblId.innerText = "Panel Serial Number";
+        lblLoc.innerText = "Testing Facility / Bay Location";
+        lblPo.innerText = "Purchase Order Number";
+
+        protoSelect.innerHTML = `
+          <option value="vfd">VFD Control Panel (Speed, Ramp, Modbus, 4-20mA)</option>
+          <option value="mcc">MCC Panel (Motor Control Center - Star-Delta, Busbars)</option>
+          <option value="pcc">PCC Panel (Power Control Center - ACB, Shunt, Clearance)</option>
+          <option value="apfc">APFC Panel (Automatic Power Factor Correction)</option>
+          <option value="plc">PLC & SCADA Panel (SMPS Ripple, DI/DO Loop, Ethernet)</option>
+        `;
+        loadActiveProtocol('vfd');
       } else {
-        badge.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20";
-        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span><span class="hidden md:inline font-medium">Offline (Storage Active)</span>`;
-      }
-    }
+        btnSite.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition bg-cyan-600 text-white shadow-md";
+        btnFat.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition";
+        headerPill.innerText = "E&I SITE PRO";
+        modeBadge.innerText = "Site Commissioning";
+        modeBadge.className = "text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-500/30";
 
-    // Tab Switcher
-    function switchTab(tabId) {
-      const tabs = ['inspection', 'voice', 'evidence', 'reports', 'settings'];
-      tabs.forEach(t => {
-        const pane = document.getElementById(`pane-${t}`);
-        const btn = document.getElementById(`tab-${t}`);
-        if (t === tabId) {
-          pane.classList.remove('hidden');
-          btn.className = 'tab-btn flex-1 min-w-[100px] py-3 px-3 text-center border-b-2 border-brand-orange text-brand-orange flex items-center justify-center gap-1.5 transition font-semibold';
-        } else {
-          pane.classList.add('hidden');
-          btn.className = 'tab-btn flex-1 min-w-[100px] py-3 px-3 text-center border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition';
-        }
-      });
+        cardTitle.innerHTML = `<i data-lucide="hard-hat" class="w-5 h-5 text-cyan-400"></i> Client Site Service Specification`;
+        cardSub.innerText = "Field cabling Megger tests, 4-20mA instrumentation loops, and motor bump trials.";
+        tableTitle.innerText = "E&I Site Service Protocol Steps";
+        btnPdfLabel.innerText = "Download Handover Certificate (PDF)";
 
-      if (tabId === 'voice') {
-        updateVoiceHUD();
-      } else if (tabId === 'evidence') {
-        resizeSignatureCanvas();
-      } else if (tabId === 'reports') {
-        renderInspectionHistory();
+        lblCat.innerText = "Site Service Protocol Package";
+        lblId.innerText = "Equipment / Field Tag No.";
+        lblLoc.innerText = "Client Plant Section / Area";
+        lblPo.innerText = "Commissioning Service Scope";
+
+        protoSelect.innerHTML = `
+          <option value="loop_checking">Field Instrumentation Loop Check (5-Point 4-20mA PT/TT/FT/LT)</option>
+          <option value="cold_checks">Cabling & Pre-Commissioning Cold Checks (Megger, Earth Pit, Glands)</option>
+          <option value="motor_trials">Motor & Drive Bump Trials (Rotation, No-Load Amps, E-Stop)</option>
+        `;
+        loadActiveProtocol('loop_checking');
       }
 
       if (window.lucide) lucide.createIcons();
     }
 
-    // Load and render selected checklist template
-    function loadChecklistTemplate(categoryKey) {
-      const template = CHECKLIST_TEMPLATES[categoryKey] || CHECKLIST_TEMPLATES.vfd;
-      // Deep clone to allow editing
-      currentChecklist = JSON.parse(JSON.stringify(template));
-      renderChecklistTable();
-      updateChecklistStats();
-      activeVoiceIndex = 0;
+    function handleProtocolSelectChange(key) {
+      loadActiveProtocol(key);
     }
 
-    // Render Checklist Table Rows
+    function loadActiveProtocol(key) {
+      if (activeServiceMode === 'fat') {
+        currentChecklist = JSON.parse(JSON.stringify(FAT_TEMPLATES[key] || FAT_TEMPLATES.vfd));
+      } else {
+        currentChecklist = JSON.parse(JSON.stringify(SITE_TEMPLATES[key] || SITE_TEMPLATES.loop_checking));
+      }
+      activeVoiceIndex = 0;
+      renderChecklistTable();
+      updateChecklistStats();
+    }
+
     function renderChecklistTable() {
       const tbody = document.getElementById('checklistTableBody');
       tbody.innerHTML = '';
 
       currentChecklist.forEach((item, index) => {
         const tr = document.createElement('tr');
-        tr.className = `border-b border-brand-steel/30 hover:bg-brand-navy/60 transition ${index === activeVoiceIndex && isVoiceActive ? 'bg-brand-orange/10' : ''}`;
+        tr.className = `border-b border-brand-steel/30 hover:bg-brand-navy/60 transition ${index === activeVoiceIndex && isVoiceActive ? 'bg-brand-orange/15' : ''}`;
 
-        // Status Badge Style
         let statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">PENDING</span>`;
         if (item.status === 'PASSED') {
           statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">PASSED</span>`;
@@ -849,17 +1048,17 @@
           </td>
           <td class="py-3 px-3 font-mono-code text-brand-orange/90">${item.nominal}</td>
           <td class="py-3 px-3 font-mono-code">
-            <input type="text" value="${item.value}" onchange="updateManualValue(${index}, this.value)" placeholder="Enter reading..." class="w-full bg-brand-navy border border-brand-steel rounded-lg px-2.5 py-1 text-white text-xs focus:border-brand-orange focus:outline-none">
+            <input type="text" value="${item.value}" onchange="updateManualValue(${index}, this.value)" placeholder="Reading..." class="w-full bg-brand-navy border border-brand-steel rounded-lg px-2.5 py-1 text-white text-xs focus:border-brand-orange focus:outline-none">
           </td>
-          <td class="py-3 px-3 text-center" id="row-status-${index}">
+          <td class="py-3 px-3 text-center">
             ${statusBadge}
           </td>
           <td class="py-3 px-3 text-right">
             <div class="flex items-center justify-end gap-1.5">
-              <button onclick="quickSetItemStatus(${index}, 'PASSED')" class="p-1.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 transition" title="Mark Passed">
+              <button onclick="quickSetItemStatus(${index}, 'PASSED')" class="p-1.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 transition" title="Pass">
                 <i data-lucide="check" class="w-3.5 h-3.5"></i>
               </button>
-              <button onclick="quickSetItemStatus(${index}, 'FAILED')" class="p-1.5 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 transition" title="Mark Failed">
+              <button onclick="quickSetItemStatus(${index}, 'FAILED')" class="p-1.5 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 transition" title="Fail">
                 <i data-lucide="x" class="w-3.5 h-3.5"></i>
               </button>
             </div>
@@ -873,10 +1072,8 @@
 
     function updateManualValue(index, val) {
       currentChecklist[index].value = val;
-      if (val.trim() !== '') {
-        if (currentChecklist[index].status === 'PENDING') {
-          currentChecklist[index].status = 'PASSED';
-        }
+      if (val.trim() !== '' && currentChecklist[index].status === 'PENDING') {
+        currentChecklist[index].status = 'PASSED';
       }
       renderChecklistTable();
       updateChecklistStats();
@@ -885,21 +1082,21 @@
     function quickSetItemStatus(index, status) {
       currentChecklist[index].status = status;
       if (status === 'PASSED' && !currentChecklist[index].value) {
-        currentChecklist[index].value = "Verified Normal";
+        currentChecklist[index].value = "Verified Compliant";
       }
       renderChecklistTable();
       updateChecklistStats();
       showToast(`Step ${index + 1} marked as ${status}`, 'success');
     }
 
-    function markAllPassed() {
+    function autoPassDefaults() {
       currentChecklist.forEach(item => {
         item.status = 'PASSED';
-        if (!item.value) item.value = "Nominal Checked";
+        if (!item.value) item.value = "Normal Checked";
       });
       renderChecklistTable();
       updateChecklistStats();
-      showToast("All test checklist items auto-verified!", "success");
+      showToast("All items set to compliant defaults", "success");
     }
 
     function updateChecklistStats() {
@@ -917,31 +1114,33 @@
       document.getElementById('checklistProgressBar').style.width = `${pct}%`;
     }
 
-    function resetInspectionForm() {
-      if (confirmDialog("Start fresh inspection? Any unsaved data will be reset.")) {
-        loadChecklistTemplate(document.getElementById('panelTypeSelect').value);
-        attachedPhotos = [];
-        renderPhotosGallery();
-        clearSignatureCanvas();
-        showToast("Started fresh inspection protocol", "info");
-      }
+    function promptResetInspection() {
+      showCustomConfirm("Start fresh protocol? Any unsaved entries will be reset.", (confirmed) => {
+        if (confirmed) {
+          loadActiveProtocol(document.getElementById('protocolSelect').value);
+          attachedPhotos = [];
+          renderPhotosGallery();
+          clearSigPad(1);
+          clearSigPad(2);
+          showToast("Started fresh testing protocol", "info");
+        }
+      });
     }
 
     /* =========================================================
-     * MODULE 1: VOICE-GUIDED HANDS-FREE ENGINE
+     * VOICE-GUIDED HANDS-FREE ENGINE
      * ========================================================= */
-
-    function initSpeechRecognition() {
+    function initSpeechEngine() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
-        console.warn("Speech Recognition API not supported in this browser.");
+        console.warn("Web Speech Recognition not supported in this browser.");
         return;
       }
 
       recognition = new SpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = false;
-      recognition.lang = 'en-IN'; // Optimized for Indian technical English accents
+      recognition.lang = 'en-IN'; // Indian technical English
 
       recognition.onstart = () => {
         setVoiceIndicator(true, "LISTENING", "Mic Active");
@@ -949,25 +1148,20 @@
 
       recognition.onresult = (event) => {
         const transcript = event.results[event.results.length - 1][0].transcript.trim();
-        handleSpokenAudioInput(transcript);
+        handleSpokenInput(transcript);
       };
 
       recognition.onerror = (event) => {
-        console.warn("Speech recognition error:", event.error);
+        console.warn("Speech error:", event.error);
         if (event.error === 'not-allowed') {
-          showToast("Microphone permission denied. Please allow mic in browser settings.", "error");
+          showToast("Microphone access denied. Please enable mic permissions.", "error");
           stopVoiceAssistant();
         }
       };
 
       recognition.onend = () => {
-        // Auto-restart if user still has voice session active
         if (isVoiceActive) {
-          try {
-            recognition.start();
-          } catch(e) {
-            console.log("Recognition restarting...");
-          }
+          try { recognition.start(); } catch(e){}
         } else {
           setVoiceIndicator(false, "STANDBY", "Mic Idle");
         }
@@ -976,31 +1170,24 @@
 
     function startVoiceHUDDirectly() {
       switchTab('voice');
-      if (!isVoiceActive) {
-        toggleVoiceAssistant();
-      }
+      if (!isVoiceActive) toggleVoiceAssistant();
     }
 
     function toggleVoiceAssistant() {
       if (!recognition && !(window.SpeechRecognition || window.webkitSpeechRecognition)) {
-        showToast("Voice Recognition is not supported by your browser. Use Google Chrome or Safari.", "error");
+        showToast("Speech Recognition not supported. Please use Google Chrome or Safari.", "error");
         return;
       }
 
       isVoiceActive = !isVoiceActive;
-
       const btnIcon = document.getElementById('voiceBtnIcon');
       const btnLabel = document.getElementById('voiceBtnLabel');
 
       if (isVoiceActive) {
         btnIcon.setAttribute('data-lucide', 'square');
         btnLabel.innerText = "Stop Hands-Free Session";
-        try {
-          recognition.start();
-        } catch(e) {
-          console.log(e);
-        }
-        playAudioChime(880, 0.15); // High beep
+        try { recognition.start(); } catch(e){}
+        playAudioChime(880, 0.15);
         promptCurrentActiveStep();
       } else {
         stopVoiceAssistant();
@@ -1044,10 +1231,9 @@
       }
     }
 
-    // Read the active step into technician's earpiece
     function promptCurrentActiveStep() {
       if (activeVoiceIndex >= currentChecklist.length) {
-        speakText("All panel testing steps are completed. Please inspect visually and capture photos.", () => {
+        speakText("All testing steps are completed. Please inspect visually and capture photos.", () => {
           stopVoiceAssistant();
           switchTab('evidence');
         });
@@ -1057,13 +1243,13 @@
       updateVoiceHUD();
       const current = currentChecklist[activeVoiceIndex];
       const stepNumber = activeVoiceIndex + 1;
-      const textToSpeak = `Step ${stepNumber}: ${current.spokenPrompt}. Nominal is ${current.nominal}. Please say reading, or say Pass or Fail.`;
+      const textToSpeak = `Step ${stepNumber}: ${current.spokenPrompt}. Target nominal is ${current.nominal}. Please speak reading, or say Pass or Fail.`;
 
       speakText(textToSpeak);
     }
 
     function speakText(text, onComplete) {
-      synth.cancel(); // Stop pending speech
+      synth.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1.0;
       utterance.pitch = 1.0;
@@ -1074,9 +1260,7 @@
       };
 
       utterance.onend = () => {
-        if (isVoiceActive) {
-          setVoiceIndicator(true, "LISTENING", "Listening...");
-        }
+        if (isVoiceActive) setVoiceIndicator(true, "LISTENING", "Listening...");
         if (onComplete) onComplete();
       };
 
@@ -1095,13 +1279,11 @@
       }
     }
 
-    // Spoken Audio Parser: Handles Multimeter Numbers, Pass/Fail, Navigation
-    function handleSpokenAudioInput(rawText) {
+    function handleSpokenInput(rawText) {
       const text = rawText.toLowerCase().trim();
       document.getElementById('liveTranscript').innerText = `"${rawText}"`;
 
-      // 1. Navigation / Flow commands
-      if (text.includes("repeat") || text.includes("again") || text.includes("what")) {
+      if (text.includes("repeat") || text.includes("again")) {
         promptCurrentActiveStep();
         return;
       }
@@ -1118,16 +1300,22 @@
         return;
       }
 
-      if (text.includes("test complete") || text.includes("finish") || text.includes("done")) {
-        speakText("Inspection complete. Proceeding to digital sign-off.", () => {
+      if (text.includes("finish") || text.includes("test complete") || text.includes("done")) {
+        speakText("Inspection complete. Advancing to proof and sign-off.", () => {
           stopVoiceAssistant();
           switchTab('evidence');
         });
         return;
       }
 
-      // 2. Pass / Fail Keywords
-      if (text.includes("pass") || text.includes("passed") || text.includes("check") || text.includes("ok") || text.includes("verified") || text.includes("good")) {
+      // Direction / Bump test for motors
+      if (text.includes("clockwise") || text.includes("anticlockwise") || text.includes("forward") || text.includes("reverse")) {
+        recordSpokenResult('PASSED', rawText.toUpperCase());
+        return;
+      }
+
+      // Pass / Fail
+      if (text.includes("pass") || text.includes("passed") || text.includes("check") || text.includes("ok") || text.includes("verified")) {
         recordSpokenResult('PASSED', rawText);
         return;
       }
@@ -1137,7 +1325,7 @@
         return;
       }
 
-      // 3. Numeric multimeter value extraction (e.g., "415.2 volts", "0.8 ohms", "24.1")
+      // Numeric multimeter or 4-20mA values (e.g. 4.02, 415, 0.8)
       const numberRegex = /(\d+(\.\d+)?)/;
       const match = text.match(numberRegex);
       if (match) {
@@ -1148,7 +1336,7 @@
         return;
       }
 
-      // Default: Log whatever was spoken
+      // Fallback
       recordSpokenResult('PASSED', rawText);
     }
 
@@ -1178,7 +1366,7 @@
       }
     }
 
-    // Audio chime tone using native Web Audio API (Zero external MP3 dependency)
+    // Audio chime using Web Audio API (Zero external MP3 dependency)
     function playAudioChime(freq = 600, duration = 0.1) {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1192,15 +1380,131 @@
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {
-        // AudioContext not allowed without gesture
-      }
+      } catch (e) {}
     }
 
     /* =========================================================
-     * MODULE 2: PHOTO EVIDENCE & LIVE CANVAS WATERMARK
+     * SITE SNAGS & PUNCH LIST MODULE
      * ========================================================= */
+    function loadSavedSnags() {
+      siteSnags = JSON.parse(localStorage.getItem('aryavarta_site_snags') || '[]');
+      renderSnagsList();
+    }
 
+    function toggleAddSnagModal(show) {
+      const modal = document.getElementById('addSnagModal');
+      if (show) {
+        modal.classList.remove('hidden');
+        document.getElementById('snagDescInput').focus();
+      } else {
+        modal.classList.add('hidden');
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function saveNewSnagItem() {
+      const desc = document.getElementById('snagDescInput').value.trim();
+      const cat = document.getElementById('snagCatInput').value;
+      const party = document.getElementById('snagPartyInput').value;
+      const tag = document.getElementById('snagTagInput').value.trim() || 'General';
+
+      if (!desc) {
+        showToast("Please enter an issue description.", "error");
+        return;
+      }
+
+      const newSnag = {
+        id: 'SNAG-' + Date.now().toString().slice(-4),
+        description: desc,
+        category: cat,
+        party: party,
+        tag: tag,
+        status: 'OPEN',
+        loggedAt: new Date().toLocaleDateString('en-IN')
+      };
+
+      siteSnags.unshift(newSnag);
+      localStorage.setItem('aryavarta_site_snags', JSON.stringify(siteSnags));
+      document.getElementById('snagDescInput').value = '';
+      document.getElementById('snagTagInput').value = '';
+      toggleAddSnagModal(false);
+      renderSnagsList();
+      showToast("Punch Point logged successfully!", "success");
+    }
+
+    function toggleSnagStatus(id) {
+      const snag = siteSnags.find(s => s.id === id);
+      if (snag) {
+        snag.status = snag.status === 'OPEN' ? 'RESOLVED' : 'OPEN';
+        localStorage.setItem('aryavarta_site_snags', JSON.stringify(siteSnags));
+        renderSnagsList();
+        showToast(`Punch point marked as ${snag.status}`, "info");
+      }
+    }
+
+    function deleteSnagItem(id) {
+      siteSnags = siteSnags.filter(s => s.id !== id);
+      localStorage.setItem('aryavarta_site_snags', JSON.stringify(siteSnags));
+      renderSnagsList();
+      showToast("Punch point deleted", "info");
+    }
+
+    function renderSnagsList() {
+      const container = document.getElementById('snagsContainer');
+      const countPill = document.getElementById('snagsCountPill');
+      const openCount = siteSnags.filter(s => s.status === 'OPEN').length;
+      countPill.innerText = openCount;
+
+      if (siteSnags.length === 0) {
+        container.innerHTML = `
+          <div class="py-8 text-center text-slate-500 text-xs border border-dashed border-brand-steel/50 rounded-xl">
+            No punch points or defects recorded. All site parameters are fully cleared.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      siteSnags.forEach(snag => {
+        const div = document.createElement('div');
+        div.className = "bg-brand-navy/90 border border-brand-steel/60 rounded-xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs";
+
+        const catBadge = snag.category === 'CAT_A'
+          ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">CAT A (Hold Point)</span>`
+          : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">CAT B (14 Days)</span>`;
+
+        const statusBadge = snag.status === 'OPEN'
+          ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">OPEN</span>`
+          : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">RESOLVED</span>`;
+
+        div.innerHTML = `
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="font-mono-code font-bold text-white">${snag.id}</span>
+              ${catBadge}
+              ${statusBadge}
+              <span class="text-[11px] text-slate-400">Tag: <b>${snag.tag}</b> | Resp: <b>${snag.party}</b></span>
+            </div>
+            <p class="text-slate-200">${snag.description}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="toggleSnagStatus('${snag.id}')" class="px-3 py-1.5 rounded-lg text-xs font-semibold ${snag.status === 'OPEN' ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-700 text-slate-300'} transition">
+              ${snag.status === 'OPEN' ? 'Mark Resolved' : 'Re-open'}
+            </button>
+            <button onclick="deleteSnagItem('${snag.id}')" class="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 transition">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    /* =========================================================
+     * PHOTO EVIDENCE & INDUSTRIAL WATERMARKING
+     * ========================================================= */
     function handlePhotoUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1209,20 +1513,18 @@
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-          applyIndustrialWatermark(img);
+          applyWatermark(img);
         };
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
-      // Reset input
       event.target.value = '';
     }
 
-    function applyIndustrialWatermark(image) {
+    function applyWatermark(image) {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
 
-      // Max dimension limit to keep PDF small & fast
       const maxDim = 1200;
       let width = image.width;
       let height = image.height;
@@ -1239,47 +1541,42 @@
 
       canvas.width = width;
       canvas.height = height;
-
-      // Draw base image
       ctx.drawImage(image, 0, 0, width, height);
 
-      // Add high-contrast semi-transparent bottom banner
       const bannerHeight = Math.max(64, Math.round(height * 0.12));
       ctx.fillStyle = 'rgba(11, 25, 44, 0.88)';
       ctx.fillRect(0, height - bannerHeight, width, bannerHeight);
 
-      // Orange boundary line
-      ctx.strokeStyle = '#ff6500';
+      ctx.strokeStyle = activeServiceMode === 'fat' ? '#ff6500' : '#0891b2';
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(0, height - bannerHeight);
       ctx.lineTo(width, height - bannerHeight);
       ctx.stroke();
 
-      // Overlaid Metadata Text
-      const serial = document.getElementById('panelSerialNo').value || 'AA-FAT-2026';
-      const engineer = document.getElementById('engineerName').value || 'QC Engineer';
-      const location = document.getElementById('inspectionLocation').value || 'Chikhali Works, Pune';
+      const id = document.getElementById('equipmentIdentifier').value || 'AA-EQUIP';
+      const engineer = document.getElementById('engineerName').value || 'Aryavarta Engineer';
+      const location = document.getElementById('facilityLocation').value || 'Pune / Site';
+      const modeText = activeServiceMode === 'fat' ? 'FAT PROOF' : 'E&I SITE COMMISSIONING PROOF';
       const dateStr = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
 
       ctx.fillStyle = '#ffffff';
       ctx.font = `bold ${Math.round(bannerHeight * 0.28)}px Inter, sans-serif`;
-      ctx.fillText(`ARYAVARTA AUTOMATION • FAT EVIDENCE • PANEL: ${serial}`, 16, height - bannerHeight + (bannerHeight * 0.4));
+      ctx.fillText(`ARYAVARTA AUTOMATION • ${modeText} • TAG/ID: ${id}`, 16, height - bannerHeight + (bannerHeight * 0.4));
 
       ctx.fillStyle = '#cbd5e1';
       ctx.font = `${Math.round(bannerHeight * 0.22)}px monospace`;
-      ctx.fillText(`INSPECTOR: ${engineer} | LOC: ${location} | ${dateStr}`, 16, height - bannerHeight + (bannerHeight * 0.78));
+      ctx.fillText(`ENGINEER: ${engineer} | LOC: ${location} | ${dateStr}`, 16, height - bannerHeight + (bannerHeight * 0.78));
 
-      // Export compressed base64 JPEG
       const watermarkedBase64 = canvas.toDataURL('image/jpeg', 0.82);
       attachedPhotos.push({
         dataUrl: watermarkedBase64,
         timestamp: dateStr,
-        serial: serial
+        tag: id
       });
 
       renderPhotosGallery();
-      showToast("Photo watermarked with Panel ID and Timestamp!", "success");
+      showToast("Photo watermarked with Tag & Timestamp!", "success");
     }
 
     function renderPhotosGallery() {
@@ -1298,9 +1595,9 @@
         const card = document.createElement('div');
         card.className = "relative rounded-xl overflow-hidden border border-brand-steel group shadow-lg bg-brand-navy";
         card.innerHTML = `
-          <img src="${photo.dataUrl}" alt="Panel Photo ${idx+1}" class="w-full h-44 object-cover">
+          <img src="${photo.dataUrl}" alt="Photo Proof ${idx+1}" class="w-full h-44 object-cover">
           <div class="p-2 text-[10px] text-slate-300 font-mono-code bg-brand-card flex justify-between items-center">
-            <span>Photo #${idx + 1}</span>
+            <span>Proof #${idx + 1}</span>
             <button onclick="removePhoto(${idx})" class="text-rose-400 hover:text-rose-300 font-bold p-1">Delete</button>
           </div>
         `;
@@ -1315,85 +1612,107 @@
     }
 
     /* =========================================================
-     * MODULE 3: DIGITAL SIGNATURE PAD (HTML5 CANVAS)
+     * DUAL SIGNATURE PADS (HTML5 CANVAS)
      * ========================================================= */
+    function initSignaturePads() {
+      sigCanvas1 = document.getElementById('sigPad1');
+      sigCtx1 = sigCanvas1.getContext('2d');
 
-    function initSignatureCanvas() {
-      signatureCanvas = document.getElementById('signaturePad');
-      signaturePadCtx = signatureCanvas.getContext('2d');
-      resizeSignatureCanvas();
+      sigCanvas2 = document.getElementById('sigPad2');
+      sigCtx2 = sigCanvas2.getContext('2d');
 
-      // Event listeners for touch and pointer
-      signatureCanvas.addEventListener('pointerdown', startSigDraw);
-      signatureCanvas.addEventListener('pointermove', drawSig);
-      window.addEventListener('pointerup', stopSigDraw);
+      resizeBothSigPads();
 
-      window.addEventListener('resize', () => {
-        resizeSignatureCanvas();
+      // Pad 1 Listeners
+      sigCanvas1.addEventListener('pointerdown', (e) => startSig(e, 1));
+      sigCanvas1.addEventListener('pointermove', (e) => drawSig(e, 1));
+      window.addEventListener('pointerup', () => stopSig(1));
+
+      // Pad 2 Listeners
+      sigCanvas2.addEventListener('pointerdown', (e) => startSig(e, 2));
+      sigCanvas2.addEventListener('pointermove', (e) => drawSig(e, 2));
+      window.addEventListener('pointerup', () => stopSig(2));
+
+      window.addEventListener('resize', resizeBothSigPads);
+    }
+
+    function resizeBothSigPads() {
+      [ { c: sigCanvas1, ctx: sigCtx1 }, { c: sigCanvas2, ctx: sigCtx2 } ].forEach(item => {
+        if (!item.c) return;
+        const rect = item.c.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) return;
+
+        const temp = item.ctx ? item.c.toDataURL() : null;
+        item.c.width = rect.width;
+        item.c.height = rect.height;
+
+        item.ctx.lineWidth = 2.5;
+        item.ctx.lineCap = 'round';
+        item.ctx.lineJoin = 'round';
+        item.ctx.strokeStyle = '#0b192c';
+
+        if (temp) {
+          const img = new Image();
+          img.onload = () => item.ctx.drawImage(img, 0, 0);
+          img.src = temp;
+        }
       });
     }
 
-    function resizeSignatureCanvas() {
-      if (!signatureCanvas) return;
-      const rect = signatureCanvas.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) return;
-
-      // Save previous drawing if any
-      const tempImage = signaturePadCtx ? signatureCanvas.toDataURL() : null;
-
-      signatureCanvas.width = rect.width;
-      signatureCanvas.height = rect.height;
-
-      // Configure pen
-      signaturePadCtx.lineWidth = 2.5;
-      signaturePadCtx.lineCap = 'round';
-      signaturePadCtx.lineJoin = 'round';
-      signaturePadCtx.strokeStyle = '#0b192c'; // Dark navy ink
-
-      if (tempImage) {
-        const img = new Image();
-        img.onload = () => signaturePadCtx.drawImage(img, 0, 0);
-        img.src = tempImage;
+    function startSig(e, padNum) {
+      if (padNum === 1) {
+        isDrawingSig1 = true;
+        document.getElementById('sigPlaceholder1').classList.add('hidden');
+        const rect = sigCanvas1.getBoundingClientRect();
+        sigCtx1.beginPath();
+        sigCtx1.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+      } else {
+        isDrawingSig2 = true;
+        document.getElementById('sigPlaceholder2').classList.add('hidden');
+        const rect = sigCanvas2.getBoundingClientRect();
+        sigCtx2.beginPath();
+        sigCtx2.moveTo(e.clientX - rect.left, e.clientY - rect.top);
       }
     }
 
-    function startSigDraw(e) {
-      isDrawingSignature = true;
-      document.getElementById('sigPlaceholder').classList.add('hidden');
-      const rect = signatureCanvas.getBoundingClientRect();
-      signaturePadCtx.beginPath();
-      signaturePadCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    function drawSig(e, padNum) {
+      if (padNum === 1 && isDrawingSig1) {
+        const rect = sigCanvas1.getBoundingClientRect();
+        sigCtx1.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        sigCtx1.stroke();
+      } else if (padNum === 2 && isDrawingSig2) {
+        const rect = sigCanvas2.getBoundingClientRect();
+        sigCtx2.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        sigCtx2.stroke();
+      }
     }
 
-    function drawSig(e) {
-      if (!isDrawingSignature) return;
-      const rect = signatureCanvas.getBoundingClientRect();
-      signaturePadCtx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-      signaturePadCtx.stroke();
+    function stopSig(padNum) {
+      if (padNum === 1) isDrawingSig1 = false;
+      if (padNum === 2) isDrawingSig2 = false;
     }
 
-    function stopSigDraw() {
-      isDrawingSignature = false;
+    function clearSigPad(padNum) {
+      if (padNum === 1 && sigCtx1) {
+        sigCtx1.clearRect(0, 0, sigCanvas1.width, sigCanvas1.height);
+        document.getElementById('sigPlaceholder1').classList.remove('hidden');
+      } else if (padNum === 2 && sigCtx2) {
+        sigCtx2.clearRect(0, 0, sigCanvas2.width, sigCanvas2.height);
+        document.getElementById('sigPlaceholder2').classList.remove('hidden');
+      }
     }
 
-    function clearSignatureCanvas() {
-      if (!signaturePadCtx || !signatureCanvas) return;
-      signaturePadCtx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
-      document.getElementById('sigPlaceholder').classList.remove('hidden');
-    }
-
-    function isSignatureEmpty() {
-      if (!signatureCanvas) return true;
+    function isSigEmpty(canvas, ctx) {
+      if (!canvas || !ctx) return true;
       const pixelBuffer = new Uint32Array(
-        signaturePadCtx.getImageData(0, 0, signatureCanvas.width, signatureCanvas.height).data.buffer
+        ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer
       );
       return !pixelBuffer.some(color => color !== 0);
     }
 
     /* =========================================================
-     * MODULE 4: AUTOMATED BRANDED PDF FAT CERTIFICATE
+     * BRANDED PDF GENERATOR (FAT OR COMMISSIONING CERTIFICATE)
      * ========================================================= */
-
     function generateOfficialPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({
@@ -1402,25 +1721,24 @@
         format: 'a4'
       });
 
-      const serialNo = document.getElementById('panelSerialNo').value || 'AA-2026';
+      const isFat = activeServiceMode === 'fat';
+      const idVal = document.getElementById('equipmentIdentifier').value || 'AA-EQUIP';
       const client = document.getElementById('clientName').value || 'Valued Client';
-      const poNo = document.getElementById('poNumber').value || 'N/A';
+      const scopeVal = document.getElementById('workScope').value || 'N/A';
       const engineer = document.getElementById('engineerName').value || 'QC Team';
-      const location = document.getElementById('inspectionLocation').value || 'Pune Works';
-      const panelType = document.getElementById('panelTypeSelect').options[document.getElementById('panelTypeSelect').selectedIndex].text;
+      const location = document.getElementById('facilityLocation').value || 'Pune Works';
       const clientRep = document.getElementById('clientRepName').value || 'Client Representative';
-      const clientDesig = document.getElementById('clientRepDesignation').value || 'Site Engineer';
+      const clientDesig = document.getElementById('clientRepDesignation').value || 'Site Lead';
       const verdict = document.getElementById('inspectionVerdict').value;
 
-      // 1. Corporate Header Band
-      doc.setFillColor(11, 25, 44); // #0b192c
+      // 1. Corporate Header
+      doc.setFillColor(11, 25, 44);
       doc.rect(0, 0, 210, 36, 'F');
 
-      // Orange Accent stripe
-      doc.setFillColor(255, 101, 0); // #ff6500
+      // Orange or Cyan accent stripe
+      doc.setFillColor(isFat ? 255 : 8, isFat ? 101 : 145, isFat ? 0 : 178);
       doc.rect(0, 36, 210, 2.5, 'F');
 
-      // Header Text
       doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(16);
@@ -1429,46 +1747,49 @@
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(203, 213, 225);
-      doc.text("AN ISO 9001:2015 & ISO 14001:2015 CERTIFIED MANUFACTURING UNIT", 14, 18);
-      doc.text("Shop No. 10, Gat No. 1610, Dehu Alandi Road, Chikhali, Pune - 411062, Maharashtra, India", 14, 23);
+      doc.text("AN ISO 9001:2015 & ISO 14001:2015 CERTIFIED INDUSTRIAL ENTERPRISE", 14, 18);
+      doc.text("Works: Shop No. 10, Gat No. 1610, Dehu Alandi Road, Chikhali, Pune - 411062, India", 14, 23);
       doc.text("Email: aryavartapune@gmail.com | Web: www.aryavartaautomation.in | Tel: +91 9766037466", 14, 28);
 
-      // Certificate Badge Title
+      // Certificate Title
       doc.setFontSize(13);
       doc.setTextColor(11, 25, 44);
       doc.setFont('helvetica', 'bold');
-      doc.text("FACTORY ACCEPTANCE TEST (FAT) CERTIFICATE", 14, 46);
+      const certTitle = isFat 
+        ? "FACTORY ACCEPTANCE TEST (FAT) CERTIFICATE"
+        : "E&I SITE COMMISSIONING & HANDOVER CERTIFICATE";
+      doc.text(certTitle, 14, 46);
 
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(100, 116, 139);
-      doc.text(`Certificate No: AA-FAT-${Date.now().toString().slice(-6)} | Issued on: ${new Date().toLocaleDateString('en-IN')}`, 14, 51);
+      doc.text(`Doc Ref: AA-${isFat ? 'FAT' : 'EIA'}-${Date.now().toString().slice(-6)} | Date: ${new Date().toLocaleDateString('en-IN')}`, 14, 51);
 
-      // 2. Project Metadata Table Box
-      const metadataBody = [
+      // Metadata Table
+      const metadataRows = [
         [
-          { content: `Client Name:\n${client}`, styles: { fontStyle: 'bold' } },
-          { content: `Panel Category:\n${panelType}`, styles: { fontStyle: 'bold' } }
+          { content: `Client / Plant:\n${client}`, styles: { fontStyle: 'bold' } },
+          { content: `Service Mode:\n${isFat ? 'Shop Floor Panel FAT' : 'E&I Site Commissioning Services'}`, styles: { fontStyle: 'bold' } }
         ],
         [
-          `Panel Serial No: ${serialNo}`,
-          `Purchase Order No: ${poNo}`
+          `${isFat ? 'Panel Serial No' : 'Equipment Tag No'}: ${idVal}`,
+          `${isFat ? 'Purchase Order No' : 'Commissioning Scope'}: ${scopeVal}`
         ],
         [
-          `Inspection Facility: ${location}`,
-          `Lead Test Engineer: ${engineer}`
+          `Facility / Location: ${location}`,
+          `Lead Engineer: ${engineer}`
         ]
       ];
 
       doc.autoTable({
         startY: 55,
         theme: 'grid',
-        body: metadataBody,
+        body: metadataRows,
         styles: { fontSize: 8, cellPadding: 2.5, textColor: [15, 23, 42] },
         alternateRowStyles: { fillColor: [248, 250, 252] }
       });
 
-      // 3. Inspection Checklist Table
+      // Verification Steps Table
       const checklistTableRows = currentChecklist.map(item => [
         item.id.toString(),
         item.name,
@@ -1494,73 +1815,98 @@
         didParseCell: function(data) {
           if (data.column.index === 4 && data.section === 'body') {
             if (data.cell.raw === 'PASSED') {
-              data.cell.styles.textColor = [16, 185, 129]; // Emerald
+              data.cell.styles.textColor = [16, 185, 129];
             } else if (data.cell.raw === 'FAILED') {
-              data.cell.styles.textColor = [239, 68, 68]; // Rose
+              data.cell.styles.textColor = [239, 68, 68];
             }
           }
         }
       });
 
-      let currentY = doc.lastAutoTable.finalY + 6;
+      let currentY = doc.lastAutoTable.finalY + 5;
 
-      // Check if we need a page break before signatures
-      if (currentY > 230) {
+      // Append Snag List Table if site mode and snags exist
+      if (!isFat && siteSnags.length > 0) {
+        if (currentY > 210) { doc.addPage(); currentY = 20; }
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(11, 25, 44);
+        doc.text("OUTSTANDING PUNCH POINTS / SNAG LIST STATUS:", 14, currentY + 3);
+
+        const snagRows = siteSnags.map(s => [
+          s.id,
+          s.category === 'CAT_A' ? 'Cat A (Critical)' : 'Cat B (14 Days)',
+          s.tag,
+          s.description,
+          s.party,
+          s.status
+        ]);
+
+        doc.autoTable({
+          startY: currentY + 5,
+          head: [['ID', 'Severity', 'Tag', 'Description', 'Party', 'Status']],
+          body: snagRows,
+          theme: 'grid',
+          headStyles: { fillColor: [30, 62, 98], textColor: [255, 255, 255], fontSize: 7.5 },
+          styles: { fontSize: 7, cellPadding: 1.8 }
+        });
+
+        currentY = doc.lastAutoTable.finalY + 6;
+      }
+
+      if (currentY > 225) {
         doc.addPage();
         currentY = 20;
       }
 
-      // 4. Client Sign-Off Box & Stamps
+      // Dual Signatures Box
       doc.setFillColor(241, 245, 249);
-      doc.roundedRect(14, currentY, 182, 42, 2, 2, 'F');
+      doc.roundedRect(14, currentY, 182, 44, 2, 2, 'F');
       doc.setDrawColor(203, 213, 225);
-      doc.roundedRect(14, currentY, 182, 42, 2, 2, 'S');
+      doc.roundedRect(14, currentY, 182, 44, 2, 2, 'S');
 
-      // Left: Official Verdict
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8.5);
       doc.setTextColor(15, 23, 42);
-      doc.text("FINAL QUALITY CONFORMANCE VERDICT:", 18, currentY + 7);
+      doc.text("FINAL QUALITY & SERVICE HANDOVER VERDICT:", 18, currentY + 6);
 
       if (verdict === 'ACCEPTED') {
         doc.setTextColor(16, 185, 129);
-        doc.text("● ACCEPTED - COMPLIES WITH ALL IS/IEC STANDARDS", 18, currentY + 13);
+        doc.text("● ACCEPTED / HANDED OVER - FULLY COMPLIANT WITH ENGINEERING SPECIFICATIONS", 18, currentY + 11);
       } else {
         doc.setTextColor(239, 68, 68);
-        doc.text(`● ${verdict}`, 18, currentY + 13);
+        doc.text(`● ${verdict}`, 18, currentY + 11);
       }
 
-      // Quality Engineer Seal
-      doc.setTextColor(100, 116, 139);
-      doc.setFontSize(7.5);
+      // Signature 1: Aryavarta Engineer
+      doc.setTextColor(15, 23, 42);
+      doc.text(`Aryavarta Engineer: ${engineer}`, 18, currentY + 18);
+      if (!isSigEmpty(sigCanvas1, sigCtx1)) {
+        try {
+          doc.addImage(sigCanvas1.toDataURL('image/png'), 'PNG', 18, currentY + 20, 42, 16);
+        } catch(e){}
+      }
       doc.setFont('helvetica', 'normal');
-      doc.text(`Certified By: ${engineer}`, 18, currentY + 24);
-      doc.text("Authorized QA/QC Signature", 18, currentY + 34);
+      doc.setFontSize(7.5);
+      doc.setTextColor(100, 116, 139);
+      doc.text("Authorized Aryavarta QC/E&I Signature", 18, currentY + 39);
 
-      // Right: Client Signature
+      // Signature 2: Client Representative
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(15, 23, 42);
-      doc.text(`Client Representative: ${clientRep}`, 115, currentY + 7);
+      doc.text(`Client Representative: ${clientRep}`, 110, currentY + 18);
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7.5);
-      doc.text(`Designation: ${clientDesig}`, 115, currentY + 12);
+      doc.text(`Designation: ${clientDesig}`, 110, currentY + 22);
 
-      // Embed signature image if drawn
-      if (!isSignatureEmpty()) {
+      if (!isSigEmpty(sigCanvas2, sigCtx2)) {
         try {
-          const sigBase64 = signatureCanvas.toDataURL('image/png');
-          doc.addImage(sigBase64, 'PNG', 115, currentY + 14, 45, 18);
-        } catch(err) {
-          console.log("Signature embedding error:", err);
-        }
-      } else {
-        doc.setTextColor(148, 163, 184);
-        doc.text("[ Digital Sign-Off Confirmed Electronically ]", 115, currentY + 24);
+          doc.addImage(sigCanvas2.toDataURL('image/png'), 'PNG', 110, currentY + 23, 42, 14);
+        } catch(e){}
       }
       doc.setTextColor(100, 116, 139);
-      doc.text("Customer Witness / TPI Signature", 115, currentY + 36);
+      doc.text("Client Witness / Site In-Charge Signature", 110, currentY + 39);
 
-      // 5. Append Photo Evidence Page (if photos exist)
+      // Visual Evidence Annexure
       if (attachedPhotos.length > 0) {
         doc.addPage();
         doc.setFillColor(11, 25, 44);
@@ -1568,59 +1914,51 @@
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(10);
-        doc.text(`ANNEXURE: VISUAL EVIDENCE DOSSIER - PANEL ${serialNo}`, 14, 12);
+        doc.text(`ANNEXURE: FIELD EVIDENCE DOSSIER - TAG ${idVal}`, 14, 12);
 
         let photoY = 26;
-        attachedPhotos.slice(0, 3).forEach((p, index) => {
+        attachedPhotos.slice(0, 3).forEach((p) => {
           try {
             doc.addImage(p.dataUrl, 'JPEG', 14, photoY, 182, 75);
             photoY += 82;
-          } catch(e) {
-            console.warn("Could not append image to PDF", e);
-          }
+          } catch(e){}
         });
       }
 
-      // Download file
-      const fileName = `Aryavarta_FAT_${serialNo.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
-      doc.save(fileName);
-      showToast(`Generated & Downloaded: ${fileName}`, "success");
+      const cleanFileName = `Aryavarta_${isFat ? 'FAT' : 'SiteCommissioning'}_${idVal.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+      doc.save(cleanFileName);
+      showToast(`Generated: ${cleanFileName}`, "success");
     }
 
     /* =========================================================
-     * MODULE 5: GOOGLE SHEETS CLOUD SYNC & AUTH
+     * GOOGLE SHEETS SYNC & OFFLINE DOSSIER
      * ========================================================= */
-
     function saveAndSyncToGoogleSheets() {
-      const serialNo = document.getElementById('panelSerialNo').value || 'AA-2026';
+      const idVal = document.getElementById('equipmentIdentifier').value || 'AA-EQUIP';
       const client = document.getElementById('clientName').value || 'Valued Client';
-      const poNo = document.getElementById('poNumber').value || 'N/A';
+      const scopeVal = document.getElementById('workScope').value || 'N/A';
       const engineer = document.getElementById('engineerName').value || 'QC Team';
-      const location = document.getElementById('inspectionLocation').value || 'Pune Works';
-      const panelType = document.getElementById('panelTypeSelect').value;
+      const location = document.getElementById('facilityLocation').value || 'Pune / Site';
       const verdict = document.getElementById('inspectionVerdict').value;
       const clientRep = document.getElementById('clientRepName').value;
 
       const record = {
         id: 'REC-' + Date.now(),
+        serviceMode: activeServiceMode,
         timestamp: new Date().toISOString(),
-        serialNo: serialNo,
+        equipmentId: idVal,
         client: client,
-        poNo: poNo,
+        scope: scopeVal,
         engineer: engineer,
         location: location,
-        panelType: panelType,
         verdict: verdict,
         clientRep: clientRep,
         checklist: currentChecklist,
-        photoCount: attachedPhotos.length,
+        snagsCount: siteSnags.filter(s => s.status === 'OPEN').length,
         syncedToSheets: false
       };
 
-      // Save locally
       saveRecordToLocalDossier(record);
-
-      // Attempt Cloud Push
       transmitToGoogleSheets(record);
     }
 
@@ -1628,46 +1966,44 @@
       const scriptUrl = localStorage.getItem('aryavarta_google_script');
 
       if (!scriptUrl) {
-        showToast("Saved to offline dossier. Set Google Script URL in Settings to sync to Sheets.", "info");
+        showToast("Saved locally. Enter Google Script URL in Cloud Settings to sync online.", "info");
         return;
       }
 
       if (!navigator.onLine) {
-        showToast("Device is offline. Record stored locally in sync queue.", "info");
+        showToast("Device is offline. Record safely queued in local storage.", "info");
         return;
       }
 
-      // Prepare clean row payload for Google Spreadsheet
       const payload = {
         timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
-        panelSerial: record.serialNo,
+        serviceType: record.serviceMode.toUpperCase(),
+        equipmentIdentifier: record.equipmentId,
         clientName: record.client,
-        poNumber: record.poNo,
-        panelCategory: record.panelType.toUpperCase(),
+        projectScope: record.scope,
+        facilityLocation: record.location,
         leadEngineer: record.engineer,
         testVerdict: record.verdict,
         clientRepresentative: record.clientRep,
-        totalTests: record.checklist.length,
-        passedTests: record.checklist.filter(i => i.status === 'PASSED').length,
-        failedTests: record.checklist.filter(i => i.status === 'FAILED').length,
+        totalSteps: record.checklist.length,
+        passedSteps: record.checklist.filter(i => i.status === 'PASSED').length,
+        failedSteps: record.checklist.filter(i => i.status === 'FAILED').length,
+        openSnags: record.snagsCount,
         inspectionSummary: record.checklist.map(c => `${c.name}: ${c.value} [${c.status}]`).join(' | ')
       };
 
-      // Standard Google Apps Script Web App POST (no-cors mode)
       fetch(scriptUrl, {
         method: 'POST',
         mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       })
       .then(() => {
         markRecordSynced(record.id);
-        showToast("Inspection successfully synchronized with Google Sheets!", "success");
+        showToast("Inspection record synced to Google Sheets!", "success");
       })
       .catch((err) => {
-        console.warn("Cloud sync error:", err);
+        console.warn("Cloud push deferred:", err);
         showToast("Sync deferred. Kept safe in offline queue.", "info");
       });
     }
@@ -1686,7 +2022,7 @@
       });
       localStorage.setItem('aryavarta_fat_dossier', JSON.stringify(dossier));
       updateSyncCounter();
-      renderInspectionHistory();
+      renderReportsList();
     }
 
     function updateSyncCounter() {
@@ -1708,21 +2044,20 @@
       const unsynced = dossier.filter(r => !r.syncedToSheets);
 
       if (unsynced.length === 0) {
-        showToast("All records are already up to date in Google Sheets.", "info");
+        showToast("All dossier records are already synced to Google Sheets.", "info");
         return;
       }
-
       unsynced.forEach(r => transmitToGoogleSheets(r));
     }
 
-    function renderInspectionHistory() {
+    function renderReportsList() {
       const container = document.getElementById('reportsListContainer');
       const dossier = JSON.parse(localStorage.getItem('aryavarta_fat_dossier') || '[]');
 
       if (dossier.length === 0) {
         container.innerHTML = `
           <div class="py-8 text-center text-slate-500 text-xs">
-            No inspection records in offline archive yet. Completed tests will appear here.
+            No inspection records stored locally yet. Completed reports will appear here.
           </div>
         `;
         return;
@@ -1737,18 +2072,23 @@
           ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Synced to Sheets</span>`
           : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">Offline Only</span>`;
 
+        const modePill = rec.serviceMode === 'fat'
+          ? `<span class="px-1.5 py-0.2 rounded text-[10px] bg-brand-orange/20 text-brand-orange border border-brand-orange/30">FAT</span>`
+          : `<span class="px-1.5 py-0.2 rounded text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">SITE</span>`;
+
         div.innerHTML = `
           <div>
             <div class="flex items-center gap-2">
-              <span class="font-bold text-white text-sm font-mono-code">${rec.serialNo}</span>
+              <span class="font-bold text-white text-sm font-mono-code">${rec.equipmentId}</span>
+              ${modePill}
               ${syncBadge}
               <span class="text-[11px] text-slate-400">${new Date(rec.timestamp).toLocaleDateString()}</span>
             </div>
-            <p class="text-slate-300 mt-1">Client: <b>${rec.client}</b> | Panel: ${rec.panelType.toUpperCase()} | Verdict: <span class="font-bold text-emerald-400">${rec.verdict}</span></p>
+            <p class="text-slate-300 mt-1">Client: <b>${rec.client}</b> | Scope: ${rec.scope} | Verdict: <span class="font-bold text-emerald-400">${rec.verdict}</span></p>
           </div>
           <div class="flex items-center gap-2">
             <button onclick="transmitToGoogleSheets(${JSON.stringify(rec).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-lg bg-brand-steel hover:bg-slate-700 text-white font-medium transition">
-              Push to Sheets
+              Push
             </button>
             <button onclick="loadRecordIntoView(${JSON.stringify(rec).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-lg bg-brand-orange hover:bg-orange-600 text-white font-bold transition">
               Review
@@ -1760,17 +2100,17 @@
     }
 
     function loadRecordIntoView(rec) {
-      document.getElementById('panelSerialNo').value = rec.serialNo;
+      setServiceMode(rec.serviceMode || 'fat');
+      document.getElementById('equipmentIdentifier').value = rec.equipmentId;
       document.getElementById('clientName').value = rec.client;
-      document.getElementById('poNumber').value = rec.poNo;
+      document.getElementById('workScope').value = rec.scope;
       document.getElementById('engineerName').value = rec.engineer;
-      document.getElementById('inspectionLocation').value = rec.location;
-      document.getElementById('panelTypeSelect').value = rec.panelType;
+      document.getElementById('facilityLocation').value = rec.location;
       currentChecklist = rec.checklist;
       renderChecklistTable();
       updateChecklistStats();
       switchTab('inspection');
-      showToast(`Loaded inspection data for ${rec.serialNo}`, 'info');
+      showToast(`Loaded details for ${rec.equipmentId}`, 'info');
     }
 
     function exportAllAsJSON() {
@@ -1779,10 +2119,10 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Aryavarta_FAT_Backup_${new Date().toISOString().slice(0,10)}.json`;
+      a.download = `Aryavarta_FAT_Site_Backup_${new Date().toISOString().slice(0,10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast("Dossier JSON exported successfully", "success");
+      showToast("Dossier exported to JSON", "success");
     }
 
     function saveGoogleScriptUrl() {
@@ -1796,26 +2136,28 @@
       const resEl = document.getElementById('diagnosticResult');
 
       if (!url) {
-        resEl.innerText = "Please paste a Google Apps Script URL first.";
+        resEl.innerText = "Paste a Google Apps Script URL first.";
         resEl.className = "text-xs font-mono-code text-rose-400";
         return;
       }
 
-      resEl.innerText = "Sending diagnostic test ping...";
+      resEl.innerText = "Sending test ping...";
       resEl.className = "text-xs font-mono-code text-amber-400";
 
       const testPayload = {
         timestamp: new Date().toLocaleString('en-IN'),
-        panelSerial: "AA-TEST-DIAGNOSTIC",
-        clientName: "System Ping Test",
-        poNumber: "TEST-000",
-        panelCategory: "TEST",
+        serviceType: "DIAGNOSTIC",
+        equipmentIdentifier: "AA-PING-TEST",
+        clientName: "System Diagnostics",
+        projectScope: "Ping Test",
+        facilityLocation: "Pune Works",
         leadEngineer: "Aryavarta Co-Pilot",
         testVerdict: "PASSED",
-        clientRepresentative: "Diagnostic Service",
-        totalTests: 1,
-        passedTests: 1,
-        failedTests: 0,
+        clientRepresentative: "Auto Checker",
+        totalSteps: 1,
+        passedSteps: 1,
+        failedSteps: 0,
+        openSnags: 0,
         inspectionSummary: "Diagnostic Ping Successful"
       };
 
@@ -1826,86 +2168,78 @@
         body: JSON.stringify(testPayload)
       })
       .then(() => {
-        resEl.innerText = "✓ Diagnostic Ping sent to Google Sheet successfully!";
+        resEl.innerText = "✓ Diagnostic Ping sent to Google Sheet!";
         resEl.className = "text-xs font-mono-code text-emerald-400";
         showToast("Connected to Google Sheets!", "success");
       })
-      .catch((e) => {
+      .catch(() => {
         resEl.innerText = "Ping failed. Check network or permissions.";
         resEl.className = "text-xs font-mono-code text-rose-400";
       });
     }
 
-    function updateEngineerPIN() {
-      const pin = document.getElementById('engineerPinInput').value.trim();
-      if (pin.length < 4) {
-        showToast("PIN must be 4 digits", "error");
-        return;
-      }
-      localStorage.setItem('aryavarta_pin', pin);
-      engineerPIN = pin;
-      showToast("Engineer Passcode updated successfully", "success");
-    }
-
-    // Google Apps Script code for 100% free Google Sheets persistence
-    const GOOGLE_APPS_SCRIPT_CODE = `
-// ==============================================================
-// ARYAVARTA AUTOMATION - GOOGLE SHEETS FAT LOGGING SCRIPT
-// 100% Free - Paste into Google Sheets > Extensions > Apps Script
-// ==============================================================
-
+    // Google Apps Script template for handling both FAT and Site Commissioning with snags
+    const APPS_SCRIPT_CODE = `
 function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  
-  // Create headers automatically if sheet is brand new
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow([
-      "Timestamp (IST)",
-      "Panel Serial No",
-      "Client / Plant Name",
-      "PO Number",
-      "Panel Category",
-      "Testing Engineer",
-      "FAT Verdict",
-      "Client Sign-Off Rep",
-      "Total Steps",
-      "Passed",
-      "Failed",
-      "Detailed Inspection Summary"
-    ]);
-    sheet.getRange(1, 1, 1, 12).setFontWeight("bold").setBackground("#0b192c").setFontColor("#ffffff");
-    sheet.setFrozenRows(1);
-  }
+  var lock = LockService.getScriptLock();
+  lock.tryLock(10000);
   
   try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow([
+        "Timestamp (IST)",
+        "Service Type",
+        "Panel Serial / Tag No",
+        "Client / Plant Name",
+        "PO / Scope",
+        "Facility / Section",
+        "Lead Engineer",
+        "Verdict",
+        "Client Rep",
+        "Total Steps",
+        "Passed",
+        "Failed",
+        "Open Snags",
+        "Inspection Summary"
+      ]);
+      sheet.getRange(1, 1, 1, 14).setFontWeight("bold").setBackground("#0b192c").setFontColor("#ffffff");
+      sheet.setFrozenRows(1);
+    }
+    
     var data = JSON.parse(e.postData.contents);
     sheet.appendRow([
       data.timestamp || new Date().toLocaleString(),
-      data.panelSerial || "N/A",
+      data.serviceType || "FAT",
+      data.equipmentIdentifier || "N/A",
       data.clientName || "N/A",
-      data.poNumber || "N/A",
-      data.panelCategory || "N/A",
+      data.projectScope || "N/A",
+      data.facilityLocation || "N/A",
       data.leadEngineer || "N/A",
       data.testVerdict || "N/A",
       data.clientRepresentative || "N/A",
-      data.totalTests || 0,
-      data.passedTests || 0,
-      data.failedTests || 0,
+      data.totalSteps || 0,
+      data.passedSteps || 0,
+      data.failedSteps || 0,
+      data.openSnags || 0,
       data.inspectionSummary || ""
     ]);
     
     return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
       .setMimeType(ContentService.MimeType.JSON);
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
   }
 }
 `.trim();
 
     function copyAppsScriptCode() {
       const textarea = document.createElement('textarea');
-      textarea.value = GOOGLE_APPS_SCRIPT_CODE;
+      textarea.value = APPS_SCRIPT_CODE;
       document.body.appendChild(textarea);
       textarea.select();
       document.execCommand('copy');
@@ -1913,7 +2247,42 @@ function doPost(e) {
       showToast("Google Apps Script code copied to clipboard!", "success");
     }
 
-    /* Custom non-blocking toast */
+    /* =========================================================
+     * UI NAVIGATION & NOTIFICATIONS
+     * ========================================================= */
+    function switchTab(tabId) {
+      const tabs = ['inspection', 'voice', 'snags', 'evidence', 'reports', 'settings'];
+      tabs.forEach(t => {
+        const pane = document.getElementById(`pane-${t}`);
+        const btn = document.getElementById(`tab-${t}`);
+        if (t === tabId) {
+          pane.classList.remove('hidden');
+          btn.className = 'tab-btn flex-1 min-w-[100px] py-3 px-3 text-center border-b-2 border-brand-orange text-brand-orange flex items-center justify-center gap-1.5 transition font-semibold';
+        } else {
+          pane.classList.add('hidden');
+          btn.className = 'tab-btn flex-1 min-w-[100px] py-3 px-3 text-center border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition';
+        }
+      });
+
+      if (tabId === 'voice') updateVoiceHUD();
+      if (tabId === 'evidence') resizeBothSigPads();
+      if (tabId === 'snags') renderSnagsList();
+      if (tabId === 'reports') renderReportsList();
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function updateNetworkStatus() {
+      const badge = document.getElementById('netStatusBadge');
+      if (navigator.onLine) {
+        badge.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span class="hidden md:inline font-medium">Online</span>`;
+      } else {
+        badge.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20";
+        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span><span class="hidden md:inline font-medium">Offline Mode</span>`;
+      }
+    }
+
     let toastTimeout = null;
     function showToast(message, type = 'info') {
       const toast = document.getElementById('toast');
@@ -1946,10 +2315,16 @@ function doPost(e) {
       }, 3500);
     }
 
-    // Custom confirm utility (Never uses native window.confirm)
-    function confirmDialog(msg) {
-      // Inline confirmation fallback with non-blocking logic
-      return window.confirm ? window.confirm(msg) : true;
+    function showCustomConfirm(message, callback) {
+      document.getElementById('confirmModalMsg').innerText = message;
+      document.getElementById('customConfirmModal').classList.remove('hidden');
+      customConfirmCallback = callback;
+    }
+
+    function resolveCustomConfirm(result) {
+      document.getElementById('customConfirmModal').classList.add('hidden');
+      if (customConfirmCallback) customConfirmCallback(result);
+      customConfirmCallback = null;
     }
   </script>
 </body>
