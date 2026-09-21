@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
   
-  <!-- External Open-Source Libraries -->
+  <!-- External Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -45,18 +45,13 @@
       
       <!-- Company Official Logo & Tagline -->
       <div class="flex items-center gap-3">
-        <!-- SVG Vector of Aryavarta Automation Official Emblem -->
         <div class="bg-white px-2.5 py-1.5 rounded-lg flex items-center shadow-md border border-slate-200">
           <svg class="h-10 w-auto" viewBox="0 0 320 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Triangular Crest -->
             <polygon points="50,6 10,70 90,70" fill="#dc2626"/>
-            <!-- Radiant Sun Rays inside Red Triangle -->
             <path d="M48 40 L50 20 M42 43 L30 30 M54 43 L68 30 M38 48 L22 46 M58 48 L76 46" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
             <circle cx="48" cy="46" r="6" fill="#ffffff"/>
-            <!-- Winding Road / River Path in White & Sky Blue -->
             <path d="M48 46 C52 54, 40 60, 56 70 L90 70 C70 56, 60 52, 48 46 Z" fill="#0284c7"/>
             <path d="M48 46 C51 53, 42 59, 54 70 L48 70 C38 60, 47 54, 48 46 Z" fill="#ffffff"/>
-            <!-- Typography -->
             <text x="100" y="44" font-family="'Cinzel', Georgia, serif" font-weight="700" font-size="25" fill="#dc2626" letter-spacing="1">aryavarta automation</text>
             <text x="104" y="66" font-family="'Inter', sans-serif" font-weight="700" font-size="10.5" fill="#0284c7" letter-spacing="2.8">SYNONYMS FOR EXCELLENCE</text>
           </svg>
@@ -105,7 +100,7 @@
   <main class="max-w-6xl mx-auto px-4 py-5 flex-1 w-full space-y-6">
 
     <!-- ========================================================================= -->
-    <!-- VIEW A: SHOP FLOOR FAT & E&I COMMISSIONING (EXISTING FULL FUNCTIONALITY) -->
+    <!-- VIEW A: SHOP FLOOR FAT & E&I COMMISSIONING -->
     <!-- ========================================================================= -->
     <div id="viewFatSite" class="space-y-6">
       <!-- Equipment Metadata Card -->
@@ -128,7 +123,7 @@
             <input type="text" id="metaSerialTag" placeholder="e.g. AA-2026-VFD-091" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none font-mono-code">
           </div>
           <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">PO / Project Number</label>
+            <label class="block text-xs font-medium text-slate-400 mb-1">PO / Project Scope</label>
             <input type="text" id="metaProjectPo" placeholder="e.g. PO-9841 / RO-Automation" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none">
           </div>
           <div>
@@ -255,7 +250,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- VIEW B: SITE DAILY WORK REPORT (DWR) (NEW FEATURE REQUESTED BY USER)     -->
+    <!-- VIEW B: SITE DAILY WORK REPORT (DWR) -->
     <!-- ========================================================================= -->
     <div id="viewDwr" class="space-y-6 hidden">
       
@@ -267,7 +262,7 @@
               <i data-lucide="shield-check" class="w-4 h-4"></i>
               <span>Fixed Site Project Profile (Day 1 Setup)</span>
             </h2>
-            <p class="text-xs text-slate-400">These 5 fields are entered on Day 1 and will automatically auto-fill for all subsequent days.</p>
+            <p class="text-xs text-slate-400">These fields are stored and automatically populate across all report sheets.</p>
           </div>
           <button onclick="toggleDwrProjectLock()" id="btnDwrLock" class="px-3 py-1.5 bg-blue-900/40 border border-blue-500/40 text-blue-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-blue-800/40">
             <i data-lucide="lock" class="w-3.5 h-3.5"></i>
@@ -312,10 +307,7 @@
           </button>
         </div>
 
-        <!-- Days Pill Buttons -->
-        <div id="dwrDaysNav" class="flex flex-wrap items-center gap-2 mt-3">
-          <!-- Dynamically populated day badges -->
-        </div>
+        <div id="dwrDaysNav" class="flex flex-wrap items-center gap-2 mt-3"></div>
       </div>
 
       <!-- Daily Form (1 Sheet Per Day Template) -->
@@ -456,16 +448,16 @@
           <span>Sync to Google Sheet</span>
         </button>
 
-        <!-- Generate PDF Report (Context-Sensitive: FAT/Commissioning Certificate vs DWR Dossier) -->
+        <!-- Generate PDF Report (Context-Sensitive) -->
         <button onclick="handlePrimaryPdfDownload()" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black text-xs font-bold font-industrial flex items-center justify-center gap-2 hover:brightness-110 shadow-lg">
           <i data-lucide="file-text" class="w-4 h-4"></i>
-          <span id="lblPrimaryPdfBtn">Download PDF Certificate</span>
+          <span id="lblPrimaryPdfBtn">Download FAT Certificate</span>
         </button>
       </div>
     </div>
   </footer>
 
-  <!-- ================= MODAL: PROTOCOL STEP BUILDER (FOR FAT & SITE) ================= -->
+  <!-- ================= MODAL: PROTOCOL STEP BUILDER ================= -->
   <div id="templateManagerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="p-4 border-b border-slate-800 flex items-center justify-between">
@@ -508,32 +500,26 @@
     </div>
   </div>
 
-  <!-- ================= LOGIC & AUTOMATION ENGINE ================= -->
+  <!-- ================= APPLICATION SCRIPT ================= -->
   <script>
-    // =========================================================================
-    // 1. CONFIGURATION: PRE-CONNECTED GOOGLE APPS SCRIPT ENDPOINT
-    // =========================================================================
+    // 1. CONFIGURATION & STATE
     const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqoT7Y4T4Rz0t9XQ_Aryavarta_FAT_Endpoint/exec";
 
-    // Application Global State
-    let currentAppMode = 'FAT'; // 'FAT', 'SITE', or 'DWR'
-    let currentLanguage = 'en'; // 'en', 'hi', or 'mr'
+    let currentAppMode = 'FAT'; // 'FAT', 'SITE', 'DWR'
+    let currentLanguage = 'en';
     let currentCategoryKey = '';
     let inspectionData = [];
     let photosList = [];
     
-    // Canvas Pads
     let engineerSigPad = null;
     let clientSigPad = null;
     let dwrEngSigPad = null;
     let dwrInchargeSigPad = null;
 
-    // DWR State
     let isDwrProfileLocked = true;
     let activeDwrDayIndex = 0;
     let dwrDaysList = [];
 
-    // Multilingual Prompts
     const I18N = {
       en: {
         voiceCode: 'en-IN',
@@ -567,7 +553,6 @@
       }
     };
 
-    // Default Industrial Templates for FAT & Site
     const DEFAULT_TEMPLATES = {
       FAT: {
         "VFD_PANEL": {
@@ -617,14 +602,21 @@
     };
 
     function getStoredTemplates() {
-      const saved = localStorage.getItem('aryavarta_custom_templates');
-      return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
-    }
-    function saveTemplates(tpl) {
-      localStorage.setItem('aryavarta_custom_templates', JSON.stringify(tpl));
+      try {
+        const saved = localStorage.getItem('aryavarta_custom_templates');
+        return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+      } catch (e) {
+        return JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+      }
     }
 
-    // App Initializer
+    function saveTemplates(tpl) {
+      try {
+        localStorage.setItem('aryavarta_custom_templates', JSON.stringify(tpl));
+      } catch (e) {}
+    }
+
+    // Initialize App
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       document.getElementById('currentDateStr').innerText = new Date().toLocaleDateString('en-IN', {
@@ -636,7 +628,6 @@
       initDwrModule();
     });
 
-    // Language Change
     function changeAppLanguage(lang) {
       currentLanguage = lang;
       if (voiceInspector && voiceInspector.isActive) {
@@ -645,7 +636,6 @@
       playAudioTone(880, 0.1);
     }
 
-    // Top Mode Navigation: FAT, SITE, or DWR
     function switchAppMode(mode) {
       currentAppMode = mode;
       const fatBtn = document.getElementById('modeFatBtn');
@@ -655,7 +645,6 @@
       const viewDwr = document.getElementById('viewDwr');
       const pdfBtnLabel = document.getElementById('lblPrimaryPdfBtn');
 
-      // Reset button styles
       [fatBtn, siteBtn, dwrBtn].forEach(b => {
         b.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white";
       });
@@ -687,27 +676,30 @@
       }
     }
 
-    // =========================================================================
-    // 2. DAILY WORK REPORT (DWR) LOGIC & PERSISTENCE
-    // =========================================================================
+    // 2. DAILY WORK REPORT (DWR) LOGIC
     function initDwrModule() {
-      // 1. Load preserved Day 1 Project profile from localStorage
-      const savedProfile = localStorage.getItem('aryavarta_dwr_profile');
-      if (savedProfile) {
-        const p = JSON.parse(savedProfile);
-        document.getElementById('dwrCustomer').value = p.customer || '';
-        document.getElementById('dwrProjectNo').value = p.projectNo || '';
-        document.getElementById('dwrSiteIncharge').value = p.siteIncharge || '';
-        document.getElementById('dwrLocation').value = p.location || '';
-        document.getElementById('dwrScope').value = p.scope || '';
-      }
+      try {
+        const savedProfile = localStorage.getItem('aryavarta_dwr_profile');
+        if (savedProfile) {
+          const p = JSON.parse(savedProfile);
+          document.getElementById('dwrCustomer').value = p.customer || '';
+          document.getElementById('dwrProjectNo').value = p.projectNo || '';
+          document.getElementById('dwrSiteIncharge').value = p.siteIncharge || '';
+          document.getElementById('dwrLocation').value = p.location || '';
+          document.getElementById('dwrScope').value = p.scope || '';
+        }
+      } catch (e) {}
+
       lockDwrProfile(true);
 
-      // 2. Load stored days list or initialize Day 1
-      const storedDays = localStorage.getItem('aryavarta_dwr_days');
-      if (storedDays) {
-        dwrDaysList = JSON.parse(storedDays);
-      } else {
+      try {
+        const storedDays = localStorage.getItem('aryavarta_dwr_days');
+        if (storedDays) {
+          dwrDaysList = JSON.parse(storedDays);
+        } else {
+          dwrDaysList = [createBlankDay(1, new Date().toISOString().split('T')[0])];
+        }
+      } catch (e) {
         dwrDaysList = [createBlankDay(1, new Date().toISOString().split('T')[0])];
       }
 
@@ -750,7 +742,6 @@
       if (isDwrProfileLocked) {
         lockDwrProfile(false);
       } else {
-        // Save current values to localStorage
         const profile = {
           customer: document.getElementById('dwrCustomer').value.trim(),
           projectNo: document.getElementById('dwrProjectNo').value.trim(),
@@ -758,7 +749,9 @@
           location: document.getElementById('dwrLocation').value.trim(),
           scope: document.getElementById('dwrScope').value.trim()
         };
-        localStorage.setItem('aryavarta_dwr_profile', JSON.stringify(profile));
+        try {
+          localStorage.setItem('aryavarta_dwr_profile', JSON.stringify(profile));
+        } catch(e) {}
         lockDwrProfile(true);
         playAudioTone(880, 0.1);
       }
@@ -775,7 +768,7 @@
         }`;
         btn.innerText = `Day ${day.dayNumber}: ${day.date}`;
         btn.onclick = () => {
-          saveCurrentDwrDay(false); // auto-save current before switching
+          saveCurrentDwrDay(false);
           loadDwrDayIntoForm(idx);
         };
         nav.appendChild(btn);
@@ -791,7 +784,6 @@
       document.getElementById('dwrDailyDate').value = day.date;
       document.getElementById('dwrPageNo').value = day.pageNo;
 
-      // Safe radio
       const isYes = day.isSafe === "YES";
       const radios = document.getElementsByName('dwrSafeEnv');
       radios[0].checked = isYes;
@@ -812,7 +804,6 @@
       document.getElementById('dwrEngName').value = day.engName || '';
       document.getElementById('dwrInchargeName').value = day.inchargeName || '';
 
-      // Clear signature canvases
       if (dwrEngSigPad) dwrEngSigPad.clear();
       if (dwrInchargeSigPad) dwrInchargeSigPad.clear();
       initDwrCanvas();
@@ -836,7 +827,9 @@
       const today = new Date().toISOString().split('T')[0];
       const newDay = createBlankDay(nextNum, today);
       dwrDaysList.push(newDay);
-      localStorage.setItem('aryavarta_dwr_days', JSON.stringify(dwrDaysList));
+      try {
+        localStorage.setItem('aryavarta_dwr_days', JSON.stringify(dwrDaysList));
+      } catch (e) {}
       loadDwrDayIntoForm(dwrDaysList.length - 1);
       playAudioTone(880, 0.15);
     }
@@ -872,7 +865,6 @@
         day.inchargeSigData = dwrInchargeSigPad.toDataURL();
       }
 
-      // Also ensure profile is saved
       const profile = {
         customer: document.getElementById('dwrCustomer').value.trim(),
         projectNo: document.getElementById('dwrProjectNo').value.trim(),
@@ -880,8 +872,11 @@
         location: document.getElementById('dwrLocation').value.trim(),
         scope: document.getElementById('dwrScope').value.trim()
       };
-      localStorage.setItem('aryavarta_dwr_profile', JSON.stringify(profile));
-      localStorage.setItem('aryavarta_dwr_days', JSON.stringify(dwrDaysList));
+      
+      try {
+        localStorage.setItem('aryavarta_dwr_profile', JSON.stringify(profile));
+        localStorage.setItem('aryavarta_dwr_days', JSON.stringify(dwrDaysList));
+      } catch (e) {}
 
       if (showAlert) {
         playAudioTone(880, 0.2);
@@ -915,11 +910,10 @@
       if (type === 'incharge' && dwrInchargeSigPad) dwrInchargeSigPad.clear();
     }
 
-    // Voice dictation into Main Activities textarea
     function dictateActivitiesIntoBox() {
       const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRec) {
-        alert("Speech dictation not supported on this browser.");
+        alert("Speech dictation is not supported on this browser.");
         return;
       }
       const rec = new SpeechRec();
@@ -935,11 +929,9 @@
       };
     }
 
-    // =========================================================================
-    // 3. BRANDED PDF GENERATOR: CONSOLIDATED DWR (1 SHEET PER DAY DOSSIER)
-    // =========================================================================
+    // 3. CONSOLIDATED DWR PDF GENERATOR
     async function generateConsolidatedDwrPDF() {
-      saveCurrentDwrDay(false); // save pending changes
+      saveCurrentDwrDay(false);
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
@@ -949,20 +941,15 @@
       const location = document.getElementById('dwrLocation').value.trim() || "Site Location";
       const scope = document.getElementById('dwrScope').value.trim() || "Electrical & Instrumentation Site Services";
 
-      // Render each day as an individual sheet (1 sheet per day)
       for (let i = 0; i < dwrDaysList.length; i++) {
         if (i > 0) doc.addPage();
         const day = dwrDaysList[i];
 
-        // 1. Top Company Header Box
         doc.setFillColor(255, 255, 255);
         doc.rect(0, 0, 210, 32, 'F');
 
-        // Draw Official Aryavarta Emblem (Red Triangle with Sun & Winding River)
-        // Red Triangle
         doc.setFillColor(220, 38, 38);
         doc.triangle(24, 6, 12, 28, 36, 28, 'F');
-        // Sun rays (White)
         doc.setDrawColor(255, 255, 255);
         doc.setLineWidth(0.4);
         doc.line(24, 18, 24, 11);
@@ -970,11 +957,9 @@
         doc.line(27, 20, 32, 15);
         doc.setFillColor(255, 255, 255);
         doc.circle(24, 20, 1.8, 'F');
-        // River / path (Cyan Blue)
         doc.setFillColor(2, 132, 199);
         doc.triangle(24, 20, 36, 28, 26, 28, 'F');
 
-        // Company Typography
         doc.setTextColor(220, 38, 38);
         doc.setFont("helvetica", "bold");
         doc.setFontSize(14);
@@ -990,7 +975,6 @@
         doc.setFont("helvetica", "normal");
         doc.text("Chikhali, Pune - 411062 | www.aryavartaautomation.in", 40, 25);
 
-        // Document Main Title Box
         doc.setFillColor(11, 25, 44);
         doc.rect(130, 8, 70, 18, 'F');
         doc.setTextColor(255, 255, 255);
@@ -1001,7 +985,6 @@
         doc.setTextColor(245, 158, 11);
         doc.text("(1 sheet per day)", 150, 22);
 
-        // 2. Metadata Grid Table (Matching the Excel Template)
         const metaGrid = [
           [
             { content: "Customer : (Site Name)", styles: { fontStyle: 'bold', fillColor: [255, 255, 0] } },
@@ -1036,7 +1019,6 @@
           }
         });
 
-        // 3. Safety Question Row
         const isSafeYes = day.isSafe === "YES";
         const safetyContent = isSafeYes
           ? "[ X ] Yes     [   ] No     Working environment verified safe for operations."
@@ -1051,7 +1033,6 @@
           styles: { fontSize: 7.5, cellPadding: 2.5, textColor: isSafeYes ? [15, 23, 42] : [220, 38, 38] }
         });
 
-        // 4. Main Activities Box
         doc.autoTable({
           startY: doc.lastAutoTable.finalY + 2,
           theme: 'grid',
@@ -1061,7 +1042,6 @@
           styles: { fontSize: 7.5, minCellHeight: 35, cellPadding: 3, textColor: [15, 23, 42] }
         });
 
-        // 5. Issues & Delays Table
         const issuesRows = [
           [
             { content: "Issue within Client Company's scope of Work", styles: { fontStyle: 'bold' } },
@@ -1088,7 +1068,6 @@
           columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 80 }, 2: { cellWidth: 30 } }
         });
 
-        // 6. Documentation Updates
         doc.autoTable({
           startY: doc.lastAutoTable.finalY + 2,
           theme: 'grid',
@@ -1098,7 +1077,6 @@
           styles: { fontSize: 7.5, cellPadding: 2.5, textColor: [15, 23, 42] }
         });
 
-        // 7. Signatures Table (Exact match to the Excel bottom layout)
         const sigY = doc.lastAutoTable.finalY + 5;
         doc.rect(14, sigY, 182, 24);
         doc.line(14, sigY + 6, 196, sigY + 6);
@@ -1118,7 +1096,6 @@
         doc.text(day.engName || "Authorized Eng", 16, sigY + 14);
         doc.text(day.inchargeName || siteIncharge, 107, sigY + 14);
 
-        // Embed signature images if present
         if (day.engSigData) {
           doc.addImage(day.engSigData, 'PNG', 62, sigY + 7, 40, 16);
         }
@@ -1127,11 +1104,9 @@
         }
       }
 
-      // Save the multi-sheet PDF
       doc.save(`Aryavarta_Daily_Report_${customer}_${projectNo}.pdf`);
     }
 
-    // Context-sensitive PDF router
     function handlePrimaryPdfDownload() {
       if (currentAppMode === 'DWR') {
         generateConsolidatedDwrPDF();
@@ -1140,9 +1115,7 @@
       }
     }
 
-    // =========================================================================
-    // 4. CHECKLIST UI & VOICE CO-PILOT ENGINE
-    // =========================================================================
+    // 4. CHECKLIST UI & VOICE ENGINE
     function refreshCategoryDropdown() {
       const templates = getStoredTemplates();
       const currentModeTemplates = templates[currentAppMode];
@@ -1251,7 +1224,6 @@
       document.getElementById('failedCountBadge').innerText = `${failed} FAILED`;
     }
 
-    // Voice Engine
     class VoiceInspectorEngine {
       constructor() {
         this.synth = window.speechSynthesis;
@@ -1288,7 +1260,9 @@
         this.isActive = false;
         clearTimeout(this.repeatTimer);
         if (this.synth) this.synth.cancel();
-        if (this.recognition) this.recognition.stop();
+        if (this.recognition) {
+          try { this.recognition.stop(); } catch(e) {}
+        }
 
         document.getElementById('voiceControlBtnText').innerText = "START VOICE INSPECTION";
         document.getElementById('voiceControlBtn').className = "w-full md:w-auto px-5 py-2.5 rounded-xl font-industrial font-bold text-sm flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black hover:brightness-110 shadow-lg";
@@ -1427,9 +1401,7 @@
       } catch (e) {}
     }
 
-    // =========================================================================
     // 5. SIGNATURES & PHOTO WATERMARKING
-    // =========================================================================
     function initSignatures() {
       const c1 = document.getElementById('canvasEngineerSig');
       const c2 = document.getElementById('canvasClientSig');
@@ -1518,23 +1490,60 @@
       lucide.createIcons();
     }
 
-    // =========================================================================
-    // 6. SYNC TO GOOGLE SHEETS
-    // =========================================================================
+    // 6. SYNC TO GOOGLE SHEETS (HARMONIZED WITH BACKEND 14 HEADERS)
     async function syncInspectionToGoogleSheet() {
       const btn = document.getElementById('syncSheetBtn');
       const orig = btn.innerHTML;
       btn.innerHTML = `<span class="animate-spin inline-block mr-2">●</span> Syncing...`;
       btn.disabled = true;
 
-      const payload = {
-        timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-        mode: currentAppMode,
-        client: currentAppMode === 'DWR' ? document.getElementById('dwrCustomer').value : document.getElementById('metaClient').value,
-        project: currentAppMode === 'DWR' ? document.getElementById('dwrProjectNo').value : document.getElementById('metaProjectPo').value,
-        details: currentAppMode === 'DWR' ? dwrDaysList : inspectionData,
-        photosCount: photosList.length
-      };
+      let payload = {};
+      const now = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+
+      if (currentAppMode === 'DWR') {
+        saveCurrentDwrDay(false);
+        const activeDay = dwrDaysList[activeDwrDayIndex] || createBlankDay(1, new Date().toISOString().split('T')[0]);
+        const safeDays = dwrDaysList.filter(d => d.isSafe === 'YES').length;
+        const unsafeDays = dwrDaysList.filter(d => d.isSafe === 'NO').length;
+        
+        payload = {
+          timestamp: now,
+          serviceType: "DAILY_WORK_REPORT",
+          equipmentIdentifier: document.getElementById('dwrProjectNo').value.trim() || activeDay.pageNo,
+          clientName: document.getElementById('dwrCustomer').value.trim() || "N/A",
+          projectScope: document.getElementById('dwrScope').value.trim() || "N/A",
+          facilityLocation: document.getElementById('dwrLocation').value.trim() || "N/A",
+          leadEngineer: document.getElementById('dwrSiteIncharge').value.trim() || "N/A",
+          testVerdict: activeDay.isSafe === "YES" ? "SAFE ENVIRONMENT" : `UNSAFE: ${activeDay.unsafeReason}`,
+          clientRepresentative: activeDay.inchargeName || document.getElementById('dwrEngName').value || "N/A",
+          totalSteps: dwrDaysList.length,
+          passedSteps: safeDays,
+          failedSteps: unsafeDays,
+          openSnags: parseInt(activeDay.clientHrs || "0", 10) + parseInt(activeDay.customerHrs || "0", 10),
+          inspectionSummary: `Day ${activeDay.dayNumber} (${activeDay.date}): ${activeDay.mainActivities.substring(0, 150)} | Issues: ${activeDay.clientIssue || 'None'}`
+        };
+      } else {
+        const passed = inspectionData.filter(i => i.status === 'PASSED').length;
+        const failed = inspectionData.filter(i => i.status === 'FAILED').length;
+        const verdict = failed > 0 ? "FAILED / PENDING SNAGS" : "PASSED / ACCEPTED";
+
+        payload = {
+          timestamp: now,
+          serviceType: currentAppMode === 'FAT' ? "SHOP_FAT" : "EI_COMMISSIONING",
+          equipmentIdentifier: document.getElementById('metaSerialTag').value.trim() || "N/A",
+          clientName: document.getElementById('metaClient').value.trim() || "N/A",
+          projectScope: document.getElementById('metaProjectPo').value.trim() || "N/A",
+          facilityLocation: currentAppMode === 'FAT' ? "Aryavarta Plant, Chikhali Pune" : document.getElementById('metaClient').value.trim(),
+          leadEngineer: document.getElementById('metaEngineer').value.trim() || "N/A",
+          testVerdict: verdict,
+          clientRepresentative: document.getElementById('sigClientName').value.trim() || "Pending Sign",
+          totalSteps: inspectionData.length,
+          passedSteps: passed,
+          failedSteps: failed,
+          openSnags: failed,
+          inspectionSummary: inspectionData.map(i => `${i.title}: ${i.measuredValue || 'N/A'} [${i.status}]`).join(" | ")
+        };
+      }
 
       try {
         await fetch(GOOGLE_APPS_SCRIPT_URL, {
@@ -1544,9 +1553,9 @@
           body: JSON.stringify(payload)
         });
         playAudioTone(880, 0.2);
-        alert("✓ Data successfully synced to Google Sheets!");
+        alert("✓ Report successfully synced to Google Sheet!");
       } catch (e) {
-        alert("Cloud sync failed. Check connection.");
+        alert("Sync request failed. Please check network connection.");
       } finally {
         btn.innerHTML = orig;
         btn.disabled = false;
@@ -1554,9 +1563,7 @@
       }
     }
 
-    // =========================================================================
-    // 7. BRANDED FAT / COMMISSIONING PDF REPORT
-    // =========================================================================
+    // 7. FAT / COMMISSIONING PDF REPORT
     async function generateOfficialInspectionPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -1568,7 +1575,6 @@
       const isFat = currentAppMode === 'FAT';
       const docTitle = isFat ? "FACTORY ACCEPTANCE TEST (FAT) CERTIFICATE" : "E&I SITE COMMISSIONING CERTIFICATE";
 
-      // Draw Top Official Emblem
       doc.setFillColor(220, 38, 38);
       doc.triangle(24, 6, 12, 28, 36, 28, 'F');
       doc.setFillColor(2, 132, 199);
@@ -1588,7 +1594,6 @@
       doc.setFont("helvetica", "normal");
       doc.text("Chikhali, Pune - 411062 | ISO 9001:2015 & 14001:2015", 40, 25);
 
-      // Certificate Title
       doc.setFillColor(11, 25, 44);
       doc.rect(14, 32, 182, 10, 'F');
       doc.setTextColor(245, 158, 11);
@@ -1596,7 +1601,6 @@
       doc.setFont("helvetica", "bold");
       doc.text(docTitle, 18, 38.5);
 
-      // Meta Table
       const metaRows = [
         [
           { content: "Client Name:", styles: { fontStyle: 'bold' } }, client,
@@ -1615,7 +1619,6 @@
         styles: { fontSize: 8, cellPadding: 2.2 }
       });
 
-      // Checklist Table
       const tableData = inspectionData.map((item, idx) => [
         idx + 1, item.title, item.standard, item.measuredValue || "N/A", item.status
       ]);
@@ -1628,7 +1631,6 @@
         styles: { fontSize: 7.5, cellPadding: 2 }
       });
 
-      // Photos
       let photoY = doc.lastAutoTable.finalY + 6;
       if (photosList.length > 0) {
         if (photoY > 210) { doc.addPage(); photoY = 20; }
@@ -1643,7 +1645,6 @@
         photoY += 52;
       }
 
-      // Signatures
       if (photoY > 230) { doc.addPage(); photoY = 25; }
       const sigY = Math.max(photoY + 5, 235);
       doc.setDrawColor(203, 213, 225);
@@ -1666,9 +1667,7 @@
       doc.save(`Aryavarta_${currentAppMode}_${serial}_Certificate.pdf`);
     }
 
-    // =========================================================================
-    // 8. TEMPLATE MANAGER MODAL
-    // =========================================================================
+    // 8. TEMPLATE MANAGER
     let editingCategoryKey = '';
     function openTemplateManagerModal() {
       const modal = document.getElementById('templateManagerModal');
