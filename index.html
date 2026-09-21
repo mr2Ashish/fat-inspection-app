@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aryavarta Automation - FAT & E&I Commissioning Co-Pilot</title>
+  <title>Aryavarta Automation - FAT, Commissioning & Daily Work Report Suite</title>
   
   <!-- Manifest & Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
   
-  <!-- External Open-Source Engines -->
+  <!-- External Open-Source Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -20,60 +20,59 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #060d17;
+      background-color: #050b14;
       color: #e2e8f0;
       -webkit-tap-highlight-color: transparent;
     }
     .font-industrial { font-family: 'Chakra Petch', sans-serif; }
     .font-mono-code { font-family: 'JetBrains Mono', monospace; }
-    .neon-border-amber { box-shadow: 0 0 15px rgba(245, 158, 11, 0.25); }
-    .neon-border-blue { box-shadow: 0 0 15px rgba(59, 130, 246, 0.25); }
-    
-    /* Pulse indicator for voice listening */
-    @keyframes pulse-ring {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.15); opacity: 0.3; }
-      100% { transform: scale(0.95); opacity: 0.8; }
-    }
-    .listening-ring { animation: pulse-ring 1.8s infinite ease-in-out; }
-    
-    /* Signature Pad Styling */
     .sig-canvas {
       border: 2px dashed #334155;
       border-radius: 0.5rem;
-      background: #0f172a;
+      background: #09111e;
       touch-action: none;
     }
-    
-    /* Custom Scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0b1320; }
+    ::-webkit-scrollbar-track { background: #070d18; }
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col pb-28">
 
-  <!-- ================= TOP INDUSTRIAL NAVIGATION ================= -->
-  <header class="sticky top-0 z-40 bg-[#09111e]/95 backdrop-blur-md border-b border-slate-800 px-4 py-3">
+  <!-- ================= TOP HEADER WITH OFFICIAL COMPANY LOGO ================= -->
+  <header class="sticky top-0 z-40 bg-[#070e1a]/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 shadow-xl">
     <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
       
-      <!-- Brand & Facility -->
+      <!-- Company Official Logo & Tagline -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center font-industrial text-black font-bold text-xl shadow-lg">
-          AA
+        <!-- SVG Vector of Aryavarta Automation Official Emblem -->
+        <div class="bg-white px-2.5 py-1.5 rounded-lg flex items-center shadow-md border border-slate-200">
+          <svg class="h-10 w-auto" viewBox="0 0 320 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Triangular Crest -->
+            <polygon points="50,6 10,70 90,70" fill="#dc2626"/>
+            <!-- Radiant Sun Rays inside Red Triangle -->
+            <path d="M48 40 L50 20 M42 43 L30 30 M54 43 L68 30 M38 48 L22 46 M58 48 L76 46" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="48" cy="46" r="6" fill="#ffffff"/>
+            <!-- Winding Road / River Path in White & Sky Blue -->
+            <path d="M48 46 C52 54, 40 60, 56 70 L90 70 C70 56, 60 52, 48 46 Z" fill="#0284c7"/>
+            <path d="M48 46 C51 53, 42 59, 54 70 L48 70 C38 60, 47 54, 48 46 Z" fill="#ffffff"/>
+            <!-- Typography -->
+            <text x="100" y="44" font-family="'Cinzel', Georgia, serif" font-weight="700" font-size="25" fill="#dc2626" letter-spacing="1">aryavarta automation</text>
+            <text x="104" y="66" font-family="'Inter', sans-serif" font-weight="700" font-size="10.5" fill="#0284c7" letter-spacing="2.8">SYNONYMS FOR EXCELLENCE</text>
+          </svg>
         </div>
-        <div>
+
+        <div class="hidden md:block">
           <div class="flex items-center gap-2">
-            <h1 class="text-base font-bold tracking-tight text-white font-industrial uppercase">Aryavarta Automation</h1>
-            <span class="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded font-mono-code">PUNE HQ</span>
+            <span class="text-xs font-bold text-slate-200 font-industrial uppercase tracking-wider">Site & Plant Operations</span>
+            <span class="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded font-mono-code">CHIKHALI, PUNE</span>
           </div>
-          <p class="text-xs text-slate-400">FAT & E&I Commissioning Suite</p>
+          <p class="text-[11px] text-slate-400">ISO 9001:2015 & 14001:2015 Certified</p>
         </div>
       </div>
 
-      <!-- Controls: Language Selector & Sync Status -->
+      <!-- Controls: Language Selector -->
       <div class="flex items-center gap-2">
-        <!-- Language Switcher -->
         <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg px-2 py-1">
           <i data-lucide="globe" class="w-4 h-4 text-amber-400 mr-1.5"></i>
           <select id="appLanguage" onchange="changeAppLanguage(this.value)" class="bg-transparent text-xs font-medium text-slate-200 focus:outline-none cursor-pointer">
@@ -82,280 +81,416 @@
             <option value="mr" class="bg-slate-900 text-white">मराठी (Marathi)</option>
           </select>
         </div>
-
-        <!-- Automatic Cloud State Badge -->
-        <div id="syncBadge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono-code bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>SHEET CONNECTED</span>
-        </div>
       </div>
     </div>
 
-    <!-- Mode Switcher: Shop Floor FAT vs E&I Site Commissioning -->
-    <div class="max-w-6xl mx-auto mt-3 grid grid-cols-2 gap-2 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
-      <button id="modeFatBtn" onclick="switchServiceMode('FAT')" class="py-2 rounded-lg font-industrial text-sm font-semibold flex items-center justify-center gap-2 transition-all bg-amber-500 text-black shadow-md">
+    <!-- Triple Mode Selector: Shop Floor FAT | E&I Commissioning | Daily Work Report (DWR) -->
+    <div class="max-w-6xl mx-auto mt-3 grid grid-cols-3 gap-2 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+      <button id="modeFatBtn" onclick="switchAppMode('FAT')" class="py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-amber-500 text-black shadow-md">
         <i data-lucide="factory" class="w-4 h-4"></i>
-        <span>SHOP FLOOR FAT</span>
+        <span>SHOP FAT</span>
       </button>
-      <button id="modeSiteBtn" onclick="switchServiceMode('SITE')" class="py-2 rounded-lg font-industrial text-sm font-semibold flex items-center justify-center gap-2 transition-all text-slate-400 hover:text-white">
+      <button id="modeSiteBtn" onclick="switchAppMode('SITE')" class="py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white">
         <i data-lucide="hard-hat" class="w-4 h-4"></i>
-        <span>E&I SITE COMMISSIONING</span>
+        <span>E&I COMMISSION</span>
+      </button>
+      <button id="modeDwrBtn" onclick="switchAppMode('DWR')" class="py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white">
+        <i data-lucide="calendar-check" class="w-4 h-4"></i>
+        <span>DAILY REPORT (DWR)</span>
       </button>
     </div>
   </header>
 
-  <!-- ================= MAIN WORKSPACE ================= -->
+  <!-- ================= MAIN WORKSPACE CONTAINER ================= -->
   <main class="max-w-6xl mx-auto px-4 py-5 flex-1 w-full space-y-6">
 
-    <!-- Section 1: Job & Equipment Metadata Card -->
-    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
-        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 font-industrial flex items-center gap-2">
-          <i data-lucide="clipboard-check" class="w-4 h-4 text-amber-400"></i>
-          <span id="metadataHeaderTitle">Panel & Job Specification</span>
-        </h2>
-        <span class="text-xs font-mono-code text-slate-500" id="currentDateStr">--</span>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Client Name -->
-        <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Client / Plant Name</label>
-          <input type="text" id="metaClient" placeholder="e.g. Baramati Agro / Praj Ind." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none">
+    <!-- ========================================================================= -->
+    <!-- VIEW A: SHOP FLOOR FAT & E&I COMMISSIONING (EXISTING FULL FUNCTIONALITY) -->
+    <!-- ========================================================================= -->
+    <div id="viewFatSite" class="space-y-6">
+      <!-- Equipment Metadata Card -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 font-industrial flex items-center gap-2">
+            <i data-lucide="clipboard-check" class="w-4 h-4 text-amber-400"></i>
+            <span id="metadataHeaderTitle">Panel & Job Specification (FAT)</span>
+          </h2>
+          <span class="text-xs font-mono-code text-slate-500" id="currentDateStr">--</span>
         </div>
 
-        <!-- Serial / Tag Number -->
-        <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1" id="lblSerialTag">Panel Serial Number</label>
-          <input type="text" id="metaSerialTag" placeholder="e.g. AA-2026-VFD-091" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none font-mono-code">
-        </div>
-
-        <!-- PO / Project Number -->
-        <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">PO / Project Number</label>
-          <input type="text" id="metaProjectPo" placeholder="e.g. PO-9841 / RO-Automation" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none">
-        </div>
-
-        <!-- Lead Engineer Name -->
-        <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Testing / Lead Engineer</label>
-          <input type="text" id="metaEngineer" placeholder="e.g. Ashish Ingle" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none">
-        </div>
-      </div>
-
-      <!-- Category / Package Selection with Custom Editor Button -->
-      <div class="mt-4 pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div class="w-full sm:w-2/3">
-          <label class="block text-xs font-medium text-slate-400 mb-1" id="lblCategory">Panel Product Line / Category</label>
-          <div class="flex items-center gap-2">
-            <select id="categorySelector" onchange="onCategoryChanged(this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none cursor-pointer">
-              <!-- Dynamically populated -->
-            </select>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Client / Plant Name</label>
+            <input type="text" id="metaClient" placeholder="e.g. Baramati Agro / Praj Ind." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1" id="lblSerialTag">Panel Serial Number</label>
+            <input type="text" id="metaSerialTag" placeholder="e.g. AA-2026-VFD-091" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none font-mono-code">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">PO / Project Number</label>
+            <input type="text" id="metaProjectPo" placeholder="e.g. PO-9841 / RO-Automation" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Testing / Lead Engineer</label>
+            <input type="text" id="metaEngineer" placeholder="e.g. Ashish Ingle" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none">
           </div>
         </div>
 
-        <!-- Custom Protocol Builder Button -->
-        <button onclick="openTemplateManagerModal()" class="w-full sm:w-auto mt-2 sm:mt-5 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-semibold text-amber-400 flex items-center justify-center gap-2 transition-all">
-          <i data-lucide="sliders" class="w-4 h-4"></i>
-          <span>Customize / Add Steps</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Section 2: Industrial Voice Co-Pilot Console -->
-    <div id="voiceConsoleCard" class="bg-gradient-to-b from-slate-900 to-[#0b1320] border-2 border-amber-500/40 rounded-2xl p-5 shadow-2xl relative overflow-hidden">
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
-            <h2 class="text-base font-bold font-industrial uppercase text-white tracking-wide">
-              Voice-Guided "Hands-Free" Inspection Loop
-            </h2>
+        <div class="mt-4 pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div class="w-full sm:w-2/3">
+            <label class="block text-xs font-medium text-slate-400 mb-1" id="lblCategory">Panel Product Line / Category</label>
+            <select id="categorySelector" onchange="onCategoryChanged(this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none cursor-pointer"></select>
           </div>
-          <p class="text-xs text-slate-400 mt-0.5">Continuous speech recognition & repetitive audio guidance for multimeter testing.</p>
-        </div>
-
-        <!-- Start/Stop Voice Button -->
-        <button id="voiceControlBtn" onclick="toggleVoiceSession()" class="w-full md:w-auto px-5 py-2.5 rounded-xl font-industrial font-bold text-sm flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black hover:brightness-110 shadow-lg transition-all">
-          <i data-lucide="mic" class="w-5 h-5"></i>
-          <span id="voiceControlBtnText">START VOICE INSPECTION</span>
-        </button>
-      </div>
-
-      <!-- Voice Session Active Dashboard -->
-      <div id="voiceSessionActiveArea" class="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4 items-center">
-        <!-- Current Spoken Step Box -->
-        <div class="lg:col-span-2 bg-slate-950/90 border border-slate-800 rounded-xl p-4">
-          <div class="flex items-center justify-between text-xs font-mono-code mb-2">
-            <span class="text-amber-400 font-bold uppercase" id="voiceStepIndicator">Step 1 of 5</span>
-            <span id="repeatCountdownBadge" class="text-slate-400 flex items-center gap-1">
-              <i data-lucide="timer" class="w-3.5 h-3.5 text-amber-400"></i> Auto-repeats if silent
-            </span>
-          </div>
-          <h3 id="voiceCurrentStepTitle" class="text-base font-semibold text-white mb-1 font-industrial">Loading...</h3>
-          <p id="voiceCurrentStepPrompt" class="text-xs text-slate-300">Measure incoming supply voltage across R-Y phases.</p>
-          
-          <div class="mt-3 flex items-center gap-2 text-xs font-mono-code text-slate-400 bg-slate-900/80 p-2 rounded border border-slate-800">
-            <i data-lucide="ear" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
-            <span class="truncate">Spoken transcript: <span id="voiceLiveTranscript" class="text-emerald-400 font-bold italic">"Listening for multimeter reading..."</span></span>
-          </div>
-        </div>
-
-        <!-- Spoken Commands Quick Reference -->
-        <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3.5 text-xs">
-          <span class="font-bold text-slate-300 uppercase font-industrial text-[11px] block mb-2 text-amber-400">Voice Commands Guide</span>
-          <ul class="space-y-1 text-slate-400 font-mono-code text-[11px]">
-            <li>• Numeric values: <span class="text-white">"415 volts", "24.2", "0.8 ohms"</span></li>
-            <li>• Quick status: <span class="text-white">"Pass", "Fail", "Verified", "Done"</span></li>
-            <li>• Repeat command: <span class="text-white">"Repeat", "फिर से", "पुन्हा"</span></li>
-            <li>• In Hindi: <span class="text-white">"415 वोल्ट", "पास", "फेल"</span></li>
-            <li>• In Marathi: <span class="text-white">"बरोबर", "झाले", "चूक"</span></li>
-          </ul>
+          <button onclick="openTemplateManagerModal()" class="w-full sm:w-auto mt-2 sm:mt-5 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-semibold text-amber-400 flex items-center justify-center gap-2">
+            <i data-lucide="sliders" class="w-4 h-4"></i>
+            <span>Customize / Add Steps</span>
+          </button>
         </div>
       </div>
-    </div>
 
-    <!-- Section 3: Protocol Checklist Table -->
-    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
-        <div>
+      <!-- Voice Co-Pilot Console -->
+      <div class="bg-gradient-to-b from-slate-900 to-[#0b1320] border-2 border-amber-500/40 rounded-2xl p-5 shadow-2xl relative overflow-hidden">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+              <h2 class="text-base font-bold font-industrial uppercase text-white tracking-wide">Voice-Guided Hands-Free Loop</h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Two-way audio guidance. Repeatedly prompts until multimeter value is spoken.</p>
+          </div>
+          <button id="voiceControlBtn" onclick="toggleVoiceSession()" class="w-full md:w-auto px-5 py-2.5 rounded-xl font-industrial font-bold text-sm flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black hover:brightness-110 shadow-lg">
+            <i data-lucide="mic" class="w-5 h-5"></i>
+            <span id="voiceControlBtnText">START VOICE INSPECTION</span>
+          </button>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4 items-center">
+          <div class="lg:col-span-2 bg-slate-950/90 border border-slate-800 rounded-xl p-4">
+            <div class="flex items-center justify-between text-xs font-mono-code mb-2">
+              <span class="text-amber-400 font-bold uppercase" id="voiceStepIndicator">Step 1</span>
+              <span class="text-slate-400 flex items-center gap-1"><i data-lucide="timer" class="w-3.5 h-3.5 text-amber-400"></i> Auto-repeats if silent</span>
+            </div>
+            <h3 id="voiceCurrentStepTitle" class="text-base font-semibold text-white mb-1 font-industrial">Ready</h3>
+            <p id="voiceCurrentStepPrompt" class="text-xs text-slate-300">Tap Start Voice Inspection to begin hands-free checklist.</p>
+            <div class="mt-3 flex items-center gap-2 text-xs font-mono-code text-slate-400 bg-slate-900/80 p-2 rounded border border-slate-800">
+              <i data-lucide="ear" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+              <span class="truncate">Transcript: <span id="voiceLiveTranscript" class="text-emerald-400 font-bold italic">"Waiting for user..."</span></span>
+            </div>
+          </div>
+          <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3.5 text-xs">
+            <span class="font-bold uppercase font-industrial text-[11px] block mb-2 text-amber-400">Voice Commands Guide</span>
+            <ul class="space-y-1 text-slate-400 font-mono-code text-[11px]">
+              <li>• English: <span class="text-white">"415 volts", "Pass", "Repeat"</span></li>
+              <li>• Hindi: <span class="text-white">"415 वोल्ट", "पास", "फिर से"</span></li>
+              <li>• Marathi: <span class="text-white">"बरोबर", "झाले", "पुन्हा सांगा"</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checklist Items Table -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
           <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 font-industrial flex items-center gap-2">
             <i data-lucide="list-checks" class="w-4 h-4 text-amber-400"></i>
             <span>Inspection Protocol Checklist</span>
           </h2>
-          <p class="text-xs text-slate-400 mt-0.5">Values can be logged via Voice or touched manually.</p>
+          <div class="flex items-center gap-2 text-xs font-mono-code">
+            <span class="text-emerald-400 font-bold" id="passedCountBadge">0 PASSED</span>
+            <span class="text-slate-600">|</span>
+            <span class="text-rose-400 font-bold" id="failedCountBadge">0 FAILED</span>
+          </div>
         </div>
-        <div class="flex items-center gap-2 text-xs font-mono-code">
-          <span class="text-emerald-400 font-bold" id="passedCountBadge">0 PASSED</span>
-          <span class="text-slate-600">|</span>
-          <span class="text-rose-400 font-bold" id="failedCountBadge">0 FAILED</span>
-        </div>
+        <div id="checklistContainer" class="space-y-3"></div>
       </div>
 
-      <!-- Checklist Items Container -->
-      <div id="checklistContainer" class="space-y-3">
-        <!-- Checklist rows inserted dynamically -->
-      </div>
-    </div>
-
-    <!-- Section 4: Watermarked Photographic Evidence -->
-    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
-        <div>
+      <!-- Watermarked Photo Evidence -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
           <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 font-industrial flex items-center gap-2">
             <i data-lucide="camera" class="w-4 h-4 text-amber-400"></i>
-            <span>Inspection Photographic Evidence</span>
+            <span>QC Photographic Evidence</span>
           </h2>
-          <p class="text-xs text-slate-400 mt-0.5">Photos are automatically stamped with panel serial, engineer name & timestamp.</p>
+          <label class="cursor-pointer px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-black font-semibold text-xs rounded-lg flex items-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>Capture Photo</span>
+            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handlePhotoCapture(event)">
+          </label>
         </div>
-        
-        <label class="cursor-pointer px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-black font-semibold text-xs rounded-lg flex items-center gap-1.5 transition-all">
-          <i data-lucide="plus-circle" class="w-4 h-4"></i>
-          <span>Capture Photo</span>
-          <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handlePhotoCapture(event)">
-        </label>
+        <div id="photosGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div id="noPhotosPrompt" class="col-span-full text-center py-8 border-2 border-dashed border-slate-800 rounded-xl text-slate-500 text-xs">
+            No inspection photos captured yet.
+          </div>
+        </div>
       </div>
 
-      <!-- Photo Gallery Grid -->
-      <div id="photosGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div id="noPhotosPrompt" class="col-span-full text-center py-8 border-2 border-dashed border-slate-800 rounded-xl text-slate-500 text-xs">
-          No inspection photos captured yet. Tap "Capture Photo" to record busbars, ferrules, or nameplates.
+      <!-- Signatures for FAT / Commissioning -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+        <div class="pb-3 border-b border-slate-800 mb-4">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 font-industrial flex items-center gap-2">
+            <i data-lucide="pen-tool" class="w-4 h-4 text-amber-400"></i>
+            <span>Official Joint Sign-Off</span>
+          </h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-medium text-slate-300">Aryavarta Testing Engineer</label>
+              <button onclick="clearSignature('engineer')" class="text-[11px] text-slate-400 hover:text-rose-400">Clear</button>
+            </div>
+            <canvas id="canvasEngineerSig" class="sig-canvas w-full h-36"></canvas>
+            <input type="text" id="sigEngineerName" placeholder="Engineer Full Name" class="mt-2 w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-medium text-slate-300">Client / TPI Representative</label>
+              <button onclick="clearSignature('client')" class="text-[11px] text-slate-400 hover:text-rose-400">Clear</button>
+            </div>
+            <canvas id="canvasClientSig" class="sig-canvas w-full h-36"></canvas>
+            <input type="text" id="sigClientName" placeholder="Client Name & Company" class="mt-2 w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Section 5: Dual Digital Signature Sign-Off -->
-    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
-      <div class="pb-3 border-b border-slate-800 mb-4">
-        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 font-industrial flex items-center gap-2">
-          <i data-lucide="pen-tool" class="w-4 h-4 text-amber-400"></i>
-          <span>Official Joint Sign-Off</span>
-        </h2>
-        <p class="text-xs text-slate-400 mt-0.5">Signatures are embedded directly onto the final PDF certificate.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Signature 1: Aryavarta Lead Engineer -->
-        <div>
-          <div class="flex items-center justify-between mb-1.5">
-            <label class="text-xs font-medium text-slate-300">Aryavarta Testing / Site Engineer</label>
-            <button onclick="clearSignature('engineer')" class="text-[11px] text-slate-400 hover:text-rose-400">Clear</button>
+    <!-- ========================================================================= -->
+    <!-- VIEW B: SITE DAILY WORK REPORT (DWR) (NEW FEATURE REQUESTED BY USER)     -->
+    <!-- ========================================================================= -->
+    <div id="viewDwr" class="space-y-6 hidden">
+      
+      <!-- Sub-Banner: Project Profile (Auto-Preserved Across All Days) -->
+      <div class="bg-gradient-to-r from-blue-950/40 to-slate-900 border border-blue-500/30 rounded-2xl p-4 sm:p-5 shadow-xl">
+        <div class="flex items-center justify-between pb-3 border-b border-blue-500/20 mb-3">
+          <div>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-blue-400 font-industrial flex items-center gap-2">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <span>Fixed Site Project Profile (Day 1 Setup)</span>
+            </h2>
+            <p class="text-xs text-slate-400">These 5 fields are entered on Day 1 and will automatically auto-fill for all subsequent days.</p>
           </div>
-          <canvas id="canvasEngineerSig" class="sig-canvas w-full h-36"></canvas>
-          <input type="text" id="sigEngineerName" placeholder="Signee Full Name" class="mt-2 w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+          <button onclick="toggleDwrProjectLock()" id="btnDwrLock" class="px-3 py-1.5 bg-blue-900/40 border border-blue-500/40 text-blue-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-blue-800/40">
+            <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+            <span id="lblDwrLock">Unlock to Edit</span>
+          </button>
         </div>
 
-        <!-- Signature 2: Client / Third Party Inspector -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+          <div>
+            <label class="block font-medium text-slate-400 mb-1">Customer : (Site Name)</label>
+            <input type="text" id="dwrCustomer" placeholder="e.g. Baramati Agro Ltd" class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-400 mb-1">Project No:</label>
+            <input type="text" id="dwrProjectNo" placeholder="e.g. PRJ-2026-ETHANOL-04" class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono-code disabled:opacity-60 disabled:cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-400 mb-1">Site In-charge:</label>
+            <input type="text" id="dwrSiteIncharge" placeholder="e.g. Mr. Sumit" class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-400 mb-1">Location:</label>
+            <input type="text" id="dwrLocation" placeholder="e.g. Daund / Baramati Plant" class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-white disabled:opacity-60 disabled:cursor-not-allowed">
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block font-medium text-slate-400 mb-1">Scope:</label>
+            <input type="text" id="dwrScope" placeholder="e.g. E&I Site Commissioning, Cable Glanding, Megger Testing & PLC Loop Check" class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-white disabled:opacity-60 disabled:cursor-not-allowed">
+          </div>
+        </div>
+      </div>
+
+      <!-- Multi-Day Tabs Navigator -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+          <div>
+            <span class="text-xs font-bold uppercase text-slate-300 font-industrial">Logged Days in this Dossier</span>
+            <p class="text-[11px] text-slate-400">Select any day to review, or add today's entry.</p>
+          </div>
+          <button onclick="addNewDwrDay()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-lg flex items-center gap-1.5 shadow">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>+ Add New Day</span>
+          </button>
+        </div>
+
+        <!-- Days Pill Buttons -->
+        <div id="dwrDaysNav" class="flex flex-wrap items-center gap-2 mt-3">
+          <!-- Dynamically populated day badges -->
+        </div>
+      </div>
+
+      <!-- Daily Form (1 Sheet Per Day Template) -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl space-y-5">
+        
+        <!-- Day Sheet Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+            <h3 class="text-sm font-bold text-white font-industrial uppercase" id="lblActiveDayTitle">DAY LOG: 01-07-2026 (Page 1)</h3>
+          </div>
+          <div class="flex items-center gap-3">
+            <div>
+              <label class="text-[11px] text-slate-400 block">Report Date:</label>
+              <input type="date" id="dwrDailyDate" onchange="onDwrDateChanged(this.value)" class="bg-slate-900 border border-slate-700 rounded px-2.5 py-1 text-xs text-white font-mono-code">
+            </div>
+            <div>
+              <label class="text-[11px] text-slate-400 block">Page / Sheet No:</label>
+              <input type="text" id="dwrPageNo" value="Page 1" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono-code w-20 text-center">
+            </div>
+          </div>
+        </div>
+
+        <!-- Safety Question -->
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <span class="text-xs font-bold text-slate-200 uppercase font-industrial">Is the Working Environment safe?</span>
+            <div class="flex items-center gap-4 text-xs">
+              <label class="flex items-center gap-1.5 cursor-pointer">
+                <input type="radio" name="dwrSafeEnv" value="YES" checked onchange="toggleDwrUnsafeBox(false)" class="accent-emerald-500">
+                <span class="text-emerald-400 font-bold">YES</span>
+              </label>
+              <label class="flex items-center gap-1.5 cursor-pointer">
+                <input type="radio" name="dwrSafeEnv" value="NO" onchange="toggleDwrUnsafeBox(true)" class="accent-rose-500">
+                <span class="text-rose-400 font-bold">NO</span>
+              </label>
+            </div>
+          </div>
+          <div id="dwrUnsafeReasonBox" class="hidden pt-2">
+            <label class="block text-[11px] text-rose-400 mb-1">If not safe, specify why?</label>
+            <input type="text" id="dwrUnsafeReason" placeholder="e.g. Scaffolding uncertified, loose wet cabling near pit" class="w-full bg-slate-900 border border-rose-500/50 rounded-lg px-3 py-2 text-xs text-white">
+          </div>
+        </div>
+
+        <!-- Main Activities Performed -->
         <div>
           <div class="flex items-center justify-between mb-1.5">
-            <label class="text-xs font-medium text-slate-300">Client / TPI Representative</label>
-            <button onclick="clearSignature('client')" class="text-[11px] text-slate-400 hover:text-rose-400">Clear</button>
+            <label class="text-xs font-bold text-slate-300 uppercase font-industrial">Main Activities performed during the day</label>
+            <button onclick="dictateActivitiesIntoBox()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
+              <i data-lucide="mic" class="w-3.5 h-3.5"></i> Voice Dictate
+            </button>
           </div>
-          <canvas id="canvasClientSig" class="sig-canvas w-full h-36"></canvas>
-          <input type="text" id="sigClientName" placeholder="Signee Full Name & Company" class="mt-2 w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+          <textarea id="dwrMainActivities" rows="5" placeholder="1. Verified cable dressing and glanding for MCC Feeder 1-4.&#10;2. Conducted 500V DC Megger test between phases R-Y-B.&#10;3. Conducted loop test for 4-20mA pressure transmitter PT-101." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white font-mono-code focus:border-amber-500 focus:outline-none"></textarea>
+        </div>
+
+        <!-- Issues & Delays Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Issue within Client Scope -->
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-300 font-industrial uppercase">Issue within Client Scope</span>
+              <div class="flex items-center gap-1">
+                <label class="text-[10px] text-slate-400">Hrs Lost:</label>
+                <input type="text" id="dwrClientHrs" placeholder="0" class="w-12 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-xs text-amber-400 text-center font-mono-code">
+              </div>
+            </div>
+            <textarea id="dwrClientIssue" rows="2" placeholder="Issue details..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white"></textarea>
+            <label class="block text-[11px] text-slate-400">How is the issue being fixed?</label>
+            <input type="text" id="dwrClientFix" placeholder="Remedial action taken..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+          </div>
+
+          <!-- Issue within Customer Scope -->
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-300 font-industrial uppercase">Issue within Customer Scope</span>
+              <div class="flex items-center gap-1">
+                <label class="text-[10px] text-slate-400">Hrs Lost:</label>
+                <input type="text" id="dwrCustomerHrs" placeholder="0" class="w-12 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-xs text-amber-400 text-center font-mono-code">
+              </div>
+            </div>
+            <textarea id="dwrCustomerIssue" rows="2" placeholder="Issue details..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white"></textarea>
+            <label class="block text-[11px] text-slate-400">How is the issue being fixed?</label>
+            <input type="text" id="dwrCustomerFix" placeholder="Remedial action taken..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+          </div>
+        </div>
+
+        <!-- Documentation Updates -->
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+          <label class="block text-xs font-bold text-slate-300 font-industrial uppercase">
+            Any change that requires documentation update (P&ID, FDS, mass balance, equipment list, wiring diagrams etc.)
+          </label>
+          <input type="text" id="dwrDocChanges" placeholder="- Please list changes here, or type 'None'" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+        </div>
+
+        <!-- Daily Client & In-charge Signatures -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-medium text-slate-300">Client Engineer Signature</label>
+              <button onclick="clearDwrSig('eng')" class="text-[10px] text-slate-400 hover:text-rose-400">Clear</button>
+            </div>
+            <canvas id="canvasDwrEngSig" class="sig-canvas w-full h-28"></canvas>
+            <input type="text" id="dwrEngName" placeholder="Client Engineer Name" class="mt-1.5 w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-white">
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-medium text-slate-300">Client Site Incharge Signature</label>
+              <button onclick="clearDwrSig('incharge')" class="text-[10px] text-slate-400 hover:text-rose-400">Clear</button>
+            </div>
+            <canvas id="canvasDwrInchargeSig" class="sig-canvas w-full h-28"></canvas>
+            <input type="text" id="dwrInchargeName" placeholder="Client Site Incharge Name" class="mt-1.5 w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-white">
+          </div>
+        </div>
+
+        <!-- Save Active Day Button -->
+        <div class="flex justify-end pt-2">
+          <button onclick="saveCurrentDwrDay()" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Save This Day's Report</span>
+          </button>
         </div>
       </div>
     </div>
   </main>
 
   <!-- ================= FIXED BOTTOM INDUSTRIAL ACTION BAR ================= -->
-  <footer class="fixed bottom-0 left-0 right-0 z-40 bg-[#09111e]/95 backdrop-blur-md border-t border-slate-800 px-4 py-3 shadow-2xl">
+  <footer class="fixed bottom-0 left-0 right-0 z-40 bg-[#070e1a]/95 backdrop-blur-md border-t border-slate-800 px-4 py-3 shadow-2xl">
     <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
       <div class="flex items-center gap-3 w-full sm:w-auto">
-        <span class="text-xs font-mono-code text-slate-400" id="bottomStatusIndicator">Ready for inspection</span>
+        <span class="text-xs font-mono-code text-slate-400" id="bottomStatusIndicator">Aryavarta Operations Ready</span>
       </div>
 
       <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-        <!-- Direct Sync to Google Sheets Button -->
-        <button onclick="syncInspectionToGoogleSheet()" id="syncSheetBtn" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+        <!-- Direct Sync to Google Sheets -->
+        <button onclick="syncInspectionToGoogleSheet()" id="syncSheetBtn" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-2">
           <i data-lucide="cloud-upload" class="w-4 h-4 text-emerald-400"></i>
           <span>Sync to Google Sheet</span>
         </button>
 
-        <!-- Generate PDF Certificate -->
-        <button onclick="generateOfficialInspectionPDF()" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black text-xs font-bold font-industrial flex items-center justify-center gap-2 hover:brightness-110 shadow-lg transition-all">
+        <!-- Generate PDF Report (Context-Sensitive: FAT/Commissioning Certificate vs DWR Dossier) -->
+        <button onclick="handlePrimaryPdfDownload()" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black text-xs font-bold font-industrial flex items-center justify-center gap-2 hover:brightness-110 shadow-lg">
           <i data-lucide="file-text" class="w-4 h-4"></i>
-          <span>Download PDF Certificate</span>
+          <span id="lblPrimaryPdfBtn">Download PDF Certificate</span>
         </button>
       </div>
     </div>
   </footer>
 
-  <!-- ================= TEMPLATE & PROTOCOL STEP MANAGER MODAL ================= -->
+  <!-- ================= MODAL: PROTOCOL STEP BUILDER (FOR FAT & SITE) ================= -->
   <div id="templateManagerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-      
-      <!-- Modal Header -->
       <div class="p-4 border-b border-slate-800 flex items-center justify-between">
         <div>
           <h3 class="text-base font-bold text-white font-industrial uppercase flex items-center gap-2">
             <i data-lucide="sliders" class="w-4 h-4 text-amber-400"></i>
             <span>Protocol & Category Customizer</span>
           </h3>
-          <p class="text-xs text-slate-400">Add new panel categories or adjust shop floor testing steps.</p>
+          <p class="text-xs text-slate-400">Create new panel categories or customize inspection steps.</p>
         </div>
         <button onclick="closeTemplateManagerModal()" class="text-slate-400 hover:text-white p-1">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-
-      <!-- Modal Body -->
       <div class="p-4 overflow-y-auto space-y-4 flex-1">
-        <!-- Category Selection / Creation -->
         <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
           <label class="block text-xs font-medium text-slate-400 mb-1">Active Category to Edit</label>
           <div class="flex gap-2">
-            <select id="modalCategorySelect" onchange="loadCategoryForEditing(this.value)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
-              <!-- Populated dynamically -->
-            </select>
+            <select id="modalCategorySelect" onchange="loadCategoryForEditing(this.value)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></select>
             <button onclick="promptAddNewCategory()" class="px-3 py-2 bg-amber-500 text-black text-xs font-bold rounded-lg hover:bg-amber-400 flex items-center gap-1">
               <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
               <span>New Category</span>
             </button>
           </div>
         </div>
-
-        <!-- Editable Steps List -->
         <div>
           <div class="flex items-center justify-between mb-2">
             <label class="text-xs font-bold uppercase text-slate-300 font-industrial">Protocol Steps for this Category</label>
@@ -363,16 +498,12 @@
               <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Step
             </button>
           </div>
-          <div id="modalStepsList" class="space-y-2.5">
-            <!-- Populated dynamically with editable rows -->
-          </div>
+          <div id="modalStepsList" class="space-y-2.5"></div>
         </div>
       </div>
-
-      <!-- Modal Footer -->
       <div class="p-4 border-t border-slate-800 flex items-center justify-between bg-slate-950">
         <button onclick="resetCurrentCategoryToDefaults()" class="text-xs text-rose-400 hover:underline">Reset to Factory Default</button>
-        <button onclick="saveCategoryEditsAndClose()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs rounded-xl shadow">Save & Apply Checklist</button>
+        <button onclick="saveCategoryEditsAndClose()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs rounded-xl shadow">Save & Apply</button>
       </div>
     </div>
   </div>
@@ -381,21 +512,28 @@
   <script>
     // =========================================================================
     // 1. CONFIGURATION: PRE-CONNECTED GOOGLE APPS SCRIPT ENDPOINT
-    // Paste your published Google Apps Script Web App URL between the quotes below:
     // =========================================================================
-    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoZsNa1eevLcBMk0la8IAO1BmDxp69JoGpp5D6_uCTfA8o_Tx7eyczhhA47sqNQQrQBQ/exec";
-    // =========================================================================
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqoT7Y4T4Rz0t9XQ_Aryavarta_FAT_Endpoint/exec";
 
-    // Current State
-    let currentServiceMode = 'FAT'; // 'FAT' or 'SITE'
-    let currentLanguage = 'en';     // 'en', 'hi', or 'mr'
+    // Application Global State
+    let currentAppMode = 'FAT'; // 'FAT', 'SITE', or 'DWR'
+    let currentLanguage = 'en'; // 'en', 'hi', or 'mr'
     let currentCategoryKey = '';
     let inspectionData = [];
     let photosList = [];
+    
+    // Canvas Pads
     let engineerSigPad = null;
     let clientSigPad = null;
+    let dwrEngSigPad = null;
+    let dwrInchargeSigPad = null;
 
-    // Multilingual Audio Vocabulary & Prompts
+    // DWR State
+    let isDwrProfileLocked = true;
+    let activeDwrDayIndex = 0;
+    let dwrDaysList = [];
+
+    // Multilingual Prompts
     const I18N = {
       en: {
         voiceCode: 'en-IN',
@@ -403,7 +541,7 @@
         repeatPrompt: "Waiting for response. Please state multimeter reading, say pass, or say repeat.",
         logged: "Logged",
         movingNext: "Next test.",
-        completed: "All inspection steps are finished. Please take photos and complete sign-off.",
+        completed: "All inspection steps are finished.",
         pass: "PASS",
         fail: "FAIL"
       },
@@ -413,7 +551,7 @@
         repeatPrompt: "प्रतीक्षा कर रहे हैं। कृपया मल्टीमीटर रीडिंग बताएं, पास कहें, या दोहराने को कहें।",
         logged: "दर्ज किया गया",
         movingNext: "अगला टेस्ट।",
-        completed: "सभी निरीक्षण चरण पूरे हो गए हैं। कृपया फोटो और हस्ताक्षर लें।",
+        completed: "सभी निरीक्षण चरण पूरे हो गए हैं।",
         pass: "पास",
         fail: "फेल"
       },
@@ -423,13 +561,13 @@
         repeatPrompt: "प्रतीक्षा करत आहे. कृपया मल्टीमीटर वाचन सांगा, बरोबर म्हणा, किंवा पुन्हा सांगा.",
         logged: "नोंदवले",
         movingNext: "पुढील चाचणी.",
-        completed: "सर्व तपासणी पायऱ्या पूर्ण झाल्या आहेत. कृपया फोटो आणि स्वाक्षरी घ्या.",
+        completed: "सर्व तपासणी पायऱ्या पूर्ण झाल्या आहेत.",
         pass: "बरोबर",
         fail: "चूक"
       }
     };
 
-    // Default Industrial Templates
+    // Default Industrial Templates for FAT & Site
     const DEFAULT_TEMPLATES = {
       FAT: {
         "VFD_PANEL": {
@@ -437,9 +575,9 @@
           steps: [
             { id: "v1", title: "Incoming Voltage R-Y", prompt: "Measure incoming voltage between R and Y phase. Nominal is 415V AC ±5%.", unit: "V AC", standard: "415 V ±5%" },
             { id: "v2", title: "Incoming Voltage Y-B", prompt: "Measure incoming voltage between Y and B phase. Nominal is 415V AC.", unit: "V AC", standard: "415 V ±5%" },
-            { id: "v3", title: "Earth Pit Resistance", prompt: "Verify earth bus continuity to main ground electrode.", unit: "Ohms", standard: "< 1.0 Ohm" },
+            { id: "v3", title: "Earth Bus Continuity", prompt: "Verify earth bus continuity to main ground electrode.", unit: "Ohms", standard: "< 1.0 Ohm" },
             { id: "v4", title: "24V DC Auxiliary Power", prompt: "Measure 24V DC switch mode power supply terminal output voltage.", unit: "V DC", standard: "24.0 V ±2%" },
-            { id: "v5", title: "VFD Forward/Reverse Command", prompt: "Trigger digital forward run command to drive and verify display frequency.", unit: "Status", standard: "50.0 Hz Achieved" }
+            { id: "v5", title: "VFD Forward Command", prompt: "Trigger digital forward run command to drive and verify display frequency.", unit: "Status", standard: "50.0 Hz Achieved" }
           ]
         },
         "MCC_PANEL": {
@@ -447,8 +585,7 @@
           steps: [
             { id: "m1", title: "Phase-to-Phase Insulation (Megger)", prompt: "500V DC insulation resistance between phases R-Y, Y-B, B-R.", unit: "M-Ohms", standard: "> 100 MΩ" },
             { id: "m2", title: "Phase-to-Earth Insulation", prompt: "500V DC insulation resistance between phases and panel earth busbar.", unit: "M-Ohms", standard: "> 50 MΩ" },
-            { id: "m3", title: "Contactor Interlocking Check", prompt: "Verify mechanical and electrical interlocking on Star-Delta or Forward-Reverse starters.", unit: "Status", standard: "Interlock Verified" },
-            { id: "m4", title: "Overload Relay Trip Simulation", prompt: "Manually trip thermal overload relay test lever and confirm trip contact opening.", unit: "Status", standard: "Trip Signal Active" }
+            { id: "m3", title: "Contactor Interlocking Check", prompt: "Verify mechanical and electrical interlocking on Star-Delta starters.", unit: "Status", standard: "Interlock Verified" }
           ]
         },
         "PLC_PANEL": {
@@ -456,8 +593,7 @@
           steps: [
             { id: "p1", title: "SMPS 24V DC Ripple & Noise", prompt: "Measure DC bus voltage stability for PLC CPU and I/O cards.", unit: "V DC", standard: "24.0 V ±1%" },
             { id: "p2", title: "Digital Input Loop Check", prompt: "Inject 24V DC to DI channel 1 and confirm LED & SCADA bit state.", unit: "Status", standard: "Channel Active" },
-            { id: "p3", title: "Analog 4-20mA Transmitter Simulation", prompt: "Simulate 12.0 mA input from calibrator and verify 50% reading on HMI screen.", unit: "mA", standard: "12.00 mA (50%)" },
-            { id: "p4", title: "Ethernet / Modbus Comm Status", prompt: "Verify ping and communication handshake between PLC, VFDs and HMI.", unit: "Status", standard: "Zero Packet Loss" }
+            { id: "p3", title: "Ethernet Comm Status", prompt: "Verify communication ping between PLC and HMI/SCADA.", unit: "Status", standard: "Zero Packet Loss" }
           ]
         }
       },
@@ -466,23 +602,20 @@
           name: "Field Instrumentation Loop Check",
           steps: [
             { id: "s1", title: "0% (4mA) Loop Calibration", prompt: "Inject 4.00 mA from field transmitter and verify 0.0% reading at SCADA.", unit: "mA", standard: "4.00 mA ±0.1%" },
-            { id: "s2", title: "50% (12mA) Loop Calibration", prompt: "Inject 12.00 mA and verify 50.0% engineering scale at PLC controller.", unit: "mA", standard: "12.00 mA ±0.1%" },
-            { id: "s3", title: "100% (20mA) Loop Calibration", prompt: "Inject 20.00 mA and confirm full span pressure/temperature on HMI.", unit: "mA", standard: "20.00 mA ±0.1%" },
-            { id: "s4", title: "Transmitter Shield Earthing", prompt: "Confirm instrument signal shield is grounded at panel end ONLY, not at field junction box.", unit: "Status", standard: "Single-Point Ground" }
+            { id: "s2", title: "50% (12mA) Loop Calibration", prompt: "Inject 12.00 mA and verify 50.0% engineering scale at PLC.", unit: "mA", standard: "12.00 mA ±0.1%" },
+            { id: "s3", title: "100% (20mA) Loop Calibration", prompt: "Inject 20.00 mA and confirm full span pressure/temperature on HMI.", unit: "mA", standard: "20.00 mA ±0.1%" }
           ]
         },
         "MOTOR_TRIALS": {
           name: "Motor & Drive On-Site Trials",
           steps: [
-            { id: "mt1", title: "Motor Bump Test (Direction)", prompt: "Momentarily energize starter and verify shaft rotation matches pump/fan arrow.", unit: "Status", standard: "Clockwise / Correct" },
-            { id: "mt2", title: "No-Load Current Check", prompt: "Measure motor uncoupled running current across all three phases.", unit: "Amps", standard: "Balanced Current" },
-            { id: "mt3", title: "Local Isolator Emergency Stop", prompt: "Press field local lock-stop push button while running; verify contactor de-energization.", unit: "Status", standard: "Instant Trip" }
+            { id: "mt1", title: "Motor Bump Test (Direction)", prompt: "Momentarily energize starter and verify shaft rotation matches pump arrow.", unit: "Status", standard: "Clockwise / Correct" },
+            { id: "mt2", title: "No-Load Current Check", prompt: "Measure motor uncoupled running current across all three phases.", unit: "Amps", standard: "Balanced Current" }
           ]
         }
       }
     };
 
-    // Load templates from localStorage or fallback
     function getStoredTemplates() {
       const saved = localStorage.getItem('aryavarta_custom_templates');
       return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
@@ -491,7 +624,7 @@
       localStorage.setItem('aryavarta_custom_templates', JSON.stringify(tpl));
     }
 
-    // App Initialization
+    // App Initializer
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       document.getElementById('currentDateStr').innerText = new Date().toLocaleDateString('en-IN', {
@@ -500,9 +633,10 @@
 
       initSignatures();
       refreshCategoryDropdown();
+      initDwrModule();
     });
 
-    // Language Switching
+    // Language Change
     function changeAppLanguage(lang) {
       currentLanguage = lang;
       if (voiceInspector && voiceInspector.isActive) {
@@ -511,56 +645,528 @@
       playAudioTone(880, 0.1);
     }
 
-    // Service Mode Switching
-    function switchServiceMode(mode) {
-      currentServiceMode = mode;
+    // Top Mode Navigation: FAT, SITE, or DWR
+    function switchAppMode(mode) {
+      currentAppMode = mode;
       const fatBtn = document.getElementById('modeFatBtn');
       const siteBtn = document.getElementById('modeSiteBtn');
-      
+      const dwrBtn = document.getElementById('modeDwrBtn');
+      const viewFatSite = document.getElementById('viewFatSite');
+      const viewDwr = document.getElementById('viewDwr');
+      const pdfBtnLabel = document.getElementById('lblPrimaryPdfBtn');
+
+      // Reset button styles
+      [fatBtn, siteBtn, dwrBtn].forEach(b => {
+        b.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white";
+      });
+
       if (mode === 'FAT') {
-        fatBtn.className = "py-2 rounded-lg font-industrial text-sm font-semibold flex items-center justify-center gap-2 transition-all bg-amber-500 text-black shadow-md";
-        siteBtn.className = "py-2 rounded-lg font-industrial text-sm font-semibold flex items-center justify-center gap-2 transition-all text-slate-400 hover:text-white";
+        fatBtn.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-amber-500 text-black shadow-md";
+        viewFatSite.classList.remove('hidden');
+        viewDwr.classList.add('hidden');
+        pdfBtnLabel.innerText = "Download FAT Certificate";
         document.getElementById('metadataHeaderTitle').innerText = "Panel & Job Specification (FAT)";
         document.getElementById('lblSerialTag').innerText = "Panel Serial Number";
         document.getElementById('lblCategory').innerText = "Panel Product Line / Category";
-      } else {
-        siteBtn.className = "py-2 rounded-lg font-industrial text-sm font-semibold flex items-center justify-center gap-2 transition-all bg-blue-600 text-white shadow-md";
-        fatBtn.className = "py-2 rounded-lg font-industrial text-sm font-semibold flex items-center justify-center gap-2 transition-all text-slate-400 hover:text-white";
+        refreshCategoryDropdown();
+      } else if (mode === 'SITE') {
+        siteBtn.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-blue-600 text-white shadow-md";
+        viewFatSite.classList.remove('hidden');
+        viewDwr.classList.add('hidden');
+        pdfBtnLabel.innerText = "Download Commissioning PDF";
         document.getElementById('metadataHeaderTitle').innerText = "Site & Commissioning Specification";
         document.getElementById('lblSerialTag').innerText = "Equipment / Field Tag No";
         document.getElementById('lblCategory').innerText = "Site Service Protocol Package";
+        refreshCategoryDropdown();
+      } else if (mode === 'DWR') {
+        dwrBtn.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-emerald-500 text-black shadow-md";
+        viewFatSite.classList.add('hidden');
+        viewDwr.classList.remove('hidden');
+        pdfBtnLabel.innerText = "Download Daily Report (PDF)";
+        initDwrCanvas();
       }
-
-      refreshCategoryDropdown();
     }
 
-    // Category Dropdown Refresh
+    // =========================================================================
+    // 2. DAILY WORK REPORT (DWR) LOGIC & PERSISTENCE
+    // =========================================================================
+    function initDwrModule() {
+      // 1. Load preserved Day 1 Project profile from localStorage
+      const savedProfile = localStorage.getItem('aryavarta_dwr_profile');
+      if (savedProfile) {
+        const p = JSON.parse(savedProfile);
+        document.getElementById('dwrCustomer').value = p.customer || '';
+        document.getElementById('dwrProjectNo').value = p.projectNo || '';
+        document.getElementById('dwrSiteIncharge').value = p.siteIncharge || '';
+        document.getElementById('dwrLocation').value = p.location || '';
+        document.getElementById('dwrScope').value = p.scope || '';
+      }
+      lockDwrProfile(true);
+
+      // 2. Load stored days list or initialize Day 1
+      const storedDays = localStorage.getItem('aryavarta_dwr_days');
+      if (storedDays) {
+        dwrDaysList = JSON.parse(storedDays);
+      } else {
+        dwrDaysList = [createBlankDay(1, new Date().toISOString().split('T')[0])];
+      }
+
+      renderDwrDaysNav();
+      loadDwrDayIntoForm(0);
+    }
+
+    function createBlankDay(dayNum, dateStr) {
+      return {
+        dayNumber: dayNum,
+        pageNo: `Page ${dayNum}`,
+        date: dateStr,
+        isSafe: "YES",
+        unsafeReason: "",
+        mainActivities: "",
+        clientIssue: "",
+        clientIssueFix: "",
+        clientHrs: "0",
+        customerIssue: "",
+        customerIssueFix: "",
+        customerHrs: "0",
+        docChanges: "None",
+        engName: "",
+        engSigData: null,
+        inchargeName: "",
+        inchargeSigData: null
+      };
+    }
+
+    function lockDwrProfile(shouldLock) {
+      isDwrProfileLocked = shouldLock;
+      const fields = ['dwrCustomer', 'dwrProjectNo', 'dwrSiteIncharge', 'dwrLocation', 'dwrScope'];
+      fields.forEach(f => {
+        document.getElementById(f).disabled = shouldLock;
+      });
+      document.getElementById('lblDwrLock').innerText = shouldLock ? "Unlock to Edit" : "Lock Profile";
+    }
+
+    function toggleDwrProjectLock() {
+      if (isDwrProfileLocked) {
+        lockDwrProfile(false);
+      } else {
+        // Save current values to localStorage
+        const profile = {
+          customer: document.getElementById('dwrCustomer').value.trim(),
+          projectNo: document.getElementById('dwrProjectNo').value.trim(),
+          siteIncharge: document.getElementById('dwrSiteIncharge').value.trim(),
+          location: document.getElementById('dwrLocation').value.trim(),
+          scope: document.getElementById('dwrScope').value.trim()
+        };
+        localStorage.setItem('aryavarta_dwr_profile', JSON.stringify(profile));
+        lockDwrProfile(true);
+        playAudioTone(880, 0.1);
+      }
+    }
+
+    function renderDwrDaysNav() {
+      const nav = document.getElementById('dwrDaysNav');
+      nav.innerHTML = '';
+      dwrDaysList.forEach((day, idx) => {
+        const btn = document.createElement('button');
+        const isActive = idx === activeDwrDayIndex;
+        btn.className = `px-3 py-1.5 rounded-lg text-xs font-mono-code font-bold transition-all ${
+          isActive ? 'bg-emerald-500 text-black shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+        }`;
+        btn.innerText = `Day ${day.dayNumber}: ${day.date}`;
+        btn.onclick = () => {
+          saveCurrentDwrDay(false); // auto-save current before switching
+          loadDwrDayIntoForm(idx);
+        };
+        nav.appendChild(btn);
+      });
+    }
+
+    function loadDwrDayIntoForm(idx) {
+      activeDwrDayIndex = idx;
+      renderDwrDaysNav();
+      const day = dwrDaysList[idx];
+
+      document.getElementById('lblActiveDayTitle').innerText = `DAY LOG: ${day.date} (${day.pageNo})`;
+      document.getElementById('dwrDailyDate').value = day.date;
+      document.getElementById('dwrPageNo').value = day.pageNo;
+
+      // Safe radio
+      const isYes = day.isSafe === "YES";
+      const radios = document.getElementsByName('dwrSafeEnv');
+      radios[0].checked = isYes;
+      radios[1].checked = !isYes;
+      toggleDwrUnsafeBox(!isYes);
+      document.getElementById('dwrUnsafeReason').value = day.unsafeReason || '';
+
+      document.getElementById('dwrMainActivities').value = day.mainActivities || '';
+      document.getElementById('dwrClientIssue').value = day.clientIssue || '';
+      document.getElementById('dwrClientFix').value = day.clientIssueFix || '';
+      document.getElementById('dwrClientHrs').value = day.clientHrs || '0';
+
+      document.getElementById('dwrCustomerIssue').value = day.customerIssue || '';
+      document.getElementById('dwrCustomerFix').value = day.customerIssueFix || '';
+      document.getElementById('dwrCustomerHrs').value = day.customerHrs || '0';
+
+      document.getElementById('dwrDocChanges').value = day.docChanges || 'None';
+      document.getElementById('dwrEngName').value = day.engName || '';
+      document.getElementById('dwrInchargeName').value = day.inchargeName || '';
+
+      // Clear signature canvases
+      if (dwrEngSigPad) dwrEngSigPad.clear();
+      if (dwrInchargeSigPad) dwrInchargeSigPad.clear();
+      initDwrCanvas();
+    }
+
+    function toggleDwrUnsafeBox(show) {
+      const box = document.getElementById('dwrUnsafeReasonBox');
+      if (show) box.classList.remove('hidden');
+      else box.classList.add('hidden');
+    }
+
+    function onDwrDateChanged(newDate) {
+      dwrDaysList[activeDwrDayIndex].date = newDate;
+      document.getElementById('lblActiveDayTitle').innerText = `DAY LOG: ${newDate} (${dwrDaysList[activeDwrDayIndex].pageNo})`;
+      renderDwrDaysNav();
+    }
+
+    function addNewDwrDay() {
+      saveCurrentDwrDay(false);
+      const nextNum = dwrDaysList.length + 1;
+      const today = new Date().toISOString().split('T')[0];
+      const newDay = createBlankDay(nextNum, today);
+      dwrDaysList.push(newDay);
+      localStorage.setItem('aryavarta_dwr_days', JSON.stringify(dwrDaysList));
+      loadDwrDayIntoForm(dwrDaysList.length - 1);
+      playAudioTone(880, 0.15);
+    }
+
+    function saveCurrentDwrDay(showAlert = true) {
+      const day = dwrDaysList[activeDwrDayIndex];
+      if (!day) return;
+
+      day.date = document.getElementById('dwrDailyDate').value || new Date().toISOString().split('T')[0];
+      day.pageNo = document.getElementById('dwrPageNo').value.trim() || `Page ${day.dayNumber}`;
+      
+      const safeVal = document.querySelector('input[name="dwrSafeEnv"]:checked')?.value || "YES";
+      day.isSafe = safeVal;
+      day.unsafeReason = document.getElementById('dwrUnsafeReason').value.trim();
+
+      day.mainActivities = document.getElementById('dwrMainActivities').value.trim();
+      day.clientIssue = document.getElementById('dwrClientIssue').value.trim();
+      day.clientIssueFix = document.getElementById('dwrClientFix').value.trim();
+      day.clientHrs = document.getElementById('dwrClientHrs').value.trim() || '0';
+
+      day.customerIssue = document.getElementById('dwrCustomerIssue').value.trim();
+      day.customerIssueFix = document.getElementById('dwrCustomerFix').value.trim();
+      day.customerHrs = document.getElementById('dwrCustomerHrs').value.trim() || '0';
+
+      day.docChanges = document.getElementById('dwrDocChanges').value.trim() || 'None';
+      day.engName = document.getElementById('dwrEngName').value.trim();
+      day.inchargeName = document.getElementById('dwrInchargeName').value.trim();
+
+      if (dwrEngSigPad && !dwrEngSigPad.isEmpty()) {
+        day.engSigData = dwrEngSigPad.toDataURL();
+      }
+      if (dwrInchargeSigPad && !dwrInchargeSigPad.isEmpty()) {
+        day.inchargeSigData = dwrInchargeSigPad.toDataURL();
+      }
+
+      // Also ensure profile is saved
+      const profile = {
+        customer: document.getElementById('dwrCustomer').value.trim(),
+        projectNo: document.getElementById('dwrProjectNo').value.trim(),
+        siteIncharge: document.getElementById('dwrSiteIncharge').value.trim(),
+        location: document.getElementById('dwrLocation').value.trim(),
+        scope: document.getElementById('dwrScope').value.trim()
+      };
+      localStorage.setItem('aryavarta_dwr_profile', JSON.stringify(profile));
+      localStorage.setItem('aryavarta_dwr_days', JSON.stringify(dwrDaysList));
+
+      if (showAlert) {
+        playAudioTone(880, 0.2);
+        alert(`✓ Daily Report for Day ${day.dayNumber} (${day.date}) saved successfully!`);
+      }
+    }
+
+    function initDwrCanvas() {
+      setTimeout(() => {
+        const c1 = document.getElementById('canvasDwrEngSig');
+        const c2 = document.getElementById('canvasDwrInchargeSig');
+        if (!c1 || !c2) return;
+
+        function resizeCanvas(canvas) {
+          const ratio = Math.max(window.devicePixelRatio || 1, 1);
+          canvas.width = canvas.offsetWidth * ratio;
+          canvas.height = canvas.offsetHeight * ratio;
+          canvas.getContext("2d").scale(ratio, ratio);
+        }
+
+        resizeCanvas(c1);
+        resizeCanvas(c2);
+
+        if (!dwrEngSigPad) dwrEngSigPad = new SignaturePad(c1, { penColor: '#38bdf8' });
+        if (!dwrInchargeSigPad) dwrInchargeSigPad = new SignaturePad(c2, { penColor: '#34d399' });
+      }, 100);
+    }
+
+    function clearDwrSig(type) {
+      if (type === 'eng' && dwrEngSigPad) dwrEngSigPad.clear();
+      if (type === 'incharge' && dwrInchargeSigPad) dwrInchargeSigPad.clear();
+    }
+
+    // Voice dictation into Main Activities textarea
+    function dictateActivitiesIntoBox() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        alert("Speech dictation not supported on this browser.");
+        return;
+      }
+      const rec = new SpeechRec();
+      rec.lang = I18N[currentLanguage].voiceCode;
+      rec.start();
+      playAudioTone(660, 0.1);
+
+      rec.onresult = (e) => {
+        const text = e.results[0][0].transcript;
+        const box = document.getElementById('dwrMainActivities');
+        box.value = (box.value ? box.value + "\n• " : "• ") + text;
+        playAudioTone(880, 0.1);
+      };
+    }
+
+    // =========================================================================
+    // 3. BRANDED PDF GENERATOR: CONSOLIDATED DWR (1 SHEET PER DAY DOSSIER)
+    // =========================================================================
+    async function generateConsolidatedDwrPDF() {
+      saveCurrentDwrDay(false); // save pending changes
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      const customer = document.getElementById('dwrCustomer').value.trim() || "Client Plant";
+      const projectNo = document.getElementById('dwrProjectNo').value.trim() || "PRJ-AA";
+      const siteIncharge = document.getElementById('dwrSiteIncharge').value.trim() || "Mr. Sumit";
+      const location = document.getElementById('dwrLocation').value.trim() || "Site Location";
+      const scope = document.getElementById('dwrScope').value.trim() || "Electrical & Instrumentation Site Services";
+
+      // Render each day as an individual sheet (1 sheet per day)
+      for (let i = 0; i < dwrDaysList.length; i++) {
+        if (i > 0) doc.addPage();
+        const day = dwrDaysList[i];
+
+        // 1. Top Company Header Box
+        doc.setFillColor(255, 255, 255);
+        doc.rect(0, 0, 210, 32, 'F');
+
+        // Draw Official Aryavarta Emblem (Red Triangle with Sun & Winding River)
+        // Red Triangle
+        doc.setFillColor(220, 38, 38);
+        doc.triangle(24, 6, 12, 28, 36, 28, 'F');
+        // Sun rays (White)
+        doc.setDrawColor(255, 255, 255);
+        doc.setLineWidth(0.4);
+        doc.line(24, 18, 24, 11);
+        doc.line(21, 20, 16, 15);
+        doc.line(27, 20, 32, 15);
+        doc.setFillColor(255, 255, 255);
+        doc.circle(24, 20, 1.8, 'F');
+        // River / path (Cyan Blue)
+        doc.setFillColor(2, 132, 199);
+        doc.triangle(24, 20, 36, 28, 26, 28, 'F');
+
+        // Company Typography
+        doc.setTextColor(220, 38, 38);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text("ARYAVARTA AUTOMATION", 40, 15);
+
+        doc.setTextColor(2, 132, 199);
+        doc.setFontSize(7.5);
+        doc.setFont("helvetica", "bold");
+        doc.text("SYNONYMS FOR EXCELLENCE", 40, 20);
+
+        doc.setTextColor(100, 116, 139);
+        doc.setFontSize(7);
+        doc.setFont("helvetica", "normal");
+        doc.text("Chikhali, Pune - 411062 | www.aryavartaautomation.in", 40, 25);
+
+        // Document Main Title Box
+        doc.setFillColor(11, 25, 44);
+        doc.rect(130, 8, 70, 18, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text("DAILY REPORT", 143, 17);
+        doc.setFontSize(7.5);
+        doc.setTextColor(245, 158, 11);
+        doc.text("(1 sheet per day)", 150, 22);
+
+        // 2. Metadata Grid Table (Matching the Excel Template)
+        const metaGrid = [
+          [
+            { content: "Customer : (Site Name)", styles: { fontStyle: 'bold', fillColor: [255, 255, 0] } },
+            { content: customer, colSpan: 2 },
+            { content: "Project No:", styles: { fontStyle: 'bold', fillColor: [255, 255, 0] } },
+            { content: projectNo },
+            { content: "Page No:", styles: { fontStyle: 'bold' } },
+            { content: day.pageNo }
+          ],
+          [
+            { content: "Site In-charge:", styles: { fontStyle: 'bold' } },
+            { content: siteIncharge, colSpan: 2 },
+            { content: "Location:", styles: { fontStyle: 'bold', fillColor: [255, 255, 0] } },
+            { content: location },
+            { content: "Date:", styles: { fontStyle: 'bold', fillColor: [255, 255, 0] } },
+            { content: day.date }
+          ],
+          [
+            { content: "Scope:", styles: { fontStyle: 'bold' } },
+            { content: scope, colSpan: 5 }
+          ]
+        ];
+
+        doc.autoTable({
+          startY: 34,
+          theme: 'grid',
+          body: metaGrid,
+          styles: { fontSize: 7.5, cellPadding: 2, textColor: [15, 23, 42], lineColor: [15, 23, 42], lineWidth: 0.2 },
+          columnStyles: {
+            0: { cellWidth: 32 }, 1: { cellWidth: 35 }, 2: { cellWidth: 25 },
+            3: { cellWidth: 25 }, 4: { cellWidth: 28 }, 5: { cellWidth: 35 }
+          }
+        });
+
+        // 3. Safety Question Row
+        const isSafeYes = day.isSafe === "YES";
+        const safetyContent = isSafeYes
+          ? "[ X ] Yes     [   ] No     Working environment verified safe for operations."
+          : `[   ] Yes     [ X ] No     SPECIFIED HAZARD: ${day.unsafeReason || 'Not specified'}`;
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY + 2,
+          theme: 'grid',
+          head: [['Is the Working Environment safe?']],
+          body: [[safetyContent]],
+          headStyles: { fillColor: [226, 232, 240], textColor: [15, 23, 42], fontSize: 8, fontStyle: 'bold' },
+          styles: { fontSize: 7.5, cellPadding: 2.5, textColor: isSafeYes ? [15, 23, 42] : [220, 38, 38] }
+        });
+
+        // 4. Main Activities Box
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY + 2,
+          theme: 'grid',
+          head: [['Main Activities performed during the day']],
+          body: [[day.mainActivities || "No logged activities for this date."]],
+          headStyles: { fillColor: [226, 232, 240], textColor: [15, 23, 42], fontSize: 8, fontStyle: 'bold' },
+          styles: { fontSize: 7.5, minCellHeight: 35, cellPadding: 3, textColor: [15, 23, 42] }
+        });
+
+        // 5. Issues & Delays Table
+        const issuesRows = [
+          [
+            { content: "Issue within Client Company's scope of Work", styles: { fontStyle: 'bold' } },
+            { content: "How is the issue being fixed?", styles: { fontStyle: 'bold' } },
+            { content: "Approx hrs lost", styles: { fontStyle: 'bold', halign: 'center' } }
+          ],
+          [
+            day.clientIssue || "None",
+            day.clientIssueFix || "N/A",
+            { content: `${day.clientHrs || 0} hrs`, styles: { halign: 'center', fontStyle: 'bold' } }
+          ],
+          [
+            { content: "Issue within Customer's scope of Work", styles: { fontStyle: 'bold' } },
+            { content: day.customerIssueFix || "N/A" },
+            { content: `${day.customerHrs || 0} hrs`, styles: { halign: 'center', fontStyle: 'bold' } }
+          ]
+        ];
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY + 2,
+          theme: 'grid',
+          body: issuesRows,
+          styles: { fontSize: 7.5, cellPadding: 2.2, textColor: [15, 23, 42] },
+          columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 80 }, 2: { cellWidth: 30 } }
+        });
+
+        // 6. Documentation Updates
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY + 2,
+          theme: 'grid',
+          head: [['Any change that requires documentation update (P&ID, FDS, mass balance, equipment list, wiring diagrams etc.)']],
+          body: [[day.docChanges || "- None"]],
+          headStyles: { fillColor: [226, 232, 240], textColor: [15, 23, 42], fontSize: 7.5, fontStyle: 'bold' },
+          styles: { fontSize: 7.5, cellPadding: 2.5, textColor: [15, 23, 42] }
+        });
+
+        // 7. Signatures Table (Exact match to the Excel bottom layout)
+        const sigY = doc.lastAutoTable.finalY + 5;
+        doc.rect(14, sigY, 182, 24);
+        doc.line(14, sigY + 6, 196, sigY + 6);
+        doc.line(60, sigY, 60, sigY + 24);
+        doc.line(105, sigY, 105, sigY + 24);
+        doc.line(150, sigY, 150, sigY + 24);
+
+        doc.setFontSize(7.5);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(15, 23, 42);
+        doc.text("Client Engineer", 20, sigY + 4.5);
+        doc.text("Signature", 72, sigY + 4.5);
+        doc.text("Client Site Incharge", 112, sigY + 4.5);
+        doc.text("Signature", 163, sigY + 4.5);
+
+        doc.setFont("helvetica", "normal");
+        doc.text(day.engName || "Authorized Eng", 16, sigY + 14);
+        doc.text(day.inchargeName || siteIncharge, 107, sigY + 14);
+
+        // Embed signature images if present
+        if (day.engSigData) {
+          doc.addImage(day.engSigData, 'PNG', 62, sigY + 7, 40, 16);
+        }
+        if (day.inchargeSigData) {
+          doc.addImage(day.inchargeSigData, 'PNG', 152, sigY + 7, 40, 16);
+        }
+      }
+
+      // Save the multi-sheet PDF
+      doc.save(`Aryavarta_Daily_Report_${customer}_${projectNo}.pdf`);
+    }
+
+    // Context-sensitive PDF router
+    function handlePrimaryPdfDownload() {
+      if (currentAppMode === 'DWR') {
+        generateConsolidatedDwrPDF();
+      } else {
+        generateOfficialInspectionPDF();
+      }
+    }
+
+    // =========================================================================
+    // 4. CHECKLIST UI & VOICE CO-PILOT ENGINE
+    // =========================================================================
     function refreshCategoryDropdown() {
       const templates = getStoredTemplates();
-      const currentModeTemplates = templates[currentServiceMode];
+      const currentModeTemplates = templates[currentAppMode];
       const select = document.getElementById('categorySelector');
+      if (!select || !currentModeTemplates) return;
       select.innerHTML = '';
 
       const keys = Object.keys(currentModeTemplates);
-      keys.forEach((key, index) => {
+      keys.forEach(key => {
         const opt = document.createElement('option');
         opt.value = key;
         opt.innerText = currentModeTemplates[key].name;
         select.appendChild(opt);
       });
 
-      if (keys.length > 0) {
-        onCategoryChanged(keys[0]);
-      }
+      if (keys.length > 0) onCategoryChanged(keys[0]);
     }
 
     function onCategoryChanged(catKey) {
       currentCategoryKey = catKey;
       const templates = getStoredTemplates();
-      const cat = templates[currentServiceMode][catKey];
+      const cat = templates[currentAppMode][catKey];
       if (!cat) return;
 
-      // Initialize checklist state
       inspectionData = cat.steps.map(s => ({
         ...s,
         measuredValue: null,
@@ -572,7 +1178,6 @@
       if (voiceInspector) voiceInspector.stop();
     }
 
-    // Render Checklist UI
     function renderChecklistUI() {
       const container = document.getElementById('checklistContainer');
       container.innerHTML = '';
@@ -599,7 +1204,7 @@
           </div>
 
           <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-            <input type="text" value="${item.measuredValue || ''}" placeholder="Spoken / Input Value"
+            <input type="text" value="${item.measuredValue || ''}" placeholder="Spoken / Input"
               onchange="updateManualValue(${index}, this.value)"
               class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono-code w-36 text-center focus:border-amber-500 focus:outline-none">
             
@@ -634,9 +1239,7 @@
 
     function setTestStatus(index, status) {
       inspectionData[index].status = status;
-      if (!inspectionData[index].measuredValue) {
-        inspectionData[index].measuredValue = status;
-      }
+      if (!inspectionData[index].measuredValue) inspectionData[index].measuredValue = status;
       renderChecklistUI();
       updateVerdictBadges();
     }
@@ -646,23 +1249,9 @@
       const failed = inspectionData.filter(i => i.status === 'FAILED').length;
       document.getElementById('passedCountBadge').innerText = `${passed} PASSED`;
       document.getElementById('failedCountBadge').innerText = `${failed} FAILED`;
-      
-      const statusInd = document.getElementById('bottomStatusIndicator');
-      if (failed > 0) {
-        statusInd.innerText = `● Verification Incomplete: ${failed} Failed Points Detected`;
-        statusInd.className = "text-xs font-mono-code text-rose-400";
-      } else if (passed === inspectionData.length && inspectionData.length > 0) {
-        statusInd.innerText = `✓ 100% Steps Verified - Ready for Sign-Off & PDF Export`;
-        statusInd.className = "text-xs font-mono-code text-emerald-400";
-      } else {
-        statusInd.innerText = `● In Progress: ${passed}/${inspectionData.length} Completed`;
-        statusInd.className = "text-xs font-mono-code text-amber-400";
-      }
     }
 
-    // =========================================================================
-    // 2. VOICE ENGINE: HANDS-FREE TWO-WAY LOOP WITH INFINITE REPEAT UNTIL ANSWER
-    // =========================================================================
+    // Voice Engine
     class VoiceInspectorEngine {
       constructor() {
         this.synth = window.speechSynthesis;
@@ -682,17 +1271,16 @@
 
       start() {
         if (!this.recognition) {
-          alert("Speech recognition is not supported on this browser. Please use Google Chrome on Android or Desktop.");
+          alert("Speech recognition is not supported on this browser. Please use Chrome on Android/Desktop.");
           return;
         }
-
         this.isActive = true;
         this.currentIndex = 0;
         this.setupRecognition();
         this.askCurrentStep();
 
         document.getElementById('voiceControlBtnText').innerText = "STOP VOICE INSPECTION";
-        document.getElementById('voiceControlBtn').className = "w-full md:w-auto px-5 py-2.5 rounded-xl font-industrial font-bold text-sm flex items-center justify-center gap-2 bg-rose-600 text-white shadow-lg transition-all";
+        document.getElementById('voiceControlBtn').className = "w-full md:w-auto px-5 py-2.5 rounded-xl font-industrial font-bold text-sm flex items-center justify-center gap-2 bg-rose-600 text-white shadow-lg";
         playAudioTone(600, 0.15);
       }
 
@@ -703,8 +1291,7 @@
         if (this.recognition) this.recognition.stop();
 
         document.getElementById('voiceControlBtnText').innerText = "START VOICE INSPECTION";
-        document.getElementById('voiceControlBtn').className = "w-full md:w-auto px-5 py-2.5 rounded-xl font-industrial font-bold text-sm flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black hover:brightness-110 shadow-lg transition-all";
-        document.getElementById('voiceLiveTranscript').innerText = "Session stopped.";
+        document.getElementById('voiceControlBtn').className = "w-full md:w-auto px-5 py-2.5 rounded-xl font-industrial font-bold text-sm flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black hover:brightness-110 shadow-lg";
       }
 
       restartWithLanguage(lang) {
@@ -728,9 +1315,7 @@
         clearTimeout(this.repeatTimer);
 
         if (this.currentIndex >= inspectionData.length) {
-          this.speak(I18N[currentLanguage].completed, () => {
-            this.stop();
-          });
+          this.speak(I18N[currentLanguage].completed, () => this.stop());
           return;
         }
 
@@ -752,16 +1337,12 @@
         clearTimeout(this.repeatTimer);
         if (!this.isActive) return;
 
-        // Schedule repetition after silenceTimeoutSec if user doesn't answer
         this.repeatTimer = setTimeout(() => {
           if (!this.isActive) return;
-          playAudioTone(440, 0.2); // Notice beep
+          playAudioTone(440, 0.2);
           const langCfg = I18N[currentLanguage];
           const reminder = `${langCfg.repeatPrompt} ${langCfg.stepPrefix} ${this.currentIndex + 1}: ${inspectionData[this.currentIndex].title}`;
-          
-          this.speak(reminder, () => {
-            this.armRepeatTimer(); // Arm again until answered
-          });
+          this.speak(reminder, () => this.armRepeatTimer());
         }, this.silenceTimeoutSec * 1000);
       }
 
@@ -769,9 +1350,7 @@
         try {
           this.recognition.lang = I18N[currentLanguage].voiceCode;
           this.recognition.start();
-        } catch(e) {
-          // If already running, ignore
-        }
+        } catch(e) {}
       }
 
       setupRecognition() {
@@ -780,11 +1359,6 @@
           document.getElementById('voiceLiveTranscript').innerText = `"${transcript}"`;
           this.handleSpokenInput(transcript);
         };
-
-        this.recognition.onerror = (err) => {
-          console.warn("Recognition error:", err.error);
-        };
-
         this.recognition.onend = () => {
           if (this.isActive) {
             try { this.recognition.start(); } catch(e) {}
@@ -796,43 +1370,33 @@
         const text = rawText.toLowerCase();
         const langCfg = I18N[currentLanguage];
 
-        // 1. Check for Repeat request
-        if (text.includes('repeat') || text.includes('फिर से') || text.includes('दोहराओ') || text.includes('पुन्हा') || text.includes('परत')) {
+        if (text.includes('repeat') || text.includes('फिर से') || text.includes('पुन्हा')) {
           clearTimeout(this.repeatTimer);
           playAudioTone(520, 0.1);
           this.askCurrentStep();
           return;
         }
 
-        // 2. Check for Valid Verdict / Measurement
         let recordedValue = rawText;
-        let isPass = false;
+        let isPass = true;
         let isFail = false;
 
-        if (text.includes('pass') || text.includes('ok') || text.includes('done') || text.includes('verified') || 
-            text.includes('पास') || text.includes('ठीक') || text.includes('झाले') || text.includes('बरोबर')) {
-          isPass = true;
+        if (text.includes('pass') || text.includes('ok') || text.includes('पास') || text.includes('बरोबर')) {
           recordedValue = langCfg.pass;
-        } else if (text.includes('fail') || text.includes('fault') || text.includes('फेल') || text.includes('खराब') || text.includes('चूक')) {
+        } else if (text.includes('fail') || text.includes('फेल') || text.includes('चूक')) {
+          isPass = false;
           isFail = true;
           recordedValue = langCfg.fail;
-        } else {
-          // Multimeter numeric reading spoken (e.g., "415", "24.1", "0.8")
-          // If numbers or words are present, consider it a valid logged reading!
-          isPass = true;
         }
 
-        // User spoke a valid answer! Clear repeating timer
         clearTimeout(this.repeatTimer);
-        playAudioTone(880, 0.15); // Success chime
+        playAudioTone(880, 0.15);
 
-        // Update checklist model
         inspectionData[this.currentIndex].measuredValue = recordedValue;
         inspectionData[this.currentIndex].status = isFail ? 'FAILED' : 'PASSED';
         renderChecklistUI();
         updateVerdictBadges();
 
-        // Audio confirmation and advance to next test
         const confirmation = `${langCfg.logged} ${recordedValue}. ${langCfg.movingNext}`;
         this.speak(confirmation, () => {
           this.currentIndex++;
@@ -844,22 +1408,17 @@
     let voiceInspector = null;
     function toggleVoiceSession() {
       if (!voiceInspector) voiceInspector = new VoiceInspectorEngine();
-      if (voiceInspector.isActive) {
-        voiceInspector.stop();
-      } else {
-        voiceInspector.start();
-      }
+      if (voiceInspector.isActive) voiceInspector.stop();
+      else voiceInspector.start();
     }
 
-    // Audio synthesizer for shop floor audible feedback
     function playAudioTone(freq, duration) {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'sine';
         osc.frequency.value = freq;
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
@@ -869,87 +1428,7 @@
     }
 
     // =========================================================================
-    // 3. PHOTO EVIDENCE WITH AUTOMATIC CANVAS WATERMARKING
-    // =========================================================================
-    function handlePhotoCapture(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          const maxDim = 1200;
-          let w = img.width;
-          let h = img.height;
-          if (w > maxDim || h > maxDim) {
-            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
-            else { w = Math.round((w * maxDim) / h); h = maxDim; }
-          }
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-
-          // Burn indelible industrial watermark banner
-          const barHeight = Math.max(50, Math.round(h * 0.09));
-          ctx.fillStyle = "rgba(6, 13, 23, 0.85)";
-          ctx.fillRect(0, h - barHeight, w, barHeight);
-
-          ctx.fillStyle = "#f59e0b";
-          ctx.font = `bold ${Math.round(barHeight * 0.32)}px 'Chakra Petch', sans-serif`;
-          ctx.fillText("ARYAVARTA AUTOMATION - QC VERIFIED", 15, h - barHeight + Math.round(barHeight * 0.42));
-
-          const serial = document.getElementById('metaSerialTag').value.trim() || 'PANEL-QC';
-          const eng = document.getElementById('metaEngineer').value.trim() || 'Engineer';
-          const stamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-
-          ctx.fillStyle = "#e2e8f0";
-          ctx.font = `${Math.round(barHeight * 0.26)}px 'JetBrains Mono', monospace`;
-          ctx.fillText(`SN: ${serial} | ENG: ${eng} | PUNE | ${stamp}`, 15, h - barHeight + Math.round(barHeight * 0.82));
-
-          const watermarkedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          photosList.push(watermarkedDataUrl);
-          renderPhotosGrid();
-        };
-        img.src = event.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function renderPhotosGrid() {
-      const grid = document.getElementById('photosGrid');
-      grid.innerHTML = '';
-      if (photosList.length === 0) {
-        grid.innerHTML = `
-          <div class="col-span-full text-center py-8 border-2 border-dashed border-slate-800 rounded-xl text-slate-500 text-xs">
-            No inspection photos captured yet. Tap "Capture Photo" to record evidence.
-          </div>`;
-        return;
-      }
-
-      photosList.forEach((src, idx) => {
-        const item = document.createElement('div');
-        item.className = "relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950 group";
-        item.innerHTML = `
-          <img src="${src}" class="w-full h-44 object-cover">
-          <button onclick="deletePhoto(${idx})" class="absolute top-2 right-2 bg-rose-600/80 hover:bg-rose-600 text-white p-1.5 rounded-lg text-xs">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
-          </button>
-        `;
-        grid.appendChild(item);
-      });
-      lucide.createIcons();
-    }
-
-    function deletePhoto(index) {
-      photosList.splice(index, 1);
-      renderPhotosGrid();
-    }
-
-    // =========================================================================
-    // 4. SIGNATURE PADS
+    // 5. SIGNATURES & PHOTO WATERMARKING
     // =========================================================================
     function initSignatures() {
       const c1 = document.getElementById('canvasEngineerSig');
@@ -974,29 +1453,87 @@
       if (type === 'client' && clientSigPad) clientSigPad.clear();
     }
 
+    function handlePhotoCapture(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 1200;
+          let w = img.width, h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          const barHeight = Math.max(50, Math.round(h * 0.09));
+          ctx.fillStyle = "rgba(7, 14, 26, 0.88)";
+          ctx.fillRect(0, h - barHeight, w, barHeight);
+
+          ctx.fillStyle = "#f59e0b";
+          ctx.font = `bold ${Math.round(barHeight * 0.32)}px 'Chakra Petch', sans-serif`;
+          ctx.fillText("ARYAVARTA AUTOMATION - QC VERIFIED", 15, h - barHeight + Math.round(barHeight * 0.42));
+
+          const serial = document.getElementById('metaSerialTag').value.trim() || 'PANEL-QC';
+          const eng = document.getElementById('metaEngineer').value.trim() || 'Engineer';
+          const stamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+          ctx.fillStyle = "#e2e8f0";
+          ctx.font = `${Math.round(barHeight * 0.26)}px 'JetBrains Mono', monospace`;
+          ctx.fillText(`SN: ${serial} | ENG: ${eng} | PUNE | ${stamp}`, 15, h - barHeight + Math.round(barHeight * 0.82));
+
+          photosList.push(canvas.toDataURL('image/jpeg', 0.85));
+          renderPhotosGrid();
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function renderPhotosGrid() {
+      const grid = document.getElementById('photosGrid');
+      grid.innerHTML = '';
+      if (photosList.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-8 border-2 border-dashed border-slate-800 rounded-xl text-slate-500 text-xs">No inspection photos captured yet.</div>`;
+        return;
+      }
+      photosList.forEach((src, idx) => {
+        const item = document.createElement('div');
+        item.className = "relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950";
+        item.innerHTML = `
+          <img src="${src}" class="w-full h-44 object-cover">
+          <button onclick="photosList.splice(${idx},1); renderPhotosGrid();" class="absolute top-2 right-2 bg-rose-600 text-white p-1.5 rounded-lg text-xs">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+        `;
+        grid.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
     // =========================================================================
-    // 5. DIRECT BACKGROUND GOOGLE SHEETS CLOUD SYNC
+    // 6. SYNC TO GOOGLE SHEETS
     // =========================================================================
     async function syncInspectionToGoogleSheet() {
       const btn = document.getElementById('syncSheetBtn');
-      const origText = btn.innerHTML;
-      btn.innerHTML = `<span class="animate-spin inline-block mr-2">●</span> Syncing to Sheet...`;
+      const orig = btn.innerHTML;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-2">●</span> Syncing...`;
       btn.disabled = true;
 
       const payload = {
         timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-        serviceType: currentServiceMode,
-        category: currentCategoryKey,
-        clientName: document.getElementById('metaClient').value.trim() || 'Not Specified',
-        equipmentIdentifier: document.getElementById('metaSerialTag').value.trim() || 'N/A',
-        projectPo: document.getElementById('metaProjectPo').value.trim() || 'N/A',
-        leadEngineer: document.getElementById('metaEngineer').value.trim() || 'Aryavarta Engineer',
-        clientSignee: document.getElementById('sigClientName').value.trim() || 'N/A',
-        totalSteps: inspectionData.length,
-        passedCount: inspectionData.filter(i => i.status === 'PASSED').length,
-        failedCount: inspectionData.filter(i => i.status === 'FAILED').length,
-        overallVerdict: inspectionData.some(i => i.status === 'FAILED') ? 'FAILED' : 'ACCEPTED',
-        checklistLogs: inspectionData.map(i => ({ title: i.title, val: i.measuredValue, status: i.status }))
+        mode: currentAppMode,
+        client: currentAppMode === 'DWR' ? document.getElementById('dwrCustomer').value : document.getElementById('metaClient').value,
+        project: currentAppMode === 'DWR' ? document.getElementById('dwrProjectNo').value : document.getElementById('metaProjectPo').value,
+        details: currentAppMode === 'DWR' ? dwrDaysList : inspectionData,
+        photosCount: photosList.length
       };
 
       try {
@@ -1006,20 +1543,19 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-
         playAudioTone(880, 0.2);
-        alert("✓ Inspection record successfully transmitted and logged in Google Sheets!");
-      } catch (err) {
-        alert("Warning: Could not sync to Google Sheet. Check network connection.");
+        alert("✓ Data successfully synced to Google Sheets!");
+      } catch (e) {
+        alert("Cloud sync failed. Check connection.");
       } finally {
-        btn.innerHTML = origText;
+        btn.innerHTML = orig;
         btn.disabled = false;
         lucide.createIcons();
       }
     }
 
     // =========================================================================
-    // 6. BRANDED ARYAVARTA PDF CERTIFICATE COMPILER
+    // 7. BRANDED FAT / COMMISSIONING PDF REPORT
     // =========================================================================
     async function generateOfficialInspectionPDF() {
       const { jsPDF } = window.jspdf;
@@ -1029,148 +1565,115 @@
       const serial = document.getElementById('metaSerialTag').value.trim() || "AA-PANEL-QC";
       const po = document.getElementById('metaProjectPo').value.trim() || "PO-REF";
       const engineer = document.getElementById('metaEngineer').value.trim() || "Aryavarta Engineer";
-      const isFat = currentServiceMode === 'FAT';
-      const docTitle = isFat ? "FACTORY ACCEPTANCE TEST (FAT) CERTIFICATE" : "ELECTRICAL & INSTRUMENTATION COMMISSIONING CERTIFICATE";
+      const isFat = currentAppMode === 'FAT';
+      const docTitle = isFat ? "FACTORY ACCEPTANCE TEST (FAT) CERTIFICATE" : "E&I SITE COMMISSIONING CERTIFICATE";
 
-      // Header Banner
-      doc.setFillColor(6, 13, 23);
-      doc.rect(0, 0, 210, 36, 'F');
+      // Draw Top Official Emblem
+      doc.setFillColor(220, 38, 38);
+      doc.triangle(24, 6, 12, 28, 36, 28, 'F');
+      doc.setFillColor(2, 132, 199);
+      doc.triangle(24, 20, 36, 28, 26, 28, 'F');
 
-      doc.setTextColor(245, 158, 11);
+      doc.setTextColor(220, 38, 38);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(16);
-      doc.text("ARYAVARTA AUTOMATION", 14, 14);
+      doc.setFontSize(15);
+      doc.text("ARYAVARTA AUTOMATION", 40, 15);
 
-      doc.setTextColor(226, 232, 240);
-      doc.setFontSize(8);
-      doc.setFont("helvetica", "normal");
-      doc.text("Gat No. 1610, Dehu Alandi Road, Chikhali, Pune - 411062, Maharashtra", 14, 20);
-      doc.text("Web: www.aryavartaautomation.in | Email: aryavartapune@gmail.com | Phone: +91 9766037466", 14, 25);
-      doc.text("ISO 9001:2015 & ISO 14001:2015 Certified Manufacturing Facility", 14, 30);
-
-      doc.setTextColor(245, 158, 11);
-      doc.setFontSize(9);
-      doc.setFont("helvetica", "bold");
-      doc.text("OFFICIAL QC REPORT", 160, 14);
-      doc.setTextColor(148, 163, 184);
+      doc.setTextColor(2, 132, 199);
       doc.setFontSize(7.5);
+      doc.text("SYNONYMS FOR EXCELLENCE", 40, 20);
+
+      doc.setTextColor(100, 116, 139);
+      doc.setFontSize(7);
       doc.setFont("helvetica", "normal");
-      doc.text(`Date: ${new Date().toLocaleDateString('en-IN')}`, 160, 20);
-      doc.text(`Ref: ${serial}`, 160, 25);
+      doc.text("Chikhali, Pune - 411062 | ISO 9001:2015 & 14001:2015", 40, 25);
 
       // Certificate Title
-      doc.setTextColor(11, 25, 44);
-      doc.setFontSize(11);
+      doc.setFillColor(11, 25, 44);
+      doc.rect(14, 32, 182, 10, 'F');
+      doc.setTextColor(245, 158, 11);
+      doc.setFontSize(10.5);
       doc.setFont("helvetica", "bold");
-      doc.text(docTitle, 14, 45);
+      doc.text(docTitle, 18, 38.5);
 
-      // Metadata Table
+      // Meta Table
       const metaRows = [
         [
-          { content: "Client / Facility:", styles: { fontStyle: 'bold' } }, client,
+          { content: "Client Name:", styles: { fontStyle: 'bold' } }, client,
           { content: isFat ? "Panel Serial No:" : "Field Tag No:", styles: { fontStyle: 'bold' } }, serial
         ],
         [
-          { content: "Project / PO:", styles: { fontStyle: 'bold' } }, po,
-          { content: "Lead Engineer:", styles: { fontStyle: 'bold' } }, engineer
-        ],
-        [
-          { content: "Service Mode:", styles: { fontStyle: 'bold' } }, currentServiceMode,
-          { content: "Inspection Date:", styles: { fontStyle: 'bold' } }, new Date().toLocaleDateString('en-IN')
+          { content: "PO / Project:", styles: { fontStyle: 'bold' } }, po,
+          { content: "Testing Engineer:", styles: { fontStyle: 'bold' } }, engineer
         ]
       ];
 
       doc.autoTable({
-        startY: 48,
+        startY: 44,
         theme: 'grid',
         body: metaRows,
-        styles: { fontSize: 8, cellPadding: 2, textColor: [30, 41, 59] },
-        alternateRowStyles: { fillColor: [248, 250, 252] },
-        columnStyles: { 0: { cellWidth: 32 }, 2: { cellWidth: 35 } }
+        styles: { fontSize: 8, cellPadding: 2.2 }
       });
 
       // Checklist Table
       const tableData = inspectionData.map((item, idx) => [
-        idx + 1,
-        item.title,
-        item.standard,
-        item.measuredValue || "N/A",
-        item.status
+        idx + 1, item.title, item.standard, item.measuredValue || "N/A", item.status
       ]);
 
       doc.autoTable({
-        startY: doc.lastAutoTable.finalY + 6,
-        head: [['#', 'Test Parameter', 'Acceptance Standard', 'Spoken / Logged Reading', 'Status']],
+        startY: doc.lastAutoTable.finalY + 4,
+        head: [['#', 'Test Parameter', 'Acceptance Standard', 'Measured Value', 'Status']],
         body: tableData,
         headStyles: { fillColor: [15, 23, 42], textColor: [245, 158, 11], fontSize: 8, fontStyle: 'bold' },
-        styles: { fontSize: 7.5, cellPadding: 2.2 },
-        didParseCell: function(data) {
-          if (data.section === 'body' && data.column.index === 4) {
-            if (data.cell.raw === 'PASSED') data.cell.styles.textColor = [16, 185, 129];
-            if (data.cell.raw === 'FAILED') data.cell.styles.textColor = [239, 68, 68];
-          }
-        }
+        styles: { fontSize: 7.5, cellPadding: 2 }
       });
 
-      // Embed Watermarked Photos (If Any)
+      // Photos
       let photoY = doc.lastAutoTable.finalY + 6;
       if (photosList.length > 0) {
         if (photoY > 210) { doc.addPage(); photoY = 20; }
-        doc.setFontSize(9);
+        doc.setFontSize(8.5);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(15, 23, 42);
-        doc.text("QC Photographic Verification Records:", 14, photoY);
+        doc.text("Photographic Verification:", 14, photoY);
         photoY += 4;
-
         for (let i = 0; i < Math.min(photosList.length, 2); i++) {
-          const imgX = 14 + (i * 92);
-          doc.addImage(photosList[i], 'JPEG', imgX, photoY, 88, 48);
+          doc.addImage(photosList[i], 'JPEG', 14 + (i * 92), photoY, 88, 48);
         }
         photoY += 52;
       }
 
-      // Embed Dual Signatures
+      // Signatures
       if (photoY > 230) { doc.addPage(); photoY = 25; }
       const sigY = Math.max(photoY + 5, 235);
-
       doc.setDrawColor(203, 213, 225);
       doc.line(14, sigY, 90, sigY);
       doc.line(120, sigY, 196, sigY);
 
       if (engineerSigPad && !engineerSigPad.isEmpty()) {
-        const engData = engineerSigPad.toDataURL();
-        doc.addImage(engData, 'PNG', 14, sigY - 18, 50, 16);
+        doc.addImage(engineerSigPad.toDataURL(), 'PNG', 14, sigY - 16, 50, 14);
       }
       if (clientSigPad && !clientSigPad.isEmpty()) {
-        const cliData = clientSigPad.toDataURL();
-        doc.addImage(cliData, 'PNG', 120, sigY - 18, 50, 16);
+        doc.addImage(clientSigPad.toDataURL(), 'PNG', 120, sigY - 16, 50, 14);
       }
 
-      doc.setFontSize(8);
+      doc.setFontSize(7.5);
       doc.setFont("helvetica", "bold");
       doc.setTextColor(15, 23, 42);
-      doc.text("Aryavarta Testing Engineer Signature", 14, sigY + 4);
-      doc.text("Client / Inspector Representative Signature", 120, sigY + 4);
+      doc.text("Aryavarta Testing Engineer", 14, sigY + 4);
+      doc.text("Client / Inspector Representative", 120, sigY + 4);
 
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(7.5);
-      doc.setTextColor(100, 116, 139);
-      doc.text(`Name: ${document.getElementById('sigEngineerName').value || engineer}`, 14, sigY + 8);
-      doc.text(`Name: ${document.getElementById('sigClientName').value || 'Authorized Client In-Charge'}`, 120, sigY + 8);
-
-      // Save PDF
-      doc.save(`Aryavarta_${currentServiceMode}_${serial}_Certificate.pdf`);
+      doc.save(`Aryavarta_${currentAppMode}_${serial}_Certificate.pdf`);
     }
 
     // =========================================================================
-    // 7. CUSTOM PROTOCOL TEMPLATE MANAGER (ADD / EDIT CATEGORIES & STEPS)
+    // 8. TEMPLATE MANAGER MODAL
     // =========================================================================
     let editingCategoryKey = '';
-
     function openTemplateManagerModal() {
       const modal = document.getElementById('templateManagerModal');
       const templates = getStoredTemplates();
-      const currentModeTemplates = templates[currentServiceMode];
+      const currentModeTemplates = templates[currentAppMode];
       const select = document.getElementById('modalCategorySelect');
       select.innerHTML = '';
 
@@ -1192,7 +1695,7 @@
     function loadCategoryForEditing(catKey) {
       editingCategoryKey = catKey;
       const templates = getStoredTemplates();
-      const cat = templates[currentServiceMode][catKey];
+      const cat = templates[currentAppMode][catKey];
       if (!cat) return;
 
       const list = document.getElementById('modalStepsList');
@@ -1204,67 +1707,44 @@
         item.innerHTML = `
           <div class="flex items-center justify-between gap-2">
             <span class="text-xs font-mono-code font-bold text-amber-400">Step #${idx + 1}</span>
-            <button onclick="removeStepFromEditingCategory(${idx})" class="text-xs text-rose-400 hover:text-rose-300">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i> Delete
-            </button>
+            <button onclick="removeStepFromEditingCategory(${idx})" class="text-xs text-rose-400">Delete</button>
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${st.title}" placeholder="Step Title" id="stepTitle_${idx}"
-              class="bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-white">
-            <input type="text" value="${st.standard}" placeholder="Acceptance Standard" id="stepStd_${idx}"
-              class="bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-white">
+            <input type="text" value="${st.title}" placeholder="Step Title" id="stepTitle_${idx}" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+            <input type="text" value="${st.standard}" placeholder="Standard" id="stepStd_${idx}" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
           </div>
-          <textarea placeholder="Audio Speech Prompt for Co-Pilot" id="stepPrompt_${idx}"
-            class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-white h-14">${st.prompt}</textarea>
+          <textarea id="stepPrompt_${idx}" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white h-12">${st.prompt}</textarea>
         `;
         list.appendChild(item);
       });
-
       lucide.createIcons();
     }
 
     function promptAddNewCategory() {
-      const name = prompt("Enter the name of the new Panel Category or Service Package:\n(e.g., 'Solar Inverter Panel' or 'RO Plant Automation')");
+      const name = prompt("Enter new Category name:");
       if (!name || !name.trim()) return;
-
       const key = "CUSTOM_" + Date.now();
       const templates = getStoredTemplates();
-      templates[currentServiceMode][key] = {
+      templates[currentAppMode][key] = {
         name: name.trim(),
-        steps: [
-          { id: "c1", title: "Visual & Earthing Inspection", prompt: "Inspect overall panel fabrication and earth busbar tightness.", standard: "< 1.0 Ohm", unit: "Ohm" }
-        ]
+        steps: [{ id: "c1", title: "Visual Inspection", prompt: "Inspect panel wiring and earth continuity.", standard: "OK", unit: "Status" }]
       };
       saveTemplates(templates);
       openTemplateManagerModal();
-      document.getElementById('modalCategorySelect').value = key;
-      loadCategoryForEditing(key);
     }
 
     function addNewStepToCurrentCategory() {
       const templates = getStoredTemplates();
-      const cat = templates[currentServiceMode][editingCategoryKey];
-      if (!cat) return;
-
-      cat.steps.push({
-        id: "step_" + Date.now(),
-        title: "New Testing Step",
-        prompt: "Check voltage or component status.",
-        standard: "Normal",
-        unit: "V/Status"
-      });
-
+      const cat = templates[currentAppMode][editingCategoryKey];
+      cat.steps.push({ id: "step_" + Date.now(), title: "New Step", prompt: "Verify component status.", standard: "Normal", unit: "Status" });
       saveTemplates(templates);
       loadCategoryForEditing(editingCategoryKey);
     }
 
     function removeStepFromEditingCategory(idx) {
       const templates = getStoredTemplates();
-      const cat = templates[currentServiceMode][editingCategoryKey];
-      if (!cat || cat.steps.length <= 1) {
-        alert("Each category must have at least one testing step.");
-        return;
-      }
+      const cat = templates[currentAppMode][editingCategoryKey];
+      if (cat.steps.length <= 1) return alert("Must retain at least 1 step.");
       cat.steps.splice(idx, 1);
       saveTemplates(templates);
       loadCategoryForEditing(editingCategoryKey);
@@ -1272,9 +1752,7 @@
 
     function saveCategoryEditsAndClose() {
       const templates = getStoredTemplates();
-      const cat = templates[currentServiceMode][editingCategoryKey];
-      if (!cat) return;
-
+      const cat = templates[currentAppMode][editingCategoryKey];
       cat.steps.forEach((st, idx) => {
         const titleEl = document.getElementById(`stepTitle_${idx}`);
         const stdEl = document.getElementById(`stepStd_${idx}`);
@@ -1283,16 +1761,13 @@
         if (stdEl) st.standard = stdEl.value.trim();
         if (promptEl) st.prompt = promptEl.value.trim();
       });
-
       saveTemplates(templates);
       closeTemplateManagerModal();
       refreshCategoryDropdown();
-      document.getElementById('categorySelector').value = editingCategoryKey;
-      onCategoryChanged(editingCategoryKey);
     }
 
     function resetCurrentCategoryToDefaults() {
-      if (!confirm("Are you sure you want to reset this category to the original Aryavarta factory template?")) return;
+      if (!confirm("Reset to default factory template?")) return;
       saveTemplates(DEFAULT_TEMPLATES);
       closeTemplateManagerModal();
       refreshCategoryDropdown();
