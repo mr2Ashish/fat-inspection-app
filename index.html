@@ -923,6 +923,7 @@
 
     // 3. CONSOLIDATED DWR PDF GENERATOR
     // 3. CONSOLIDATED DWR PDF GENERATOR (EXACT EXCEL FORMAT - NO COMPANY LOGO / NO HEADER INFO)
+    // 3. CONSOLIDATED DWR PDF GENERATOR (OPTIMIZED ROW HEIGHT & PROFESSIONAL LAYOUT)
     async function generateConsolidatedDwrPDF() {
       saveCurrentDwrDay(false);
       const { jsPDF } = window.jspdf;
@@ -934,49 +935,51 @@
       const location = document.getElementById('dwrLocation').value.trim() || "";
       const scope = document.getElementById('dwrScope').value.trim() || "";
 
-      const yellowHighlight = [255, 255, 0];
-      const headerGrey = [235, 235, 235];
+      const excelYellow = [255, 255, 0];
+      const lightGreyHeader = [241, 245, 249];
+      const borderDark = [15, 23, 42];
 
       for (let i = 0; i < dwrDaysList.length; i++) {
         if (i > 0) doc.addPage();
         const day = dwrDaysList[i];
 
-        // 1. TOP HEADER BANNER (NO COMPANY LOGO / NO COMPANY DETAILS)
+        // 1. TOP HEADER BANNER
         doc.autoTable({
           startY: 12,
+          margin: { left: 12, right: 12 },
           theme: 'grid',
           body: [
             [
-              { content: '', styles: { cellWidth: 40 } },
-              { content: 'DAILY REPORT', styles: { fontStyle: 'bold', fontSize: 13, halign: 'center', textColor: [0, 0, 0] } },
-              { content: '(1 sheet per day)', styles: { fontStyle: 'normal', fontSize: 8, halign: 'right', textColor: [0, 0, 0], cellWidth: 42 } }
+              { content: '', styles: { cellWidth: 35 } },
+              { content: 'DAILY REPORT', styles: { fontStyle: 'bold', fontSize: 13, halign: 'center', valign: 'middle', textColor: [0, 0, 0] } },
+              { content: '(1 sheet per day)', styles: { fontStyle: 'normal', fontSize: 8.5, halign: 'right', valign: 'middle', textColor: [70, 70, 70], cellWidth: 40 } }
             ]
           ],
           styles: {
-            lineColor: [0, 0, 0],
-            lineWidth: 0.35,
-            cellPadding: 2.5,
-            minCellHeight: 9
+            lineColor: borderDark,
+            lineWidth: 0.3,
+            minCellHeight: 8,
+            cellPadding: 1.5
           }
         });
 
-        // 2. METADATA SPECIFICATION GRID WITH EXCEL COLOR CODING
+        // 2. METADATA SPECIFICATION GRID (EXACT 6 COLUMNS - COMPACT ROW HEIGHT)
         const metaGrid = [
           [
-            { content: 'Customer :(Site Name)', styles: { fontStyle: 'bold', fillColor: yellowHighlight } },
-            { content: customer, colSpan: 2, styles: { fontStyle: 'bold' } },
-            { content: 'Project No:', styles: { fontStyle: 'bold', fillColor: yellowHighlight } },
+            { content: 'Customer :(Site Name)', styles: { fontStyle: 'bold', fillColor: excelYellow } },
+            { content: customer, styles: { fontStyle: 'bold' } },
+            { content: 'Project No:', styles: { fontStyle: 'bold', fillColor: excelYellow } },
             { content: projectNo, styles: { fontStyle: 'bold' } },
             { content: 'Page No:', styles: { fontStyle: 'bold' } },
-            { content: day.pageNo || `Page ${i + 1}`, styles: { fontStyle: 'bold' } }
+            { content: day.pageNo || `Page ${i + 1}`, styles: { fontStyle: 'bold', halign: 'center' } }
           ],
           [
             { content: 'site In-charge:', styles: { fontStyle: 'bold' } },
-            { content: siteIncharge, colSpan: 2 },
-            { content: 'Location:', styles: { fontStyle: 'bold', fillColor: yellowHighlight } },
+            { content: siteIncharge },
+            { content: 'Location:', styles: { fontStyle: 'bold', fillColor: excelYellow } },
             { content: location },
-            { content: 'Date:', styles: { fontStyle: 'bold', fillColor: yellowHighlight } },
-            { content: day.date, styles: { fontStyle: 'bold' } }
+            { content: 'Date:', styles: { fontStyle: 'bold', fillColor: excelYellow } },
+            { content: day.date, styles: { fontStyle: 'bold', halign: 'center' } }
           ],
           [
             { content: 'Scope:', styles: { fontStyle: 'bold' } },
@@ -985,135 +988,145 @@
         ];
 
         doc.autoTable({
-          startY: doc.lastAutoTable.finalY + 1.2,
+          startY: doc.lastAutoTable.finalY + 1,
+          margin: { left: 12, right: 12 },
           theme: 'grid',
           body: metaGrid,
           styles: {
             fontSize: 7.8,
-            cellPadding: 2,
+            cellPadding: 1.8,
+            valign: 'middle',
             textColor: [0, 0, 0],
-            lineColor: [0, 0, 0],
-            lineWidth: 0.25
+            lineColor: borderDark,
+            lineWidth: 0.25,
+            minCellHeight: 8
           },
           columnStyles: {
-            0: { cellWidth: 34 },
-            1: { cellWidth: 32 },
-            2: { cellWidth: 26 },
-            3: { cellWidth: 30 },
-            4: { cellWidth: 26 },
-            5: { cellWidth: 38 }
+            0: { cellWidth: 35 },
+            1: { cellWidth: 43 },
+            2: { cellWidth: 23 },
+            3: { cellWidth: 33 },
+            4: { cellWidth: 22 },
+            5: { cellWidth: 30 }
           }
         });
 
         // 3. SAFETY QUESTION SECTION
         const isSafeYes = day.isSafe === "YES";
-        const safetyCheck = isSafeYes
+        const safetyContent = isSafeYes
           ? "Yes   [ X ]       No   [   ]                If not safe, specify why?  N/A"
           : `Yes   [   ]       No   [ X ]                If not safe, specify why?  ${day.unsafeReason || 'Hazard noted'}`;
 
         doc.autoTable({
-          startY: doc.lastAutoTable.finalY + 1.2,
+          startY: doc.lastAutoTable.finalY + 1,
+          margin: { left: 12, right: 12 },
           theme: 'grid',
-          head: [[{ content: 'Is the Working Environment safe?', styles: { fontStyle: 'bold', fillColor: headerGrey, textColor: [0, 0, 0] } }]],
-          body: [[{ content: safetyCheck, styles: { minCellHeight: 6.5, textColor: [0, 0, 0] } }]],
-          styles: { fontSize: 7.8, cellPadding: 2, lineColor: [0, 0, 0], lineWidth: 0.25 }
+          head: [[{ content: 'Is the Working Environment safe?', styles: { fontStyle: 'bold', fillColor: lightGreyHeader, textColor: [0, 0, 0] } }]],
+          body: [[{ content: safetyContent, styles: { minCellHeight: 7, valign: 'middle', textColor: isSafeYes ? [0, 0, 0] : [220, 38, 38] } }]],
+          styles: { fontSize: 7.8, cellPadding: 2, lineColor: borderDark, lineWidth: 0.25 }
         });
 
         // 4. MAIN ACTIVITIES BOX
         doc.autoTable({
-          startY: doc.lastAutoTable.finalY + 1.2,
+          startY: doc.lastAutoTable.finalY + 1,
+          margin: { left: 12, right: 12 },
           theme: 'grid',
-          head: [[{ content: 'Main Activities performed during the day', styles: { fontStyle: 'bold', fillColor: headerGrey, textColor: [0, 0, 0] } }]],
-          body: [[{ content: day.mainActivities || 'No logged activities for this date.', styles: { minCellHeight: 56, cellPadding: 3, textColor: [0, 0, 0] } }]],
-          styles: { fontSize: 7.8, lineColor: [0, 0, 0], lineWidth: 0.25 }
+          head: [[{ content: 'Main Activities performed during the day', styles: { fontStyle: 'bold', fillColor: lightGreyHeader, textColor: [0, 0, 0] } }]],
+          body: [[{ content: day.mainActivities || 'No activities logged for this day.', styles: { minCellHeight: 52, cellPadding: 3, textColor: [15, 23, 42] } }]],
+          styles: { fontSize: 7.8, lineColor: borderDark, lineWidth: 0.25 }
         });
 
-        // 5. ISSUES & REMEDIAL ACTIONS (CLIENT & CUSTOMER SCOPE)
-        const issuesGrid = [
+        // 5. ISSUES & DELAYS GRID (CLIENT & CUSTOMER SCOPE)
+        const issuesRows = [
           [
-            { content: "Issue within Client Company's scope of Work", styles: { fontStyle: 'bold' } },
-            { content: "How is the issue being fixed?", styles: { fontStyle: 'bold' } },
-            { content: "Approx hrs lost", styles: { fontStyle: 'bold', halign: 'center' } }
+            { content: "Issue within Client Company's scope of Work", styles: { fontStyle: 'bold', fillColor: lightGreyHeader } },
+            { content: "How is the issue being fixed?", styles: { fontStyle: 'bold', fillColor: lightGreyHeader } },
+            { content: "Approx hrs lost", styles: { fontStyle: 'bold', halign: 'center', fillColor: lightGreyHeader } }
           ],
           [
-            { content: day.clientIssue || "None", styles: { minCellHeight: 12 } },
-            { content: day.clientIssueFix || "N/A" },
-            { content: `${day.clientHrs || 0} hrs`, styles: { halign: 'center', fontStyle: 'bold' } }
+            { content: day.clientIssue || "None", styles: { minCellHeight: 11, valign: 'middle' } },
+            { content: day.clientIssueFix || "N/A", styles: { valign: 'middle' } },
+            { content: `${day.clientHrs || 0} hrs`, styles: { halign: 'center', valign: 'middle', fontStyle: 'bold' } }
           ],
           [
-            { content: "Issue within Customer's scope of Work", styles: { fontStyle: 'bold' } },
-            { content: day.customerIssueFix || "N/A" },
-            { content: `${day.customerHrs || 0} hrs`, styles: { halign: 'center', fontStyle: 'bold' } }
+            { content: "Issue within Customer's scope of Work", styles: { fontStyle: 'bold', fillColor: lightGreyHeader } },
+            { content: "How is the issue being fixed?", styles: { fontStyle: 'bold', fillColor: lightGreyHeader } },
+            { content: "Approx hrs lost", styles: { fontStyle: 'bold', halign: 'center', fillColor: lightGreyHeader } }
           ],
           [
-            { content: day.customerIssue || "None", styles: { minCellHeight: 12 } },
-            { content: day.customerIssueFix || "N/A" },
-            { content: `${day.customerHrs || 0} hrs`, styles: { halign: 'center', fontStyle: 'bold' } }
+            { content: day.customerIssue || "None", styles: { minCellHeight: 11, valign: 'middle' } },
+            { content: day.customerIssueFix || "N/A", styles: { valign: 'middle' } },
+            { content: `${day.customerHrs || 0} hrs`, styles: { halign: 'center', valign: 'middle', fontStyle: 'bold' } }
           ]
         ];
 
         doc.autoTable({
-          startY: doc.lastAutoTable.finalY + 1.2,
+          startY: doc.lastAutoTable.finalY + 1,
+          margin: { left: 12, right: 12 },
           theme: 'grid',
-          body: issuesGrid,
-          styles: { fontSize: 7.5, cellPadding: 2, textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.25 },
+          body: issuesRows,
+          styles: { fontSize: 7.5, cellPadding: 2, textColor: [0, 0, 0], lineColor: borderDark, lineWidth: 0.25 },
           columnStyles: {
             0: { cellWidth: 80 },
-            1: { cellWidth: 78 },
-            2: { cellWidth: 28 }
+            1: { cellWidth: 80 },
+            2: { cellWidth: 26 }
           }
         });
 
-        // 6. DOCUMENTATION UPDATE SECTION
+        // 6. DOCUMENTATION UPDATES SECTION
         doc.autoTable({
-          startY: doc.lastAutoTable.finalY + 1.2,
+          startY: doc.lastAutoTable.finalY + 1,
+          margin: { left: 12, right: 12 },
           theme: 'grid',
-          head: [[{ content: 'Any change that requires documentation update (P&ID, FDS, mass balance, equipment list, wiring diagrams etc.)', styles: { fontStyle: 'bold', fillColor: headerGrey, textColor: [0, 0, 0] } }]],
-          body: [[{ content: `- ${day.docChanges || 'Please list here'}`, styles: { minCellHeight: 14, textColor: [0, 0, 0], cellPadding: 2.5 } }]],
-          styles: { fontSize: 7.5, lineColor: [0, 0, 0], lineWidth: 0.25 }
+          head: [[{ content: 'Any change that requires documentation update (P&ID, FDS, mass balance, equipment list, wiring diagrams etc.)', styles: { fontStyle: 'bold', fillColor: lightGreyHeader, textColor: [0, 0, 0] } }]],
+          body: [[{ content: `- ${day.docChanges || 'None'}`, styles: { minCellHeight: 12, valign: 'middle', textColor: [0, 0, 0], cellPadding: 2.5 } }]],
+          styles: { fontSize: 7.5, lineColor: borderDark, lineWidth: 0.25 }
         });
 
-        // 7. SIGNATURES & CLOSING BLOCKS
-        const sigStartY = doc.lastAutoTable.finalY + 2.5;
-        
-        doc.setFillColor(215, 215, 215);
-        doc.rect(14, sigStartY, 186, 3, 'F');
-        doc.setDrawColor(0, 0, 0);
-        doc.setLineWidth(0.25);
-        doc.rect(14, sigStartY, 186, 3);
+        // 7. SIGNATURE BOXES (MATCHES EXCEL BOTTOM ROW)
+        const sigStartY = doc.lastAutoTable.finalY + 3;
+        const sigBoxHeight = 21;
+        const totalTableWidth = 186; // 35+43+23+33+22+30
 
-        const sigBoxY = sigStartY + 3.5;
-        const sigBoxHeight = 22;
-        doc.rect(14, sigBoxY, 186, sigBoxHeight);
+        // Outer framework
+        doc.setDrawColor(borderDark[0], borderDark[1], borderDark[2]);
+        doc.setLineWidth(0.3);
+        doc.rect(12, sigStartY, totalTableWidth, sigBoxHeight);
 
-        doc.line(55, sigBoxY, 55, sigBoxY + sigBoxHeight);
-        doc.line(105, sigBoxY, 105, sigBoxY + sigBoxHeight);
-        doc.line(146, sigBoxY, 146, sigBoxY + sigBoxHeight);
-        doc.line(14, sigBoxY + 6, 200, sigBoxY + 6);
+        // Header separator line
+        doc.line(12, sigStartY + 6, 12 + totalTableWidth, sigStartY + 6);
 
+        // Column divider lines
+        doc.line(55, sigStartY, 55, sigStartY + sigBoxHeight);
+        doc.line(105, sigStartY, 105, sigStartY + sigBoxHeight);
+        doc.line(148, sigStartY, 148, sigStartY + sigBoxHeight);
+
+        // Header titles
         doc.setFont("helvetica", "bold");
         doc.setFontSize(7.5);
         doc.setTextColor(0, 0, 0);
-        doc.text("Client Engineer", 20, sigBoxY + 4.2);
-        doc.text("Signature", 72, sigBoxY + 4.2);
-        doc.text("Client Site Incharge", 112, sigBoxY + 4.2);
-        doc.text("Signature", 164, sigBoxY + 4.2);
+        doc.text("Client Engineer", 18, sigStartY + 4.2);
+        doc.text("Signature", 73, sigStartY + 4.2);
+        doc.text("Client Site Incharge", 112, sigStartY + 4.2);
+        doc.text("Signature", 166, sigStartY + 4.2);
 
+        // Signatory names
         doc.setFont("helvetica", "normal");
-        doc.text(day.engName || "Authorized Signatory", 17, sigBoxY + 14);
-        doc.text(day.inchargeName || siteIncharge, 108, sigBoxY + 14);
+        doc.text(day.engName || "Authorized Signatory", 15, sigStartY + 13.5);
+        doc.text(day.inchargeName || siteIncharge, 108, sigStartY + 13.5);
 
+        // Render digital signatures if captured
         if (day.engSigData) {
-          doc.addImage(day.engSigData, 'PNG', 57, sigBoxY + 7, 46, 14);
+          doc.addImage(day.engSigData, 'PNG', 58, sigStartY + 7, 44, 13);
         }
         if (day.inchargeSigData) {
-          doc.addImage(day.inchargeSigData, 'PNG', 148, sigBoxY + 7, 46, 14);
+          doc.addImage(day.inchargeSigData, 'PNG', 150, sigStartY + 7, 44, 13);
         }
       }
 
-      const cleanFileCustomer = (customer || "Daily_Report").replace(/[^a-zA-Z0-9_-]/g, "_");
-      const cleanFileProject = (projectNo || "Project").replace(/[^a-zA-Z0-9_-]/g, "_");
-      doc.save(`Daily_Work_Report_${cleanFileCustomer}_${cleanFileProject}.pdf`);
+      const cleanCustomer = (customer || "Daily_Report").replace(/[^a-zA-Z0-9_-]/g, "_");
+      const cleanProject = (projectNo || "Project").replace(/[^a-zA-Z0-9_-]/g, "_");
+      doc.save(`Daily_Work_Report_${cleanCustomer}_${cleanProject}.pdf`);
     }
 
     function handlePrimaryPdfDownload() {
