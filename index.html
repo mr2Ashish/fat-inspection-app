@@ -46,15 +46,7 @@
       <!-- Company Official Logo & Tagline -->
       <div class="flex items-center gap-3">
         <div class="bg-white px-2.5 py-1.5 rounded-lg flex items-center shadow-md border border-slate-200">
-          <svg class="h-10 w-auto" viewBox="0 0 320 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <polygon points="50,6 10,70 90,70" fill="#dc2626"/>
-            <path d="M48 40 L50 20 M42 43 L30 30 M54 43 L68 30 M38 48 L22 46 M58 48 L76 46" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
-            <circle cx="48" cy="46" r="6" fill="#ffffff"/>
-            <path d="M48 46 C52 54, 40 60, 56 70 L90 70 C70 56, 60 52, 48 46 Z" fill="#0284c7"/>
-            <path d="M48 46 C51 53, 42 59, 54 70 L48 70 C38 60, 47 54, 48 46 Z" fill="#ffffff"/>
-            <text x="100" y="44" font-family="'Cinzel', Georgia, serif" font-weight="700" font-size="25" fill="#dc2626" letter-spacing="1">aryavarta automation</text>
-            <text x="104" y="66" font-family="'Inter', sans-serif" font-weight="700" font-size="10.5" fill="#0284c7" letter-spacing="2.8">SYNONYMS FOR EXCELLENCE</text>
-          </svg>
+         <img src="logo.png" alt="Aryavarta Automation" class="h-10 w-auto object-contain">
         </div>
 
         <div class="hidden md:block">
@@ -930,181 +922,198 @@
     }
 
     // 3. CONSOLIDATED DWR PDF GENERATOR
+    // 3. CONSOLIDATED DWR PDF GENERATOR (EXACT EXCEL FORMAT - NO COMPANY LOGO / NO HEADER INFO)
     async function generateConsolidatedDwrPDF() {
       saveCurrentDwrDay(false);
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-      const customer = document.getElementById('dwrCustomer').value.trim() || "Client Plant";
-      const projectNo = document.getElementById('dwrProjectNo').value.trim() || "PRJ-AA";
-      const siteIncharge = document.getElementById('dwrSiteIncharge').value.trim() || "Mr. Sumit";
-      const location = document.getElementById('dwrLocation').value.trim() || "Site Location";
-      const scope = document.getElementById('dwrScope').value.trim() || "Electrical & Instrumentation Site Services";
+      const customer = document.getElementById('dwrCustomer').value.trim() || "";
+      const projectNo = document.getElementById('dwrProjectNo').value.trim() || "";
+      const siteIncharge = document.getElementById('dwrSiteIncharge').value.trim() || "";
+      const location = document.getElementById('dwrLocation').value.trim() || "";
+      const scope = document.getElementById('dwrScope').value.trim() || "";
+
+      const yellowHighlight = [255, 255, 0];
+      const headerGrey = [235, 235, 235];
 
       for (let i = 0; i < dwrDaysList.length; i++) {
         if (i > 0) doc.addPage();
         const day = dwrDaysList[i];
 
-        doc.setFillColor(255, 255, 255);
-        doc.rect(0, 0, 210, 32, 'F');
+        // 1. TOP HEADER BANNER (NO COMPANY LOGO / NO COMPANY DETAILS)
+        doc.autoTable({
+          startY: 12,
+          theme: 'grid',
+          body: [
+            [
+              { content: '', styles: { cellWidth: 40 } },
+              { content: 'DAILY REPORT', styles: { fontStyle: 'bold', fontSize: 13, halign: 'center', textColor: [0, 0, 0] } },
+              { content: '(1 sheet per day)', styles: { fontStyle: 'normal', fontSize: 8, halign: 'right', textColor: [0, 0, 0], cellWidth: 42 } }
+            ]
+          ],
+          styles: {
+            lineColor: [0, 0, 0],
+            lineWidth: 0.35,
+            cellPadding: 2.5,
+            minCellHeight: 9
+          }
+        });
 
-        doc.setFillColor(220, 38, 38);
-        doc.triangle(24, 6, 12, 28, 36, 28, 'F');
-        doc.setDrawColor(255, 255, 255);
-        doc.setLineWidth(0.4);
-        doc.line(24, 18, 24, 11);
-        doc.line(21, 20, 16, 15);
-        doc.line(27, 20, 32, 15);
-        doc.setFillColor(255, 255, 255);
-        doc.circle(24, 20, 1.8, 'F');
-        doc.setFillColor(2, 132, 199);
-        doc.triangle(24, 20, 36, 28, 26, 28, 'F');
-
-        doc.setTextColor(220, 38, 38);
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
-        doc.text("ARYAVARTA AUTOMATION", 40, 15);
-
-        doc.setTextColor(2, 132, 199);
-        doc.setFontSize(7.5);
-        doc.setFont("helvetica", "bold");
-        doc.text("SYNONYMS FOR EXCELLENCE", 40, 20);
-
-        doc.setTextColor(100, 116, 139);
-        doc.setFontSize(7);
-        doc.setFont("helvetica", "normal");
-        doc.text("Chikhali, Pune - 411062 | www.aryavartaautomation.in", 40, 25);
-
-        doc.setFillColor(11, 25, 44);
-        doc.rect(130, 8, 70, 18, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "bold");
-        doc.text("DAILY REPORT", 143, 17);
-        doc.setFontSize(7.5);
-        doc.setTextColor(245, 158, 11);
-        doc.text("(1 sheet per day)", 150, 22);
-
+        // 2. METADATA SPECIFICATION GRID WITH EXCEL COLOR CODING
         const metaGrid = [
           [
-            { content: "Customer : (Site Name)", styles: { fontStyle: 'bold', fillColor: [255, 255, 0] } },
-            { content: customer, colSpan: 2 },
-            { content: "Project No:", styles: { fontStyle: 'bold', fillColor: [255, 255, 0] } },
-            { content: projectNo },
-            { content: "Page No:", styles: { fontStyle: 'bold' } },
-            { content: day.pageNo }
+            { content: 'Customer :(Site Name)', styles: { fontStyle: 'bold', fillColor: yellowHighlight } },
+            { content: customer, colSpan: 2, styles: { fontStyle: 'bold' } },
+            { content: 'Project No:', styles: { fontStyle: 'bold', fillColor: yellowHighlight } },
+            { content: projectNo, styles: { fontStyle: 'bold' } },
+            { content: 'Page No:', styles: { fontStyle: 'bold' } },
+            { content: day.pageNo || `Page ${i + 1}`, styles: { fontStyle: 'bold' } }
           ],
           [
-            { content: "Site In-charge:", styles: { fontStyle: 'bold' } },
+            { content: 'site In-charge:', styles: { fontStyle: 'bold' } },
             { content: siteIncharge, colSpan: 2 },
-            { content: "Location:", styles: { fontStyle: 'bold', fillColor: [255, 255, 0] } },
+            { content: 'Location:', styles: { fontStyle: 'bold', fillColor: yellowHighlight } },
             { content: location },
-            { content: "Date:", styles: { fontStyle: 'bold', fillColor: [255, 255, 0] } },
-            { content: day.date }
+            { content: 'Date:', styles: { fontStyle: 'bold', fillColor: yellowHighlight } },
+            { content: day.date, styles: { fontStyle: 'bold' } }
           ],
           [
-            { content: "Scope:", styles: { fontStyle: 'bold' } },
+            { content: 'Scope:', styles: { fontStyle: 'bold' } },
             { content: scope, colSpan: 5 }
           ]
         ];
 
         doc.autoTable({
-          startY: 34,
+          startY: doc.lastAutoTable.finalY + 1.2,
           theme: 'grid',
           body: metaGrid,
-          styles: { fontSize: 7.5, cellPadding: 2, textColor: [15, 23, 42], lineColor: [15, 23, 42], lineWidth: 0.2 },
+          styles: {
+            fontSize: 7.8,
+            cellPadding: 2,
+            textColor: [0, 0, 0],
+            lineColor: [0, 0, 0],
+            lineWidth: 0.25
+          },
           columnStyles: {
-            0: { cellWidth: 32 }, 1: { cellWidth: 35 }, 2: { cellWidth: 25 },
-            3: { cellWidth: 25 }, 4: { cellWidth: 28 }, 5: { cellWidth: 35 }
+            0: { cellWidth: 34 },
+            1: { cellWidth: 32 },
+            2: { cellWidth: 26 },
+            3: { cellWidth: 30 },
+            4: { cellWidth: 26 },
+            5: { cellWidth: 38 }
           }
         });
 
+        // 3. SAFETY QUESTION SECTION
         const isSafeYes = day.isSafe === "YES";
-        const safetyContent = isSafeYes
-          ? "[ X ] Yes     [   ] No     Working environment verified safe for operations."
-          : `[   ] Yes     [ X ] No     SPECIFIED HAZARD: ${day.unsafeReason || 'Not specified'}`;
+        const safetyCheck = isSafeYes
+          ? "Yes   [ X ]       No   [   ]                If not safe, specify why?  N/A"
+          : `Yes   [   ]       No   [ X ]                If not safe, specify why?  ${day.unsafeReason || 'Hazard noted'}`;
 
         doc.autoTable({
-          startY: doc.lastAutoTable.finalY + 2,
+          startY: doc.lastAutoTable.finalY + 1.2,
           theme: 'grid',
-          head: [['Is the Working Environment safe?']],
-          body: [[safetyContent]],
-          headStyles: { fillColor: [226, 232, 240], textColor: [15, 23, 42], fontSize: 8, fontStyle: 'bold' },
-          styles: { fontSize: 7.5, cellPadding: 2.5, textColor: isSafeYes ? [15, 23, 42] : [220, 38, 38] }
+          head: [[{ content: 'Is the Working Environment safe?', styles: { fontStyle: 'bold', fillColor: headerGrey, textColor: [0, 0, 0] } }]],
+          body: [[{ content: safetyCheck, styles: { minCellHeight: 6.5, textColor: [0, 0, 0] } }]],
+          styles: { fontSize: 7.8, cellPadding: 2, lineColor: [0, 0, 0], lineWidth: 0.25 }
         });
 
+        // 4. MAIN ACTIVITIES BOX
         doc.autoTable({
-          startY: doc.lastAutoTable.finalY + 2,
+          startY: doc.lastAutoTable.finalY + 1.2,
           theme: 'grid',
-          head: [['Main Activities performed during the day']],
-          body: [[day.mainActivities || "No logged activities for this date."]],
-          headStyles: { fillColor: [226, 232, 240], textColor: [15, 23, 42], fontSize: 8, fontStyle: 'bold' },
-          styles: { fontSize: 7.5, minCellHeight: 35, cellPadding: 3, textColor: [15, 23, 42] }
+          head: [[{ content: 'Main Activities performed during the day', styles: { fontStyle: 'bold', fillColor: headerGrey, textColor: [0, 0, 0] } }]],
+          body: [[{ content: day.mainActivities || 'No logged activities for this date.', styles: { minCellHeight: 56, cellPadding: 3, textColor: [0, 0, 0] } }]],
+          styles: { fontSize: 7.8, lineColor: [0, 0, 0], lineWidth: 0.25 }
         });
 
-        const issuesRows = [
+        // 5. ISSUES & REMEDIAL ACTIONS (CLIENT & CUSTOMER SCOPE)
+        const issuesGrid = [
           [
             { content: "Issue within Client Company's scope of Work", styles: { fontStyle: 'bold' } },
             { content: "How is the issue being fixed?", styles: { fontStyle: 'bold' } },
             { content: "Approx hrs lost", styles: { fontStyle: 'bold', halign: 'center' } }
           ],
           [
-            day.clientIssue || "None",
-            day.clientIssueFix || "N/A",
+            { content: day.clientIssue || "None", styles: { minCellHeight: 12 } },
+            { content: day.clientIssueFix || "N/A" },
             { content: `${day.clientHrs || 0} hrs`, styles: { halign: 'center', fontStyle: 'bold' } }
           ],
           [
             { content: "Issue within Customer's scope of Work", styles: { fontStyle: 'bold' } },
             { content: day.customerIssueFix || "N/A" },
             { content: `${day.customerHrs || 0} hrs`, styles: { halign: 'center', fontStyle: 'bold' } }
+          ],
+          [
+            { content: day.customerIssue || "None", styles: { minCellHeight: 12 } },
+            { content: day.customerIssueFix || "N/A" },
+            { content: `${day.customerHrs || 0} hrs`, styles: { halign: 'center', fontStyle: 'bold' } }
           ]
         ];
 
         doc.autoTable({
-          startY: doc.lastAutoTable.finalY + 2,
+          startY: doc.lastAutoTable.finalY + 1.2,
           theme: 'grid',
-          body: issuesRows,
-          styles: { fontSize: 7.5, cellPadding: 2.2, textColor: [15, 23, 42] },
-          columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 80 }, 2: { cellWidth: 30 } }
+          body: issuesGrid,
+          styles: { fontSize: 7.5, cellPadding: 2, textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.25 },
+          columnStyles: {
+            0: { cellWidth: 80 },
+            1: { cellWidth: 78 },
+            2: { cellWidth: 28 }
+          }
         });
 
+        // 6. DOCUMENTATION UPDATE SECTION
         doc.autoTable({
-          startY: doc.lastAutoTable.finalY + 2,
+          startY: doc.lastAutoTable.finalY + 1.2,
           theme: 'grid',
-          head: [['Any change that requires documentation update (P&ID, FDS, mass balance, equipment list, wiring diagrams etc.)']],
-          body: [[day.docChanges || "- None"]],
-          headStyles: { fillColor: [226, 232, 240], textColor: [15, 23, 42], fontSize: 7.5, fontStyle: 'bold' },
-          styles: { fontSize: 7.5, cellPadding: 2.5, textColor: [15, 23, 42] }
+          head: [[{ content: 'Any change that requires documentation update (P&ID, FDS, mass balance, equipment list, wiring diagrams etc.)', styles: { fontStyle: 'bold', fillColor: headerGrey, textColor: [0, 0, 0] } }]],
+          body: [[{ content: `- ${day.docChanges || 'Please list here'}`, styles: { minCellHeight: 14, textColor: [0, 0, 0], cellPadding: 2.5 } }]],
+          styles: { fontSize: 7.5, lineColor: [0, 0, 0], lineWidth: 0.25 }
         });
 
-        const sigY = doc.lastAutoTable.finalY + 5;
-        doc.rect(14, sigY, 182, 24);
-        doc.line(14, sigY + 6, 196, sigY + 6);
-        doc.line(60, sigY, 60, sigY + 24);
-        doc.line(105, sigY, 105, sigY + 24);
-        doc.line(150, sigY, 150, sigY + 24);
+        // 7. SIGNATURES & CLOSING BLOCKS
+        const sigStartY = doc.lastAutoTable.finalY + 2.5;
+        
+        doc.setFillColor(215, 215, 215);
+        doc.rect(14, sigStartY, 186, 3, 'F');
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(0.25);
+        doc.rect(14, sigStartY, 186, 3);
 
-        doc.setFontSize(7.5);
+        const sigBoxY = sigStartY + 3.5;
+        const sigBoxHeight = 22;
+        doc.rect(14, sigBoxY, 186, sigBoxHeight);
+
+        doc.line(55, sigBoxY, 55, sigBoxY + sigBoxHeight);
+        doc.line(105, sigBoxY, 105, sigBoxY + sigBoxHeight);
+        doc.line(146, sigBoxY, 146, sigBoxY + sigBoxHeight);
+        doc.line(14, sigBoxY + 6, 200, sigBoxY + 6);
+
         doc.setFont("helvetica", "bold");
-        doc.setTextColor(15, 23, 42);
-        doc.text("Client Engineer", 20, sigY + 4.5);
-        doc.text("Signature", 72, sigY + 4.5);
-        doc.text("Client Site Incharge", 112, sigY + 4.5);
-        doc.text("Signature", 163, sigY + 4.5);
+        doc.setFontSize(7.5);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Client Engineer", 20, sigBoxY + 4.2);
+        doc.text("Signature", 72, sigBoxY + 4.2);
+        doc.text("Client Site Incharge", 112, sigBoxY + 4.2);
+        doc.text("Signature", 164, sigBoxY + 4.2);
 
         doc.setFont("helvetica", "normal");
-        doc.text(day.engName || "Authorized Eng", 16, sigY + 14);
-        doc.text(day.inchargeName || siteIncharge, 107, sigY + 14);
+        doc.text(day.engName || "Authorized Signatory", 17, sigBoxY + 14);
+        doc.text(day.inchargeName || siteIncharge, 108, sigBoxY + 14);
 
         if (day.engSigData) {
-          doc.addImage(day.engSigData, 'PNG', 62, sigY + 7, 40, 16);
+          doc.addImage(day.engSigData, 'PNG', 57, sigBoxY + 7, 46, 14);
         }
         if (day.inchargeSigData) {
-          doc.addImage(day.inchargeSigData, 'PNG', 152, sigY + 7, 40, 16);
+          doc.addImage(day.inchargeSigData, 'PNG', 148, sigBoxY + 7, 46, 14);
         }
       }
 
-      doc.save(`Aryavarta_Daily_Report_${customer}_${projectNo}.pdf`);
+      const cleanFileCustomer = (customer || "Daily_Report").replace(/[^a-zA-Z0-9_-]/g, "_");
+      const cleanFileProject = (projectNo || "Project").replace(/[^a-zA-Z0-9_-]/g, "_");
+      doc.save(`Daily_Work_Report_${cleanFileCustomer}_${cleanFileProject}.pdf`);
     }
 
     function handlePrimaryPdfDownload() {
