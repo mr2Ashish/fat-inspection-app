@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aryavarta Automation - FAT, Commissioning & Daily Work Report Suite</title>
+  <title>Aryavarta Automation - FAT, Commissioning & Operations Suite</title>
   
   <!-- Manifest & Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,7 +46,12 @@
       <!-- Company Official Logo & Tagline -->
       <div class="flex items-center gap-3">
         <div class="bg-white px-2.5 py-1.5 rounded-lg flex items-center shadow-md border border-slate-200">
-         <img src="logo.png" alt="Aryavarta Automation" class="h-10 w-auto object-contain">
+          <img 
+            src="logo.png" 
+            alt="Aryavarta Automation" 
+            class="h-10 sm:h-11 w-auto object-contain"
+            onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/mr2Ashish/fat-inspection-app/main/logo.png';"
+          >
         </div>
 
         <div class="hidden md:block">
@@ -71,8 +76,8 @@
       </div>
     </div>
 
-    <!-- Triple Mode Selector: Shop Floor FAT | E&I Commissioning | Daily Work Report (DWR) -->
-    <div class="max-w-6xl mx-auto mt-3 grid grid-cols-3 gap-2 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+    <!-- 4-Mode Selector -->
+    <div class="max-w-6xl mx-auto mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
       <button id="modeFatBtn" onclick="switchAppMode('FAT')" class="py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-amber-500 text-black shadow-md">
         <i data-lucide="factory" class="w-4 h-4"></i>
         <span>SHOP FAT</span>
@@ -83,7 +88,11 @@
       </button>
       <button id="modeDwrBtn" onclick="switchAppMode('DWR')" class="py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white">
         <i data-lucide="calendar-check" class="w-4 h-4"></i>
-        <span>DAILY REPORT (DWR)</span>
+        <span>DAILY REPORT</span>
+      </button>
+      <button id="modeExpBtn" onclick="switchAppMode('EXPENSES')" class="py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white">
+        <i data-lucide="wallet" class="w-4 h-4"></i>
+        <span>SITE EXPENSES</span>
       </button>
     </div>
   </header>
@@ -95,7 +104,6 @@
     <!-- VIEW A: SHOP FLOOR FAT & E&I COMMISSIONING -->
     <!-- ========================================================================= -->
     <div id="viewFatSite" class="space-y-6">
-      <!-- Equipment Metadata Card -->
       <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
         <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
           <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 font-industrial flex items-center gap-2">
@@ -245,10 +253,8 @@
     <!-- VIEW B: SITE DAILY WORK REPORT (DWR) -->
     <!-- ========================================================================= -->
     <div id="viewDwr" class="space-y-6 hidden">
-      
-      <!-- Sub-Banner: Project Profile (Auto-Preserved Across All Days) -->
       <div class="bg-gradient-to-r from-blue-950/40 to-slate-900 border border-blue-500/30 rounded-2xl p-4 sm:p-5 shadow-xl">
-        <div class="flex items-center justify-between pb-3 border-b border-blue-500/20 mb-3">
+        <div class="flex items-center justify-between pb-3 border-blue-500/20 mb-3 border-b">
           <div>
             <h2 class="text-sm font-bold uppercase tracking-wider text-blue-400 font-industrial flex items-center gap-2">
               <i data-lucide="shield-check" class="w-4 h-4"></i>
@@ -298,14 +304,11 @@
             <span>+ Add New Day</span>
           </button>
         </div>
-
         <div id="dwrDaysNav" class="flex flex-wrap items-center gap-2 mt-3"></div>
       </div>
 
       <!-- Daily Form (1 Sheet Per Day Template) -->
       <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl space-y-5">
-        
-        <!-- Day Sheet Header -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-950 p-3.5 rounded-xl border border-slate-800">
           <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
@@ -357,7 +360,6 @@
 
         <!-- Issues & Delays Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Issue within Client Scope -->
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-slate-300 font-industrial uppercase">Issue within Client Scope</span>
@@ -371,7 +373,6 @@
             <input type="text" id="dwrClientFix" placeholder="Remedial action taken..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
           </div>
 
-          <!-- Issue within Customer Scope -->
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-slate-300 font-industrial uppercase">Issue within Customer Scope</span>
@@ -394,7 +395,7 @@
           <input type="text" id="dwrDocChanges" placeholder="- Please list changes here, or type 'None'" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
         </div>
 
-        <!-- Daily Client & In-charge Signatures -->
+        <!-- Signatures -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
           <div>
             <div class="flex items-center justify-between mb-1">
@@ -415,13 +416,273 @@
           </div>
         </div>
 
-        <!-- Save Active Day Button -->
         <div class="flex justify-end pt-2">
           <button onclick="saveCurrentDwrDay()" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow">
             <i data-lucide="save" class="w-4 h-4"></i>
             <span>Save This Day's Report</span>
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW C: SITE EXPENSES & FINANCIAL RECONCILIATION -->
+    <!-- ========================================================================= -->
+    <div id="viewExpenses" class="space-y-6 hidden">
+      
+      <!-- Day 1 Setup: Fixed Project & Engineer Profile -->
+      <div class="bg-gradient-to-r from-amber-950/30 to-slate-900 border border-amber-500/30 rounded-2xl p-4 sm:p-5 shadow-xl">
+        <div class="flex items-center justify-between pb-3 border-b border-amber-500/20 mb-3">
+          <div>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400 font-industrial flex items-center gap-2">
+              <i data-lucide="user-check" class="w-4 h-4"></i>
+              <span>Fixed Site Profile (Day 1 Setup)</span>
+            </h2>
+            <p class="text-xs text-slate-400">Stored automatically across all daily expense sheets.</p>
+          </div>
+          <button onclick="toggleExpProfileLock()" id="btnExpProfileLock" class="px-3 py-1.5 bg-amber-900/40 border border-amber-500/40 text-amber-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-amber-800/40">
+            <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+            <span id="lblExpProfileLock">Unlock to Edit</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div>
+            <label class="block font-medium text-slate-400 mb-1">Site Name:</label>
+            <input type="text" id="expSiteName" placeholder="e.g. Baramati Agro Ltd" class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-400 mb-1">Site Engineer Name:</label>
+            <input type="text" id="expEngineerName" placeholder="e.g. Ashish Ingle" class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-400 mb-1">Project No:</label>
+            <input type="text" id="expProjectNo" placeholder="e.g. PRJ-2026-ETHANOL-04" class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono-code disabled:opacity-60 disabled:cursor-not-allowed">
+          </div>
+        </div>
+      </div>
+
+      <!-- Multi-Day Tabs Navigator -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+          <div>
+            <span class="text-xs font-bold uppercase text-slate-300 font-industrial">Logged Expense Days</span>
+            <p class="text-[11px] text-slate-400">Select any day to review, or add a new site day.</p>
+          </div>
+          <button onclick="addNewExpDay()" class="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-semibold text-xs rounded-lg flex items-center gap-1.5 shadow">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>+ Add New Day</span>
+          </button>
+        </div>
+        <div id="expDaysNav" class="flex flex-wrap items-center gap-2 mt-3"></div>
+      </div>
+
+      <!-- Active Day Financial Flow Form -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl space-y-6">
+        
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+            <h3 class="text-sm font-bold text-white font-industrial uppercase" id="lblExpDayTitle">EXPENSES FOR: DAY 1</h3>
+          </div>
+          <div>
+            <label class="text-[11px] text-slate-400 block">Expense Date:</label>
+            <input type="date" id="expDailyDate" onchange="onExpDateChanged(this.value)" class="bg-slate-900 border border-slate-700 rounded px-2.5 py-1 text-xs text-white font-mono-code">
+          </div>
+        </div>
+
+        <!-- 4 Daily Cash Flow Questions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-200 uppercase font-industrial">Got Advance Today?</span>
+              <div class="flex items-center gap-3 text-xs">
+                <label class="flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="expGotAdvance" value="YES" onchange="toggleAdvanceBox(true)" class="accent-amber-500">
+                  <span class="text-amber-400 font-bold">YES</span>
+                </label>
+                <label class="flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="expGotAdvance" value="NO" checked onchange="toggleAdvanceBox(false)" class="accent-slate-500">
+                  <span class="text-slate-400 font-bold">NO</span>
+                </label>
+              </div>
+            </div>
+            <div id="boxAdvanceAmount" class="hidden">
+              <label class="block text-[11px] text-amber-400 mb-1">Advance Amount Received (₹):</label>
+              <input type="number" id="expAdvanceAmount" placeholder="0.00" oninput="calculateExpTotals()" class="w-full bg-slate-900 border border-amber-500/50 rounded-lg px-3 py-2 text-xs text-white font-mono-code">
+            </div>
+          </div>
+
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-200 uppercase font-industrial">Daily Allowance (DA)</span>
+              <span class="text-[10px] text-slate-400">Fixed Company Rate</span>
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">Per Day Allowance Amount (₹):</label>
+              <input type="number" id="expAllowanceAmount" placeholder="e.g. 500.00" oninput="calculateExpTotals()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-mono-code">
+            </div>
+          </div>
+
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-200 uppercase font-industrial">Demand Advance for Next Days?</span>
+              <div class="flex items-center gap-3 text-xs">
+                <label class="flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="expDemandAdvance" value="YES" onchange="toggleDemandBox(true)" class="accent-blue-500">
+                  <span class="text-blue-400 font-bold">YES</span>
+                </label>
+                <label class="flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="expDemandAdvance" value="NO" checked onchange="toggleDemandBox(false)" class="accent-slate-500">
+                  <span class="text-slate-400 font-bold">NO</span>
+                </label>
+              </div>
+            </div>
+            <div id="boxDemandAmount" class="hidden">
+              <label class="block text-[11px] text-blue-400 mb-1">Demanded Advance Amount (₹):</label>
+              <input type="number" id="expDemandAmount" placeholder="0.00" class="w-full bg-slate-900 border border-blue-500/50 rounded-lg px-3 py-2 text-xs text-white font-mono-code">
+            </div>
+          </div>
+
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-200 uppercase font-industrial">Used Own Money?</span>
+              <div class="flex items-center gap-3 text-xs">
+                <label class="flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="expUsedOwnMoney" value="YES" onchange="toggleOwnMoneyBox(true)" class="accent-emerald-500">
+                  <span class="text-emerald-400 font-bold">YES</span>
+                </label>
+                <label class="flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="expUsedOwnMoney" value="NO" checked onchange="toggleOwnMoneyBox(false)" class="accent-slate-500">
+                  <span class="text-slate-400 font-bold">NO</span>
+                </label>
+              </div>
+            </div>
+            <div id="boxOwnMoneyAmount" class="hidden">
+              <label class="block text-[11px] text-emerald-400 mb-1">Own Money Used Amount (₹):</label>
+              <input type="number" id="expOwnMoneyAmount" placeholder="0.00" oninput="calculateExpTotals()" class="w-full bg-slate-900 border border-emerald-500/50 rounded-lg px-3 py-2 text-xs text-white font-mono-code">
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Category Expense Item Form -->
+        <div class="bg-slate-950 p-4 sm:p-5 rounded-xl border border-slate-800 space-y-4">
+          <h4 class="text-xs font-bold text-amber-400 uppercase font-industrial flex items-center gap-2">
+            <i data-lucide="receipt" class="w-4 h-4"></i>
+            <span>Add Bill / Categorized Expense Item</span>
+          </h4>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">Expense Category:</label>
+              <select id="expCategorySelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+                <option value="Hotel">Hotel</option>
+                <option value="Travel">Travel</option>
+                <option value="Food">Food</option>
+                <option value="Mobile Recharge">Mobile Recharge</option>
+                <option value="Other Expenses">Other Expenses</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">Amount Spent (₹):</label>
+              <input type="number" id="expItemAmount" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-mono-code">
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">Receipt / Bill Photographic Evidence:</label>
+              <label class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-slate-900 border border-dashed border-slate-700 hover:border-amber-400 rounded-lg text-xs text-slate-300 cursor-pointer truncate">
+                <i data-lucide="camera" class="w-4 h-4 text-amber-400"></i>
+                <span id="lblReceiptFile">Attach Bill Photo</span>
+                <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptUpload(event)">
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">Description / Bill Specifics:</label>
+            <input type="text" id="expItemDescription" placeholder="e.g. Lodge accommodation for 2 nights with GST bill / Bus ticket Pune to Site" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+          </div>
+
+          <div class="flex justify-end">
+            <button onclick="addExpenseItemToActiveDay()" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-industrial font-bold text-xs rounded-lg hover:brightness-110 flex items-center gap-1.5 shadow">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>Add This Expense</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Logged Bills Table for Current Day -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-xs font-bold text-slate-300 uppercase font-industrial">Logged Receipts for this Day</h4>
+            <span class="text-xs font-mono-code text-amber-400" id="lblDayCategorizedTotal">Day Receipts: ₹0.00</span>
+          </div>
+          <div id="dayExpensesTableContainer" class="overflow-x-auto rounded-xl border border-slate-800"></div>
+        </div>
+
+        <!-- Final Financial Reconciliation & Settlement Card -->
+        <div class="bg-gradient-to-br from-slate-950 via-[#071324] to-slate-950 border-2 border-amber-500/40 rounded-2xl p-5 shadow-2xl space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h4 class="text-sm font-bold uppercase font-industrial text-amber-400 flex items-center gap-2">
+              <i data-lucide="calculator" class="w-4 h-4"></i>
+              <span>Project Expense Audit & Settlement Reconciliation</span>
+            </h4>
+            <span class="text-[11px] font-mono-code text-slate-400">All Logged Days Consolidated</span>
+          </div>
+
+          <!-- Formula Breakdown -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+              <span class="text-[10px] text-slate-400 uppercase font-bold block">1. Total Receipts</span>
+              <span class="text-sm font-mono-code font-bold text-white" id="statCategorizedExpenses">₹0.00</span>
+            </div>
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+              <span class="text-[10px] text-slate-400 uppercase font-bold block">2. Total Allowance</span>
+              <span class="text-sm font-mono-code font-bold text-white" id="statTotalAllowance">₹0.00</span>
+            </div>
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+              <span class="text-[10px] text-slate-400 uppercase font-bold block">3. Own Money Used</span>
+              <span class="text-sm font-mono-code font-bold text-white" id="statOwnMoneyUsed">₹0.00</span>
+            </div>
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+              <span class="text-[10px] text-amber-400 uppercase font-bold block">Total Advance Got</span>
+              <span class="text-sm font-mono-code font-bold text-amber-400" id="statTotalAdvance">₹0.00</span>
+            </div>
+          </div>
+
+          <!-- Final Calculation Banner -->
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <span class="text-xs text-slate-400 block font-mono-code">Final Total Expenses = (Receipts + Allowance + Own Money)</span>
+              <span class="text-lg font-bold font-mono-code text-white" id="statFinalTotalExpenses">₹0.00</span>
+            </div>
+
+            <div class="w-full sm:w-auto text-left sm:text-right">
+              <span class="text-[11px] font-mono-code text-slate-400 block">Net Balance = (Total Advance - Final Total Expenses)</span>
+              <div id="statSettlementBadge" class="inline-block mt-1 px-4 py-1.5 rounded-lg text-xs font-bold font-mono-code uppercase bg-slate-800 text-slate-300">
+                Awaiting calculation
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+          <button onclick="saveCurrentExpDay(true)" class="w-full sm:w-auto px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 border border-slate-700">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Save Active Day</span>
+          </button>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button onclick="syncExpensesToGoogleSheet()" id="btnSyncExpenseSheet" class="flex-1 sm:flex-initial px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow">
+              <i data-lucide="table" class="w-4 h-4"></i>
+              <span>Sync All to Google Sheet</span>
+            </button>
+            <button onclick="exportExpensesToCsv()" class="flex-1 sm:flex-initial px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>Download Excel/CSV</span>
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   </main>
@@ -434,13 +695,11 @@
       </div>
 
       <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-        <!-- Direct Sync to Google Sheets -->
         <button onclick="syncInspectionToGoogleSheet()" id="syncSheetBtn" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-2">
           <i data-lucide="cloud-upload" class="w-4 h-4 text-emerald-400"></i>
           <span>Sync to Google Sheet</span>
         </button>
 
-        <!-- Generate PDF Report (Context-Sensitive) -->
         <button onclick="handlePrimaryPdfDownload()" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black text-xs font-bold font-industrial flex items-center justify-center gap-2 hover:brightness-110 shadow-lg">
           <i data-lucide="file-text" class="w-4 h-4"></i>
           <span id="lblPrimaryPdfBtn">Download FAT Certificate</span>
@@ -492,12 +751,36 @@
     </div>
   </div>
 
+  <!-- ================= MODAL: RECEIPT IMAGE LIGHTBOX ================= -->
+  <div id="receiptLightboxModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full flex flex-col overflow-hidden shadow-2xl">
+      <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+        <div class="flex items-center gap-2">
+          <i data-lucide="receipt" class="w-4 h-4 text-amber-400"></i>
+          <span class="text-xs font-bold uppercase text-white font-industrial" id="lblLightboxTitle">Receipt Preview</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <a id="btnDownloadReceipt" download="Site_Receipt.jpg" class="px-3 py-1 bg-amber-500 text-black text-xs font-bold rounded-lg flex items-center gap-1 hover:bg-amber-400 cursor-pointer">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Download</span>
+          </a>
+          <button onclick="closeReceiptLightbox()" class="text-slate-400 hover:text-white p-1">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+      <div class="p-4 flex items-center justify-center bg-black/60 max-h-[75vh] overflow-auto">
+        <img id="lightboxFullImage" src="" alt="Full Receipt" class="max-h-[70vh] w-auto object-contain rounded-lg shadow-lg">
+      </div>
+    </div>
+  </div>
+
   <!-- ================= APPLICATION SCRIPT ================= -->
   <script>
     // 1. CONFIGURATION & STATE
-    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqoT7Y4T4Rz0t9XQ_Aryavarta_FAT_Endpoint/exec";
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoZsNa1eevLcBMk0la8IAO1BmDxp69JoGpp5D6_uCTfA8o_Tx7eyczhhA47sqNQQrQBQ/exec";
 
-    let currentAppMode = 'FAT'; // 'FAT', 'SITE', 'DWR'
+    let currentAppMode = 'FAT'; // 'FAT', 'SITE', 'DWR', 'EXPENSES'
     let currentLanguage = 'en';
     let currentCategoryKey = '';
     let inspectionData = [];
@@ -618,6 +901,7 @@
       initSignatures();
       refreshCategoryDropdown();
       initDwrModule();
+      initExpensesModule();
     });
 
     function changeAppLanguage(lang) {
@@ -633,18 +917,22 @@
       const fatBtn = document.getElementById('modeFatBtn');
       const siteBtn = document.getElementById('modeSiteBtn');
       const dwrBtn = document.getElementById('modeDwrBtn');
+      const expBtn = document.getElementById('modeExpBtn');
+
       const viewFatSite = document.getElementById('viewFatSite');
       const viewDwr = document.getElementById('viewDwr');
+      const viewExpenses = document.getElementById('viewExpenses');
       const pdfBtnLabel = document.getElementById('lblPrimaryPdfBtn');
 
-      [fatBtn, siteBtn, dwrBtn].forEach(b => {
-        b.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white";
+      [fatBtn, siteBtn, dwrBtn, expBtn].forEach(b => {
+        if (b) b.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white";
       });
 
       if (mode === 'FAT') {
         fatBtn.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-amber-500 text-black shadow-md";
         viewFatSite.classList.remove('hidden');
         viewDwr.classList.add('hidden');
+        viewExpenses.classList.add('hidden');
         pdfBtnLabel.innerText = "Download FAT Certificate";
         document.getElementById('metadataHeaderTitle').innerText = "Panel & Job Specification (FAT)";
         document.getElementById('lblSerialTag').innerText = "Panel Serial Number";
@@ -654,6 +942,7 @@
         siteBtn.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-blue-600 text-white shadow-md";
         viewFatSite.classList.remove('hidden');
         viewDwr.classList.add('hidden');
+        viewExpenses.classList.add('hidden');
         pdfBtnLabel.innerText = "Download Commissioning PDF";
         document.getElementById('metadataHeaderTitle').innerText = "Site & Commissioning Specification";
         document.getElementById('lblSerialTag').innerText = "Equipment / Field Tag No";
@@ -663,8 +952,15 @@
         dwrBtn.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-emerald-500 text-black shadow-md";
         viewFatSite.classList.add('hidden');
         viewDwr.classList.remove('hidden');
+        viewExpenses.classList.add('hidden');
         pdfBtnLabel.innerText = "Download Daily Report (PDF)";
         initDwrCanvas();
+      } else if (mode === 'EXPENSES') {
+        expBtn.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-amber-500 text-black shadow-md";
+        viewFatSite.classList.add('hidden');
+        viewDwr.classList.add('hidden');
+        viewExpenses.classList.remove('hidden');
+        pdfBtnLabel.innerText = "Sync All to Google Sheet";
       }
     }
 
@@ -921,8 +1217,6 @@
       };
     }
 
-    // 3. CONSOLIDATED DWR PDF GENERATOR
-    // 3. CONSOLIDATED DWR PDF GENERATOR (EXACT EXCEL FORMAT - NO COMPANY LOGO / NO HEADER INFO)
     // 3. CONSOLIDATED DWR PDF GENERATOR (OPTIMIZED ROW HEIGHT & PROFESSIONAL LAYOUT)
     async function generateConsolidatedDwrPDF() {
       saveCurrentDwrDay(false);
@@ -1086,22 +1380,17 @@
         // 7. SIGNATURE BOXES (MATCHES EXCEL BOTTOM ROW)
         const sigStartY = doc.lastAutoTable.finalY + 3;
         const sigBoxHeight = 21;
-        const totalTableWidth = 186; // 35+43+23+33+22+30
+        const totalTableWidth = 186;
 
-        // Outer framework
         doc.setDrawColor(borderDark[0], borderDark[1], borderDark[2]);
         doc.setLineWidth(0.3);
         doc.rect(12, sigStartY, totalTableWidth, sigBoxHeight);
 
-        // Header separator line
         doc.line(12, sigStartY + 6, 12 + totalTableWidth, sigStartY + 6);
-
-        // Column divider lines
         doc.line(55, sigStartY, 55, sigStartY + sigBoxHeight);
         doc.line(105, sigStartY, 105, sigStartY + sigBoxHeight);
         doc.line(148, sigStartY, 148, sigStartY + sigBoxHeight);
 
-        // Header titles
         doc.setFont("helvetica", "bold");
         doc.setFontSize(7.5);
         doc.setTextColor(0, 0, 0);
@@ -1110,12 +1399,10 @@
         doc.text("Client Site Incharge", 112, sigStartY + 4.2);
         doc.text("Signature", 166, sigStartY + 4.2);
 
-        // Signatory names
         doc.setFont("helvetica", "normal");
         doc.text(day.engName || "Authorized Signatory", 15, sigStartY + 13.5);
         doc.text(day.inchargeName || siteIncharge, 108, sigStartY + 13.5);
 
-        // Render digital signatures if captured
         if (day.engSigData) {
           doc.addImage(day.engSigData, 'PNG', 58, sigStartY + 7, 44, 13);
         }
@@ -1132,6 +1419,8 @@
     function handlePrimaryPdfDownload() {
       if (currentAppMode === 'DWR') {
         generateConsolidatedDwrPDF();
+      } else if (currentAppMode === 'EXPENSES') {
+        syncExpensesToGoogleSheet();
       } else {
         generateOfficialInspectionPDF();
       }
@@ -1512,7 +1801,7 @@
       lucide.createIcons();
     }
 
-    // 6. SYNC TO GOOGLE SHEETS (HARMONIZED WITH BACKEND 14 HEADERS)
+    // 6. SYNC TO GOOGLE SHEETS
     async function syncInspectionToGoogleSheet() {
       const btn = document.getElementById('syncSheetBtn');
       const orig = btn.innerHTML;
@@ -1792,6 +2081,475 @@
       saveTemplates(DEFAULT_TEMPLATES);
       closeTemplateManagerModal();
       refreshCategoryDropdown();
+    }
+
+    // =========================================================================
+    // 9. SITE EXPENSE ENGINE & RECONCILIATION
+    // =========================================================================
+    let isExpProfileLocked = true;
+    let activeExpDayIndex = 0;
+    let expDaysList = [];
+    let currentReceiptBase64 = null;
+
+    function initExpensesModule() {
+      try {
+        const savedProfile = localStorage.getItem('aryavarta_exp_profile');
+        if (savedProfile) {
+          const p = JSON.parse(savedProfile);
+          document.getElementById('expSiteName').value = p.siteName || '';
+          document.getElementById('expEngineerName').value = p.engineerName || '';
+          document.getElementById('expProjectNo').value = p.projectNo || '';
+        }
+      } catch (e) {}
+
+      lockExpProfile(true);
+
+      try {
+        const storedDays = localStorage.getItem('aryavarta_exp_days');
+        if (storedDays) {
+          expDaysList = JSON.parse(storedDays);
+        } else {
+          expDaysList = [createBlankExpDay(1, new Date().toISOString().split('T')[0])];
+        }
+      } catch (e) {
+        expDaysList = [createBlankExpDay(1, new Date().toISOString().split('T')[0])];
+      }
+
+      renderExpDaysNav();
+      loadExpDayIntoForm(0);
+    }
+
+    function createBlankExpDay(dayNum, dateStr) {
+      return {
+        dayNumber: dayNum,
+        date: dateStr,
+        gotAdvance: "NO",
+        advanceAmount: 0,
+        dailyAllowance: 0,
+        demandAdvance: "NO",
+        demandAmount: 0,
+        usedOwnMoney: "NO",
+        ownMoneyAmount: 0,
+        expenses: []
+      };
+    }
+
+    function lockExpProfile(shouldLock) {
+      isExpProfileLocked = shouldLock;
+      ['expSiteName', 'expEngineerName', 'expProjectNo'].forEach(f => {
+        document.getElementById(f).disabled = shouldLock;
+      });
+      document.getElementById('lblExpProfileLock').innerText = shouldLock ? "Unlock to Edit" : "Lock Profile";
+    }
+
+    function toggleExpProfileLock() {
+      if (isExpProfileLocked) {
+        lockExpProfile(false);
+      } else {
+        const profile = {
+          siteName: document.getElementById('expSiteName').value.trim(),
+          engineerName: document.getElementById('expEngineerName').value.trim(),
+          projectNo: document.getElementById('expProjectNo').value.trim()
+        };
+        try {
+          localStorage.setItem('aryavarta_exp_profile', JSON.stringify(profile));
+        } catch(e) {}
+        lockExpProfile(true);
+        playAudioTone(880, 0.1);
+      }
+    }
+
+    function renderExpDaysNav() {
+      const nav = document.getElementById('expDaysNav');
+      nav.innerHTML = '';
+      expDaysList.forEach((day, idx) => {
+        const btn = document.createElement('button');
+        const isActive = idx === activeExpDayIndex;
+        btn.className = `px-3 py-1.5 rounded-lg text-xs font-mono-code font-bold transition-all ${
+          isActive ? 'bg-amber-500 text-black shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+        }`;
+        btn.innerText = `Day ${day.dayNumber}: ${day.date}`;
+        btn.onclick = () => {
+          saveCurrentExpDay(false);
+          loadExpDayIntoForm(idx);
+        };
+        nav.appendChild(btn);
+      });
+      lucide.createIcons();
+    }
+
+    function loadExpDayIntoForm(idx) {
+      activeExpDayIndex = idx;
+      renderExpDaysNav();
+      const day = expDaysList[idx];
+
+      document.getElementById('lblExpDayTitle').innerText = `EXPENSES FOR: DAY ${day.dayNumber} (${day.date})`;
+      document.getElementById('expDailyDate').value = day.date;
+
+      const isAdv = day.gotAdvance === "YES";
+      document.getElementsByName('expGotAdvance')[0].checked = isAdv;
+      document.getElementsByName('expGotAdvance')[1].checked = !isAdv;
+      toggleAdvanceBox(isAdv);
+      document.getElementById('expAdvanceAmount').value = day.advanceAmount || '';
+
+      document.getElementById('expAllowanceAmount').value = day.dailyAllowance || '';
+
+      const isDem = day.demandAdvance === "YES";
+      document.getElementsByName('expDemandAdvance')[0].checked = isDem;
+      document.getElementsByName('expDemandAdvance')[1].checked = !isDem;
+      toggleDemandBox(isDem);
+      document.getElementById('expDemandAmount').value = day.demandAmount || '';
+
+      const isOwn = day.usedOwnMoney === "YES";
+      document.getElementsByName('expUsedOwnMoney')[0].checked = isOwn;
+      document.getElementsByName('expUsedOwnMoney')[1].checked = !isOwn;
+      toggleOwnMoneyBox(isOwn);
+      document.getElementById('expOwnMoneyAmount').value = day.ownMoneyAmount || '';
+
+      currentReceiptBase64 = null;
+      document.getElementById('lblReceiptFile').innerText = "Attach Bill Photo";
+
+      renderDayExpensesTable();
+      calculateExpTotals();
+    }
+
+    function toggleAdvanceBox(show) {
+      document.getElementById('boxAdvanceAmount').classList.toggle('hidden', !show);
+    }
+    function toggleDemandBox(show) {
+      document.getElementById('boxDemandAmount').classList.toggle('hidden', !show);
+    }
+    function toggleOwnMoneyBox(show) {
+      document.getElementById('boxOwnMoneyAmount').classList.toggle('hidden', !show);
+    }
+
+    function onExpDateChanged(newDate) {
+      expDaysList[activeExpDayIndex].date = newDate;
+      document.getElementById('lblExpDayTitle').innerText = `EXPENSES FOR: DAY ${expDaysList[activeExpDayIndex].dayNumber} (${newDate})`;
+      renderExpDaysNav();
+    }
+
+    function addNewExpDay() {
+      saveCurrentExpDay(false);
+      const nextNum = expDaysList.length + 1;
+      const today = new Date().toISOString().split('T')[0];
+      expDaysList.push(createBlankExpDay(nextNum, today));
+      try {
+        localStorage.setItem('aryavarta_exp_days', JSON.stringify(expDaysList));
+      } catch (e) {}
+      loadExpDayIntoForm(expDaysList.length - 1);
+      playAudioTone(880, 0.15);
+    }
+
+    function handleReceiptUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 1200;
+          let w = img.width, h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          currentReceiptBase64 = canvas.toDataURL('image/jpeg', 0.85);
+          document.getElementById('lblReceiptFile').innerText = "✓ Receipt Attached";
+          playAudioTone(880, 0.1);
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function addExpenseItemToActiveDay() {
+      const cat = document.getElementById('expCategorySelect').value;
+      const amount = parseFloat(document.getElementById('expItemAmount').value);
+      const desc = document.getElementById('expItemDescription').value.trim();
+
+      if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid expense amount.");
+        return;
+      }
+
+      const day = expDaysList[activeExpDayIndex];
+      day.expenses.push({
+        id: "exp_" + Date.now(),
+        category: cat,
+        description: desc || `${cat} Expense`,
+        amount: amount,
+        receiptPhoto: currentReceiptBase64
+      });
+
+      document.getElementById('expItemAmount').value = '';
+      document.getElementById('expItemDescription').value = '';
+      currentReceiptBase64 = null;
+      document.getElementById('lblReceiptFile').innerText = "Attach Bill Photo";
+
+      renderDayExpensesTable();
+      calculateExpTotals();
+      playAudioTone(750, 0.15);
+    }
+
+    function deleteExpenseItem(itemIdx) {
+      const day = expDaysList[activeExpDayIndex];
+      day.expenses.splice(itemIdx, 1);
+      renderDayExpensesTable();
+      calculateExpTotals();
+    }
+
+    function renderDayExpensesTable() {
+      const container = document.getElementById('dayExpensesTableContainer');
+      const day = expDaysList[activeExpDayIndex];
+
+      if (!day.expenses || day.expenses.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 bg-slate-950">No categorized expenses added for this day yet.</div>`;
+        document.getElementById('lblDayCategorizedTotal').innerText = `Day Receipts: ₹0.00`;
+        return;
+      }
+
+      let dayTotal = 0;
+      let html = `
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-slate-950 text-slate-400 font-industrial uppercase border-b border-slate-800">
+            <tr>
+              <th class="p-2.5">Category</th>
+              <th class="p-2.5">Description</th>
+              <th class="p-2.5">Amount (₹)</th>
+              <th class="p-2.5 text-center">Receipt Evidence</th>
+              <th class="p-2.5 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 bg-slate-900/60 font-mono-code">
+      `;
+
+      day.expenses.forEach((item, idx) => {
+        dayTotal += item.amount;
+        const photoCell = item.receiptPhoto
+          ? `<img src="${item.receiptPhoto}" onclick="openReceiptLightbox('${item.receiptPhoto}', '${item.category} - ₹${item.amount}')" class="w-10 h-10 object-cover rounded-md border border-slate-700 mx-auto cursor-pointer hover:scale-110 transition-transform">`
+          : `<span class="text-[10px] text-slate-500 italic">No Photo</span>`;
+
+        html += `
+          <tr>
+            <td class="p-2.5 font-bold text-amber-400">${item.category}</td>
+            <td class="p-2.5 text-slate-300 font-sans">${item.description}</td>
+            <td class="p-2.5 font-bold text-white">₹${item.amount.toFixed(2)}</td>
+            <td class="p-2.5 text-center">${photoCell}</td>
+            <td class="p-2.5 text-right">
+              <button onclick="deleteExpenseItem(${idx})" class="text-rose-400 hover:text-rose-300 text-xs font-sans">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+      document.getElementById('lblDayCategorizedTotal').innerText = `Day Receipts: ₹${dayTotal.toFixed(2)}`;
+    }
+
+    function openReceiptLightbox(imgSrc, title) {
+      document.getElementById('lightboxFullImage').src = imgSrc;
+      document.getElementById('lblLightboxTitle').innerText = title || "Receipt Preview";
+      document.getElementById('btnDownloadReceipt').href = imgSrc;
+      document.getElementById('receiptLightboxModal').classList.remove('hidden');
+    }
+
+    function closeReceiptLightbox() {
+      document.getElementById('receiptLightboxModal').classList.add('hidden');
+    }
+
+    function calculateExpTotals() {
+      saveCurrentExpDay(false);
+
+      let grandCategorized = 0;
+      let grandAllowance = 0;
+      let grandOwnMoney = 0;
+      let grandAdvance = 0;
+
+      expDaysList.forEach(day => {
+        if (day.expenses) {
+          day.expenses.forEach(e => { grandCategorized += (Number(e.amount) || 0); });
+        }
+        grandAllowance += (Number(day.dailyAllowance) || 0);
+        grandOwnMoney += (day.usedOwnMoney === "YES" ? (Number(day.ownMoneyAmount) || 0) : 0);
+        grandAdvance += (day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0);
+      });
+
+      const finalTotalExpenses = grandCategorized + grandAllowance + grandOwnMoney;
+      const netBalance = grandAdvance - finalTotalExpenses;
+
+      document.getElementById('statCategorizedExpenses').innerText = `₹${grandCategorized.toFixed(2)}`;
+      document.getElementById('statTotalAllowance').innerText = `₹${grandAllowance.toFixed(2)}`;
+      document.getElementById('statOwnMoneyUsed').innerText = `₹${grandOwnMoney.toFixed(2)}`;
+      document.getElementById('statTotalAdvance').innerText = `₹${grandAdvance.toFixed(2)}`;
+      document.getElementById('statFinalTotalExpenses').innerText = `₹${finalTotalExpenses.toFixed(2)}`;
+
+      const badge = document.getElementById('statSettlementBadge');
+      if (netBalance > 0) {
+        badge.className = "inline-block mt-1 px-4 py-1.5 rounded-lg text-xs font-bold font-mono-code uppercase bg-rose-500/20 text-rose-400 border border-rose-500/50";
+        badge.innerText = `DEBIT FROM ENGINEER: Return ₹${netBalance.toFixed(2)} to Company`;
+      } else if (netBalance < 0) {
+        badge.className = "inline-block mt-1 px-4 py-1.5 rounded-lg text-xs font-bold font-mono-code uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/50";
+        badge.innerText = `CREDIT TO ENGINEER: Reimburse ₹${Math.abs(netBalance).toFixed(2)} to Engineer`;
+      } else {
+        badge.className = "inline-block mt-1 px-4 py-1.5 rounded-lg text-xs font-bold font-mono-code uppercase bg-blue-500/20 text-blue-400 border border-blue-500/50";
+        badge.innerText = `BALANCED / SETTLED: ₹0.00`;
+      }
+
+      return {
+        grandCategorized, grandAllowance, grandOwnMoney, grandAdvance, finalTotalExpenses, netBalance
+      };
+    }
+
+    function saveCurrentExpDay(showAlert = true) {
+      const day = expDaysList[activeExpDayIndex];
+      if (!day) return;
+
+      day.date = document.getElementById('expDailyDate').value || new Date().toISOString().split('T')[0];
+      day.gotAdvance = document.querySelector('input[name="expGotAdvance"]:checked')?.value || "NO";
+      day.advanceAmount = parseFloat(document.getElementById('expAdvanceAmount').value) || 0;
+      day.dailyAllowance = parseFloat(document.getElementById('expAllowanceAmount').value) || 0;
+      day.demandAdvance = document.querySelector('input[name="expDemandAdvance"]:checked')?.value || "NO";
+      day.demandAmount = parseFloat(document.getElementById('expDemandAmount').value) || 0;
+      day.usedOwnMoney = document.querySelector('input[name="expUsedOwnMoney"]:checked')?.value || "NO";
+      day.ownMoneyAmount = parseFloat(document.getElementById('expOwnMoneyAmount').value) || 0;
+
+      const profile = {
+        siteName: document.getElementById('expSiteName').value.trim(),
+        engineerName: document.getElementById('expEngineerName').value.trim(),
+        projectNo: document.getElementById('expProjectNo').value.trim()
+      };
+
+      try {
+        localStorage.setItem('aryavarta_exp_profile', JSON.stringify(profile));
+        localStorage.setItem('aryavarta_exp_days', JSON.stringify(expDaysList));
+      } catch (e) {}
+
+      if (showAlert) {
+        playAudioTone(880, 0.2);
+        alert(`✓ Day ${day.dayNumber} expense sheet saved successfully!`);
+      }
+    }
+
+    async function syncExpensesToGoogleSheet() {
+      const stats = calculateExpTotals();
+      const btn = document.getElementById('btnSyncExpenseSheet');
+      const origText = btn.innerHTML;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-1">●</span> Syncing to Sheet...`;
+      btn.disabled = true;
+
+      const siteName = document.getElementById('expSiteName').value.trim() || "Site";
+      const engineerName = document.getElementById('expEngineerName').value.trim() || "Engineer";
+      const projectNo = document.getElementById('expProjectNo').value.trim() || "PRJ-01";
+
+      const verdictText = stats.netBalance > 0
+        ? `DEBIT ENGINEER (Return ₹${stats.netBalance.toFixed(2)})`
+        : stats.netBalance < 0
+          ? `CREDIT ENGINEER (Reimburse ₹${Math.abs(stats.netBalance).toFixed(2)})`
+          : "SETTLED (₹0.00)";
+
+      let flatItems = [];
+      expDaysList.forEach(day => {
+        if (day.expenses && day.expenses.length > 0) {
+          day.expenses.forEach(e => {
+            flatItems.push({
+              date: day.date,
+              category: e.category,
+              description: e.description,
+              amount: e.amount,
+              dailyAllowance: day.dailyAllowance || 0,
+              advanceReceived: day.gotAdvance === "YES" ? day.advanceAmount : 0,
+              demandedAdvance: day.demandAdvance === "YES" ? day.demandAmount : 0,
+              ownMoneyUsed: day.usedOwnMoney === "YES" ? day.ownMoneyAmount : 0,
+              receiptPhotoBase64: e.receiptPhoto
+            });
+          });
+        } else {
+          flatItems.push({
+            date: day.date,
+            category: "Allowance & Advances",
+            description: "Daily Allowance & Cash Flow Log",
+            amount: 0,
+            dailyAllowance: day.dailyAllowance || 0,
+            advanceReceived: day.gotAdvance === "YES" ? day.advanceAmount : 0,
+            demandedAdvance: day.demandAdvance === "YES" ? day.demandAmount : 0,
+            ownMoneyUsed: day.usedOwnMoney === "YES" ? day.ownMoneyAmount : 0,
+            receiptPhotoBase64: null
+          });
+        }
+      });
+
+      const payload = {
+        timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+        serviceType: "EXPENSES",
+        siteName: siteName,
+        engineerName: engineerName,
+        projectNo: projectNo,
+        settlementVerdict: verdictText,
+        items: flatItems
+      };
+
+      try {
+        await fetch(GOOGLE_APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        playAudioTone(880, 0.2);
+        alert("✓ Site Expenses successfully synced to Google Sheets with receipt links!");
+      } catch (err) {
+        alert("Sync request failed. Please check network connection.");
+      } finally {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+        lucide.createIcons();
+      }
+    }
+
+    function exportExpensesToCsv() {
+      const stats = calculateExpTotals();
+      const siteName = document.getElementById('expSiteName').value.trim() || "Site";
+      const engineerName = document.getElementById('expEngineerName').value.trim() || "Engineer";
+      const projectNo = document.getElementById('expProjectNo').value.trim() || "Project";
+
+      let csv = "ARYAVARTA AUTOMATION - SITE EXPENSES & SETTLEMENT REPORT\n";
+      csv += `Site Name:,${siteName},Project No:,${projectNo},Engineer Name:,${engineerName}\n\n`;
+      csv += "Date,Category,Description,Receipt Amount (INR),Daily Allowance (INR),Advance Received (INR),Demanded Advance (INR),Own Money Used (INR)\n";
+
+      expDaysList.forEach(day => {
+        if (day.expenses && day.expenses.length > 0) {
+          day.expenses.forEach(e => {
+            csv += `"${day.date}","${e.category}","${e.description.replace(/"/g, '""')}",${e.amount},${day.dailyAllowance || 0},${day.advanceAmount || 0},${day.demandAmount || 0},${day.ownMoneyAmount || 0}\n`;
+          });
+        } else {
+          csv += `"${day.date}","No Receipts","Daily Allowance Log",0,${day.dailyAllowance || 0},${day.advanceAmount || 0},${day.demandAmount || 0},${day.ownMoneyAmount || 0}\n`;
+        }
+      });
+
+      csv += `\nSUMMARY TOTALS:\n`;
+      csv += `Total Receipts Amount:,${stats.grandCategorized.toFixed(2)}\n`;
+      csv += `Total Daily Allowance:,${stats.grandAllowance.toFixed(2)}\n`;
+      csv += `Total Own Money Used:,${stats.grandOwnMoney.toFixed(2)}\n`;
+      csv += `FINAL TOTAL EXPENSES (Receipts + Allowance + Own Money):,${stats.finalTotalExpenses.toFixed(2)}\n`;
+      csv += `TOTAL ADVANCE RECEIVED:,${stats.grandAdvance.toFixed(2)}\n`;
+      csv += `NET SETTLEMENT BALANCE (Advance - Expenses):,${stats.netBalance.toFixed(2)}\n`;
+      csv += `FINAL VERDICT:,${stats.netBalance > 0 ? "DEBIT ENGINEER (Return balance to company)" : stats.netBalance < 0 ? "CREDIT ENGINEER (Company reimbursement)" : "SETTLED"}\n`;
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Site_Expenses_${siteName}_${projectNo}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
   </script>
 </body>
