@@ -1890,6 +1890,27 @@
     }
 
     // 7. FAT / COMMISSIONING PDF REPORT
+    // HELPER: ASYNC LOGO LOADER (LOCAL FILE WITH GITHUB RAW FALLBACK)
+    function loadLogoImage() {
+      const urls = [
+        'logo.png',
+        'https://raw.githubusercontent.com/mr2Ashish/fat-inspection-app/main/logo.png'
+      ];
+      return new Promise((resolve) => {
+        let idx = 0;
+        function tryNext() {
+          if (idx >= urls.length) return resolve(null);
+          const img = new Image();
+          img.crossOrigin = 'Anonymous';
+          img.onload = () => resolve(img);
+          img.onerror = () => { idx++; tryNext(); };
+          img.src = urls[idx];
+        }
+        tryNext();
+      });
+    }
+
+    // 7. FAT / COMMISSIONING PDF REPORT (WITH OFFICIAL COMPANY LOGO IMAGE)
     async function generateOfficialInspectionPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -1901,32 +1922,42 @@
       const isFat = currentAppMode === 'FAT';
       const docTitle = isFat ? "FACTORY ACCEPTANCE TEST (FAT) CERTIFICATE" : "E&I SITE COMMISSIONING CERTIFICATE";
 
-      doc.setFillColor(220, 38, 38);
-      doc.triangle(24, 6, 12, 28, 36, 28, 'F');
-      doc.setFillColor(2, 132, 199);
-      doc.triangle(24, 20, 36, 28, 26, 28, 'F');
+      // 1. EMBED 100% AUTHENTIC ARYAVARTA LOGO VIA URL
+      const logoImg = await loadLogoImage();
+      if (logoImg) {
+        // Fits perfectly at top-left with original aspect ratio
+        doc.addImage(logoImg, 'PNG', 14, 7, 50, 24);
+      } else {
+        // Fallback text if network/image fails
+        doc.setTextColor(220, 38, 38);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text("ARYAVARTA AUTOMATION", 14, 16);
+      }
 
-      doc.setTextColor(220, 38, 38);
+      // 2. RIGHT-ALIGNED OFFICIAL FACILITY DETAILS
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(15);
-      doc.text("ARYAVARTA AUTOMATION", 40, 15);
+      doc.setFontSize(9.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text("ARYAVARTA AUTOMATION", 196, 12, { align: "right" });
 
-      doc.setTextColor(2, 132, 199);
-      doc.setFontSize(7.5);
-      doc.text("SYNONYMS FOR EXCELLENCE", 40, 20);
-
-      doc.setTextColor(100, 116, 139);
-      doc.setFontSize(7);
       doc.setFont("helvetica", "normal");
-      doc.text("Chikhali, Pune - 411062 | ISO 9001:2015 & 14001:2015", 40, 25);
+      doc.setFontSize(7.5);
+      doc.setTextColor(71, 85, 105);
+      doc.text("Site & Plant Engineering Operations", 196, 16.5, { align: "right" });
+      doc.text("Chikhali, Pune - 411062, Maharashtra, India", 196, 21, { align: "right" });
+      doc.text("ISO 9001:2015 & ISO 14001:2015 Certified", 196, 25.5, { align: "right" });
+      doc.text("Web: www.aryavartaautomation.in", 196, 30, { align: "right" });
 
+      // 3. TITLE BANNER
       doc.setFillColor(11, 25, 44);
-      doc.rect(14, 32, 182, 10, 'F');
+      doc.rect(14, 33, 182, 10, 'F');
       doc.setTextColor(245, 158, 11);
       doc.setFontSize(10.5);
       doc.setFont("helvetica", "bold");
-      doc.text(docTitle, 18, 38.5);
+      doc.text(docTitle, 18, 39.5);
 
+      // 4. METADATA SPECIFICATIONS
       const metaRows = [
         [
           { content: "Client Name:", styles: { fontStyle: 'bold' } }, client,
@@ -1939,12 +1970,13 @@
       ];
 
       doc.autoTable({
-        startY: 44,
+        startY: 45,
         theme: 'grid',
         body: metaRows,
-        styles: { fontSize: 8, cellPadding: 2.2 }
+        styles: { fontSize: 8, cellPadding: 2.2, lineColor: [15, 23, 42], lineWidth: 0.2 }
       });
 
+      // 5. TEST PARAMETERS TABLE
       const tableData = inspectionData.map((item, idx) => [
         idx + 1, item.title, item.standard, item.measuredValue || "N/A", item.status
       ]);
@@ -1954,9 +1986,10 @@
         head: [['#', 'Test Parameter', 'Acceptance Standard', 'Measured Value', 'Status']],
         body: tableData,
         headStyles: { fillColor: [15, 23, 42], textColor: [245, 158, 11], fontSize: 8, fontStyle: 'bold' },
-        styles: { fontSize: 7.5, cellPadding: 2 }
+        styles: { fontSize: 7.5, cellPadding: 2, lineColor: [203, 213, 225], lineWidth: 0.2 }
       });
 
+      // 6. PHOTOGRAPHIC VERIFICATION
       let photoY = doc.lastAutoTable.finalY + 6;
       if (photosList.length > 0) {
         if (photoY > 210) { doc.addPage(); photoY = 20; }
@@ -1971,6 +2004,7 @@
         photoY += 52;
       }
 
+      // 7. JOINT SIGN-OFF
       if (photoY > 230) { doc.addPage(); photoY = 25; }
       const sigY = Math.max(photoY + 5, 235);
       doc.setDrawColor(203, 213, 225);
@@ -1991,26 +2025,6 @@
       doc.text("Client / Inspector Representative", 120, sigY + 4);
 
       doc.save(`Aryavarta_${currentAppMode}_${serial}_Certificate.pdf`);
-    }
-
-    // 8. TEMPLATE MANAGER
-    let editingCategoryKey = '';
-    function openTemplateManagerModal() {
-      const modal = document.getElementById('templateManagerModal');
-      const templates = getStoredTemplates();
-      const currentModeTemplates = templates[currentAppMode];
-      const select = document.getElementById('modalCategorySelect');
-      select.innerHTML = '';
-
-      Object.keys(currentModeTemplates).forEach(k => {
-        const opt = document.createElement('option');
-        opt.value = k;
-        opt.innerText = currentModeTemplates[k].name;
-        select.appendChild(opt);
-      });
-
-      modal.classList.remove('hidden');
-      loadCategoryForEditing(select.value || currentCategoryKey);
     }
 
     function closeTemplateManagerModal() {
