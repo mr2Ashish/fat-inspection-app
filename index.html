@@ -430,7 +430,7 @@
     <!-- ========================================================================= -->
     <div id="viewExpenses" class="space-y-6 hidden">
       
-      <!-- Day 1 Setup: Fixed Project & Engineer Profile -->
+      <!-- Day 1 Setup: Fixed Project & Engineer Profile (With Compulsory Email) -->
       <div class="bg-gradient-to-r from-amber-950/30 to-slate-900 border border-amber-500/30 rounded-2xl p-4 sm:p-5 shadow-xl">
         <div class="flex items-center justify-between pb-3 border-b border-amber-500/20 mb-3">
           <div>
@@ -446,7 +446,8 @@
           </button>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        <!-- 4-Column Grid Including Compulsory Email -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           <div>
             <label class="block font-medium text-slate-400 mb-1">Site Name:</label>
             <input type="text" id="expSiteName" placeholder="e.g. Baramati Agro Ltd" class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed">
@@ -454,6 +455,10 @@
           <div>
             <label class="block font-medium text-slate-400 mb-1">Site Engineer Name:</label>
             <input type="text" id="expEngineerName" placeholder="e.g. Ashish Ingle" class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-400 mb-1">Email Address: <span class="text-rose-400 font-bold">*</span></label>
+            <input type="email" id="expEngineerEmail" placeholder="e.g. ashish@aryavarta.in" class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed">
           </div>
           <div>
             <label class="block font-medium text-slate-400 mb-1">Project No:</label>
@@ -1217,7 +1222,7 @@
       };
     }
 
-    // 3. CONSOLIDATED DWR PDF GENERATOR (OPTIMIZED ROW HEIGHT & PROFESSIONAL LAYOUT)
+    // 3. CONSOLIDATED DWR PDF GENERATOR
     async function generateConsolidatedDwrPDF() {
       saveCurrentDwrDay(false);
       const { jsPDF } = window.jspdf;
@@ -1801,7 +1806,7 @@
       lucide.createIcons();
     }
 
-    // 6. SYNC TO GOOGLE SHEETS
+    // 6. SYNC TO GOOGLE SHEETS (FAT / DWR)
     async function syncInspectionToGoogleSheet() {
       const btn = document.getElementById('syncSheetBtn');
       const orig = btn.innerHTML;
@@ -2098,6 +2103,7 @@
           const p = JSON.parse(savedProfile);
           document.getElementById('expSiteName').value = p.siteName || '';
           document.getElementById('expEngineerName').value = p.engineerName || '';
+          document.getElementById('expEngineerEmail').value = p.engineerEmail || '';
           document.getElementById('expProjectNo').value = p.projectNo || '';
         }
       } catch (e) {}
@@ -2136,7 +2142,7 @@
 
     function lockExpProfile(shouldLock) {
       isExpProfileLocked = shouldLock;
-      ['expSiteName', 'expEngineerName', 'expProjectNo'].forEach(f => {
+      ['expSiteName', 'expEngineerName', 'expEngineerEmail', 'expProjectNo'].forEach(f => {
         document.getElementById(f).disabled = shouldLock;
       });
       document.getElementById('lblExpProfileLock').innerText = shouldLock ? "Unlock to Edit" : "Lock Profile";
@@ -2146,9 +2152,18 @@
       if (isExpProfileLocked) {
         lockExpProfile(false);
       } else {
+        const email = document.getElementById('expEngineerEmail').value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+          alert("Please enter a valid compulsory Email Address before locking the profile.");
+          document.getElementById('expEngineerEmail').focus();
+          return;
+        }
+
         const profile = {
           siteName: document.getElementById('expSiteName').value.trim(),
           engineerName: document.getElementById('expEngineerName').value.trim(),
+          engineerEmail: email,
           projectNo: document.getElementById('expProjectNo').value.trim()
         };
         try {
@@ -2423,6 +2438,7 @@
       const profile = {
         siteName: document.getElementById('expSiteName').value.trim(),
         engineerName: document.getElementById('expEngineerName').value.trim(),
+        engineerEmail: document.getElementById('expEngineerEmail').value.trim(),
         projectNo: document.getElementById('expProjectNo').value.trim()
       };
 
@@ -2437,7 +2453,19 @@
       }
     }
 
+    // SYNC EXPENSES TO GOOGLE SHEETS WITH COMPULSORY EMAIL CHECK
     async function syncExpensesToGoogleSheet() {
+      const engineerEmail = document.getElementById('expEngineerEmail').value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      // Compulsory Email Verification
+      if (!engineerEmail || !emailRegex.test(engineerEmail)) {
+        alert("⚠️ Email Address is compulsory!\n\nPlease enter a valid email address in the Fixed Site Profile (Day 1 Setup) before syncing.");
+        if (isExpProfileLocked) lockExpProfile(false);
+        document.getElementById('expEngineerEmail').focus();
+        return;
+      }
+
       const stats = calculateExpTotals();
       const btn = document.getElementById('btnSyncExpenseSheet');
       const origText = btn.innerHTML;
@@ -2490,6 +2518,7 @@
         serviceType: "EXPENSES",
         siteName: siteName,
         engineerName: engineerName,
+        engineerEmail: engineerEmail,
         projectNo: projectNo,
         settlementVerdict: verdictText,
         items: flatItems
@@ -2517,10 +2546,11 @@
       const stats = calculateExpTotals();
       const siteName = document.getElementById('expSiteName').value.trim() || "Site";
       const engineerName = document.getElementById('expEngineerName').value.trim() || "Engineer";
+      const engineerEmail = document.getElementById('expEngineerEmail').value.trim() || "N/A";
       const projectNo = document.getElementById('expProjectNo').value.trim() || "Project";
 
       let csv = "ARYAVARTA AUTOMATION - SITE EXPENSES & SETTLEMENT REPORT\n";
-      csv += `Site Name:,${siteName},Project No:,${projectNo},Engineer Name:,${engineerName}\n\n`;
+      csv += `Site Name:,${siteName},Project No:,${projectNo},Engineer Name:,${engineerName},Email:,${engineerEmail}\n\n`;
       csv += "Date,Category,Description,Receipt Amount (INR),Daily Allowance (INR),Advance Received (INR),Demanded Advance (INR),Own Money Used (INR)\n";
 
       expDaysList.forEach(day => {
