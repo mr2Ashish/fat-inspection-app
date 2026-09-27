@@ -446,7 +446,6 @@
           </button>
         </div>
 
-        <!-- 4-Column Grid Including Compulsory Email -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           <div>
             <label class="block font-medium text-slate-400 mb-1">Site Name:</label>
@@ -570,7 +569,7 @@
           </div>
         </div>
 
-        <!-- Add Category Expense Item Form -->
+        <!-- Add Category Expense Item Form (Dual: Camera + File Upload) -->
         <div class="bg-slate-950 p-4 sm:p-5 rounded-xl border border-slate-800 space-y-4">
           <h4 class="text-xs font-bold text-amber-400 uppercase font-industrial flex items-center gap-2">
             <i data-lucide="receipt" class="w-4 h-4"></i>
@@ -594,11 +593,22 @@
             </div>
             <div>
               <label class="block text-[11px] text-slate-400 mb-1">Receipt / Bill Photographic Evidence:</label>
-              <label class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-slate-900 border border-dashed border-slate-700 hover:border-amber-400 rounded-lg text-xs text-slate-300 cursor-pointer truncate">
-                <i data-lucide="camera" class="w-4 h-4 text-amber-400"></i>
-                <span id="lblReceiptFile">Attach Bill Photo</span>
-                <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptUpload(event)">
-              </label>
+              <div class="grid grid-cols-2 gap-2">
+                <!-- Option A: Take Photo via Camera -->
+                <label class="flex items-center justify-center gap-1.5 px-2 py-2 bg-slate-900 border border-dashed border-slate-700 hover:border-amber-400 rounded-lg text-xs text-slate-300 cursor-pointer transition-all hover:bg-slate-800">
+                  <i data-lucide="camera" class="w-4 h-4 text-amber-400 flex-shrink-0"></i>
+                  <span class="truncate">Camera</span>
+                  <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptUpload(event)">
+                </label>
+
+                <!-- Option B: Upload Photo from Storage / Gallery -->
+                <label class="flex items-center justify-center gap-1.5 px-2 py-2 bg-slate-900 border border-dashed border-slate-700 hover:border-amber-400 rounded-lg text-xs text-slate-300 cursor-pointer transition-all hover:bg-slate-800">
+                  <i data-lucide="upload" class="w-4 h-4 text-amber-400 flex-shrink-0"></i>
+                  <span class="truncate">Upload Bill</span>
+                  <input type="file" accept="image/*" class="hidden" onchange="handleReceiptUpload(event)">
+                </label>
+              </div>
+              <p id="lblReceiptStatus" class="text-[10px] text-slate-500 font-mono-code mt-1 text-center truncate">No bill attached yet</p>
             </div>
           </div>
 
@@ -2222,7 +2232,11 @@
       document.getElementById('expOwnMoneyAmount').value = day.ownMoneyAmount || '';
 
       currentReceiptBase64 = null;
-      document.getElementById('lblReceiptFile').innerText = "Attach Bill Photo";
+      const statusEl = document.getElementById('lblReceiptStatus');
+      if (statusEl) {
+        statusEl.innerText = "No bill attached yet";
+        statusEl.className = "text-[10px] text-slate-500 font-mono-code mt-1 text-center truncate";
+      }
 
       renderDayExpensesTable();
       calculateExpTotals();
@@ -2256,6 +2270,7 @@
       playAudioTone(880, 0.15);
     }
 
+    // Handles both Camera & Storage uploads cleanly
     function handleReceiptUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -2275,7 +2290,12 @@
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
           currentReceiptBase64 = canvas.toDataURL('image/jpeg', 0.85);
-          document.getElementById('lblReceiptFile').innerText = "✓ Receipt Attached";
+
+          const statusEl = document.getElementById('lblReceiptStatus');
+          if (statusEl) {
+            statusEl.innerText = `✓ Attached: ${file.name || 'Receipt Image'}`;
+            statusEl.className = "text-[10px] text-emerald-400 font-mono-code mt-1 text-center truncate font-bold";
+          }
           playAudioTone(880, 0.1);
         };
         img.src = evt.target.result;
@@ -2305,7 +2325,12 @@
       document.getElementById('expItemAmount').value = '';
       document.getElementById('expItemDescription').value = '';
       currentReceiptBase64 = null;
-      document.getElementById('lblReceiptFile').innerText = "Attach Bill Photo";
+      
+      const statusEl = document.getElementById('lblReceiptStatus');
+      if (statusEl) {
+        statusEl.innerText = "No bill attached yet";
+        statusEl.className = "text-[10px] text-slate-500 font-mono-code mt-1 text-center truncate";
+      }
 
       renderDayExpensesTable();
       calculateExpTotals();
@@ -2453,12 +2478,11 @@
       }
     }
 
-    // SYNC EXPENSES TO GOOGLE SHEETS WITH COMPULSORY EMAIL CHECK
+    // SYNC EXPENSES TO GOOGLE SHEETS
     async function syncExpensesToGoogleSheet() {
       const engineerEmail = document.getElementById('expEngineerEmail').value.trim();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       
-      // Compulsory Email Verification
       if (!engineerEmail || !emailRegex.test(engineerEmail)) {
         alert("⚠️ Email Address is compulsory!\n\nPlease enter a valid email address in the Fixed Site Profile (Day 1 Setup) before syncing.");
         if (isExpProfileLocked) lockExpProfile(false);
