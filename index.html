@@ -1911,6 +1911,7 @@
     }
 
     // 7. FAT / COMMISSIONING PDF REPORT (WITH OFFICIAL COMPANY LOGO IMAGE)
+    // 7. FAT / COMMISSIONING PDF REPORT (ALL PHOTOS IN 2-COLUMN GRID + AUTO-PAGINATION)
     async function generateOfficialInspectionPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -1922,13 +1923,11 @@
       const isFat = currentAppMode === 'FAT';
       const docTitle = isFat ? "FACTORY ACCEPTANCE TEST (FAT) CERTIFICATE" : "E&I SITE COMMISSIONING CERTIFICATE";
 
-      // 1. EMBED 100% AUTHENTIC ARYAVARTA LOGO VIA URL
+      // 1. EMBED ARYAVARTA LOGO VIA URL
       const logoImg = await loadLogoImage();
       if (logoImg) {
-        // Fits perfectly at top-left with original aspect ratio
         doc.addImage(logoImg, 'PNG', 14, 7, 50, 24);
       } else {
-        // Fallback text if network/image fails
         doc.setTextColor(220, 38, 38);
         doc.setFont("helvetica", "bold");
         doc.setFontSize(14);
@@ -1989,24 +1988,52 @@
         styles: { fontSize: 7.5, cellPadding: 2, lineColor: [203, 213, 225], lineWidth: 0.2 }
       });
 
-      // 6. PHOTOGRAPHIC VERIFICATION
+      // 6. ALL PHOTOGRAPHIC EVIDENCE (NO LIMIT - 2 PER ROW WITH AUTO-PAGING)
       let photoY = doc.lastAutoTable.finalY + 6;
       if (photosList.length > 0) {
-        if (photoY > 210) { doc.addPage(); photoY = 20; }
+        if (photoY > 215) {
+          doc.addPage();
+          photoY = 20;
+        }
         doc.setFontSize(8.5);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(15, 23, 42);
-        doc.text("Photographic Verification:", 14, photoY);
+        doc.text(`Photographic Verification (${photosList.length} photos):`, 14, photoY);
         photoY += 4;
-        for (let i = 0; i < Math.min(photosList.length, 2); i++) {
-          doc.addImage(photosList[i], 'JPEG', 14 + (i * 92), photoY, 88, 48);
+
+        const imgW = 88;
+        const imgH = 48;
+        const colGap = 6;
+        const rowGap = 5;
+
+        for (let i = 0; i < photosList.length; i++) {
+          const col = i % 2; // 0 = Left column, 1 = Right column
+          const posX = 14 + col * (imgW + colGap);
+
+          // If starting a new row and it exceeds page boundary, create a new page
+          if (col === 0 && (photoY + imgH > 270)) {
+            doc.addPage();
+            photoY = 20;
+          }
+
+          doc.addImage(photosList[i], 'JPEG', posX, photoY, imgW, imgH);
+
+          // Advance vertical cursor after placing right image or on the final image
+          if (col === 1 || i === photosList.length - 1) {
+            photoY += imgH + rowGap;
+          }
         }
-        photoY += 52;
       }
 
-      // 7. JOINT SIGN-OFF
-      if (photoY > 230) { doc.addPage(); photoY = 25; }
-      const sigY = Math.max(photoY + 5, 235);
+      // 7. JOINT SIGN-OFF (ALWAYS PLACED SAFELY BELOW PHOTOS)
+      let sigY;
+      if (photoY > 235) {
+        doc.addPage();
+        sigY = 35;
+      } else {
+        sigY = Math.max(photoY + 8, 235);
+      }
+
       doc.setDrawColor(203, 213, 225);
       doc.line(14, sigY, 90, sigY);
       doc.line(120, sigY, 196, sigY);
@@ -2026,7 +2053,6 @@
 
       doc.save(`Aryavarta_${currentAppMode}_${serial}_Certificate.pdf`);
     }
-
     function closeTemplateManagerModal() {
       document.getElementById('templateManagerModal').classList.add('hidden');
     }
