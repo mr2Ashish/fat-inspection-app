@@ -2441,6 +2441,7 @@
     }
 
     // SYNC EXPENSES TO GOOGLE SHEETS
+    // SYNC EXPENSES TO GOOGLE SHEETS (ALLOWANCE & ADVANCE LOGGED ONCE PER DAY)
     async function syncExpensesToGoogleSheet() {
       const engineerEmail = document.getElementById('expEngineerEmail').value.trim();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -2472,28 +2473,31 @@
       let flatItems = [];
       expDaysList.forEach(day => {
         if (day.expenses && day.expenses.length > 0) {
-          day.expenses.forEach(e => {
+          day.expenses.forEach((e, itemIdx) => {
+            // Allowance, Advance Received, and Demanded Advance appear ONLY ONCE per day (on the 1st expense row)
+            const isFirstItemOfDay = (itemIdx === 0);
             flatItems.push({
               date: day.date,
               category: e.category,
               description: e.description,
               amount: e.amount,
-              dailyAllowance: fixedDA,
-              advanceReceived: day.gotAdvance === "YES" ? day.advanceAmount : 0,
-              demandedAdvance: day.demandAdvance === "YES" ? day.demandAmount : 0,
+              dailyAllowance: isFirstItemOfDay ? fixedDA : 0,
+              advanceReceived: isFirstItemOfDay && day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0,
+              demandedAdvance: isFirstItemOfDay && day.demandAdvance === "YES" ? (Number(day.demandAmount) || 0) : 0,
               ownMoneyUsed: 0,
               receiptPhotoBase64: e.receiptPhoto
             });
           });
         } else {
+          // If no receipts added for this day, still record the daily allowance and cash flow
           flatItems.push({
             date: day.date,
             category: "Allowance & Advances",
             description: "Daily Allowance & Cash Flow Log",
             amount: 0,
             dailyAllowance: fixedDA,
-            advanceReceived: day.gotAdvance === "YES" ? day.advanceAmount : 0,
-            demandedAdvance: day.demandAdvance === "YES" ? day.demandAmount : 0,
+            advanceReceived: day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0,
+            demandedAdvance: day.demandAdvance === "YES" ? (Number(day.demandAmount) || 0) : 0,
             ownMoneyUsed: 0,
             receiptPhotoBase64: null
           });
@@ -2529,6 +2533,7 @@
       }
     }
 
+    // EXPORT TO EXCEL / CSV REPORT (ALLOWANCE & ADVANCE LOGGED ONCE PER DAY)
     function exportExpensesToCsv() {
       const stats = calculateExpTotals();
       const siteName = document.getElementById('expSiteName').value.trim() || "Site";
@@ -2543,11 +2548,18 @@
 
       expDaysList.forEach(day => {
         if (day.expenses && day.expenses.length > 0) {
-          day.expenses.forEach(e => {
-            csv += `"${day.date}","${e.category}","${e.description.replace(/"/g, '""')}",${e.amount},${fixedDA},${day.advanceAmount || 0},${day.demandAmount || 0}\n`;
+          day.expenses.forEach((e, itemIdx) => {
+            // Only output Daily Allowance and Advance on the 1st row of that date
+            const isFirst = (itemIdx === 0);
+            const daVal = isFirst ? fixedDA : 0;
+            const advVal = isFirst && day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0;
+            const demVal = isFirst && day.demandAdvance === "YES" ? (Number(day.demandAmount) || 0) : 0;
+            csv += `"${day.date}","${e.category}","${e.description.replace(/"/g, '""')}",${e.amount},${daVal},${advVal},${demVal}\n`;
           });
         } else {
-          csv += `"${day.date}","No Receipts","Daily Allowance Log",0,${fixedDA},${day.advanceAmount || 0},${day.demandAmount || 0}\n`;
+          const advVal = day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0;
+          const demVal = day.demandAdvance === "YES" ? (Number(day.demandAmount) || 0) : 0;
+          csv += `"${day.date}","No Receipts","Daily Allowance Log",0,${fixedDA},${advVal},${demVal}\n`;
         }
       });
 
