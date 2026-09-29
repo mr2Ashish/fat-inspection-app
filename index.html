@@ -2484,7 +2484,6 @@
               dailyAllowance: isFirstItemOfDay ? fixedDA : 0,
               advanceReceived: isFirstItemOfDay && day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0,
               demandedAdvance: isFirstItemOfDay && day.demandAdvance === "YES" ? (Number(day.demandAmount) || 0) : 0,
-              ownMoneyUsed: 0,
               receiptPhotoBase64: e.receiptPhoto
             });
           });
