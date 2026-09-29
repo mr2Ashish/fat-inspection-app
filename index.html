@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aryavarta Automation - FAT, Commissioning & Operations Suite</title>
+  <title>Aryavarta Automation - FAT, Daily Report & Operations Suite</title>
   
   <!-- Manifest & Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,8 +76,8 @@
       </div>
     </div>
 
-    <!-- 3-Mode Selector (E&I Commissioning Removed) -->
-    <div class="max-w-6xl mx-auto mt-3 grid grid-cols-3 gap-2 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+    <!-- 4-Mode Selector (FAT | DWR | EXPENSES | MY STATEMENT PORTAL) -->
+    <div class="max-w-6xl mx-auto mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
       <button id="modeFatBtn" onclick="switchAppMode('FAT')" class="py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-amber-500 text-black shadow-md">
         <i data-lucide="factory" class="w-4 h-4"></i>
         <span>SHOP FAT</span>
@@ -89,6 +89,10 @@
       <button id="modeExpBtn" onclick="switchAppMode('EXPENSES')" class="py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white">
         <i data-lucide="wallet" class="w-4 h-4"></i>
         <span>SITE EXPENSES</span>
+      </button>
+      <button id="modePortalBtn" onclick="switchAppMode('PORTAL')" class="py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white">
+        <i data-lucide="user-check" class="w-4 h-4"></i>
+        <span>MY STATEMENT</span>
       </button>
     </div>
   </header>
@@ -422,11 +426,11 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- VIEW C: SITE EXPENSES & FINANCIAL RECONCILIATION -->
+    <!-- VIEW C: SITE EXPENSES FORM & ENTRY -->
     <!-- ========================================================================= -->
     <div id="viewExpenses" class="space-y-6 hidden">
       
-      <!-- Day 1 Setup: Fixed Project & Engineer Profile (With Compulsory Email + Fixed Daily Allowance) -->
+      <!-- Day 1 Setup -->
       <div class="bg-gradient-to-r from-amber-950/30 to-slate-900 border border-amber-500/30 rounded-2xl p-4 sm:p-5 shadow-xl">
         <div class="flex items-center justify-between pb-3 border-b border-amber-500/20 mb-3">
           <div>
@@ -442,7 +446,6 @@
           </button>
         </div>
 
-        <!-- 5-Column Grid with Email & Fixed Daily Allowance -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
           <div>
             <label class="block font-medium text-slate-400 mb-1">Site Name:</label>
@@ -484,7 +487,6 @@
 
       <!-- Active Day Form -->
       <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl space-y-6">
-        
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-950 p-3.5 rounded-xl border border-slate-800">
           <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-full bg-amber-400"></span>
@@ -496,7 +498,6 @@
           </div>
         </div>
 
-        <!-- Cash Flow: Got Advance & Demand Advance (Used Own Money & DA Removed) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
             <div class="flex items-center justify-between">
@@ -539,7 +540,7 @@
           </div>
         </div>
 
-        <!-- Add Category Expense Item Form (Dual: Camera + File Upload) -->
+        <!-- Add Category Expense Item Form -->
         <div class="bg-slate-950 p-4 sm:p-5 rounded-xl border border-slate-800 space-y-4">
           <h4 class="text-xs font-bold text-amber-400 uppercase font-industrial flex items-center gap-2">
             <i data-lucide="receipt" class="w-4 h-4"></i>
@@ -562,7 +563,7 @@
               <input type="number" id="expItemAmount" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-mono-code">
             </div>
             <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Receipt / Bill Photographic Evidence:</label>
+              <label class="block text-[11px] text-slate-400 mb-1">Receipt / Bill Evidence:</label>
               <div class="grid grid-cols-2 gap-2">
                 <label class="flex items-center justify-center gap-1.5 px-2 py-2 bg-slate-900 border border-dashed border-slate-700 hover:border-amber-400 rounded-lg text-xs text-slate-300 cursor-pointer transition-all hover:bg-slate-800">
                   <i data-lucide="camera" class="w-4 h-4 text-amber-400 flex-shrink-0"></i>
@@ -593,7 +594,6 @@
           </div>
         </div>
 
-        <!-- Logged Bills Table for Current Day -->
         <div>
           <div class="flex items-center justify-between mb-2">
             <h4 class="text-xs font-bold text-slate-300 uppercase font-industrial">Logged Receipts for this Day</h4>
@@ -602,7 +602,7 @@
           <div id="dayExpensesTableContainer" class="overflow-x-auto rounded-xl border border-slate-800"></div>
         </div>
 
-        <!-- Final Financial Reconciliation & Settlement Card (Own Money Removed) -->
+        <!-- Summary Totals -->
         <div class="bg-gradient-to-br from-slate-950 via-[#071324] to-slate-950 border-2 border-amber-500/40 rounded-2xl p-5 shadow-2xl space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-slate-800">
             <h4 class="text-sm font-bold uppercase font-industrial text-amber-400 flex items-center gap-2">
@@ -612,7 +612,6 @@
             <span class="text-[11px] font-mono-code text-slate-400">All Logged Days Consolidated</span>
           </div>
 
-          <!-- Formula Breakdown (3 Columns) -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
               <span class="text-[10px] text-slate-400 uppercase font-bold block">1. Total Receipts</span>
@@ -628,7 +627,6 @@
             </div>
           </div>
 
-          <!-- Final Calculation Banner -->
           <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <span class="text-xs text-slate-400 block font-mono-code">Final Total Expenses = (Receipts + Total Allowance)</span>
@@ -644,7 +642,6 @@
           </div>
         </div>
 
-        <!-- Action Row -->
         <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
           <button onclick="saveCurrentExpDay(true)" class="w-full sm:w-auto px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 border border-slate-700">
             <i data-lucide="save" class="w-4 h-4"></i>
@@ -660,6 +657,168 @@
               <span>Download Excel/CSV</span>
             </button>
           </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW D: IN-APP "MY STATEMENT" EMPLOYEE DASHBOARD PORTAL -->
+    <!-- ========================================================================= -->
+    <div id="viewPortal" class="space-y-6 hidden">
+      
+      <!-- Employee Authentication & Email Bar -->
+      <div class="bg-gradient-to-r from-blue-950/60 via-slate-900 to-indigo-950/50 border border-blue-500/40 rounded-2xl p-4 sm:p-5 shadow-2xl">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-base font-bold uppercase tracking-wider text-blue-400 font-industrial flex items-center gap-2">
+              <i data-lucide="shield-check" class="w-5 h-5 text-blue-400"></i>
+              <span>Employee Expense Statement & Settlement Portal</span>
+            </h2>
+            <p class="text-xs text-slate-300 mt-0.5">Secure, real-time statement directly from Aryavarta central records.</p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+            <input type="email" id="portalEmailInput" placeholder="Enter your official email..." class="bg-slate-950 border border-blue-500/50 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 w-full sm:w-64 font-mono-code">
+            <button onclick="loadEmployeeStatement()" id="btnLoadPortalStatement" class="px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:brightness-110 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow">
+              <i data-lucide="search" class="w-4 h-4"></i>
+              <span>Load My Statement</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="portalLoadingBox" class="hidden text-center py-12 bg-slate-900/60 border border-slate-800 rounded-2xl">
+        <div class="animate-spin inline-block w-8 h-8 border-4 border-amber-400 border-t-transparent rounded-full mb-3"></div>
+        <p class="text-xs text-slate-300 font-mono-code">Fetching verified expense statement & ledger records...</p>
+      </div>
+
+      <!-- Statement Main Workspace (Visible once loaded) -->
+      <div id="portalContentBox" class="space-y-6 hidden">
+        
+        <!-- Master Settlement Ledger Status Card -->
+        <div class="bg-gradient-to-br from-slate-950 via-[#071324] to-slate-950 border-2 border-indigo-500/40 rounded-2xl p-5 shadow-2xl space-y-4">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                <h3 class="text-sm font-bold text-white uppercase font-industrial" id="lblPortalEngineerName">Engineer Name</h3>
+              </div>
+              <p class="text-xs text-slate-400 font-mono-code" id="lblPortalEngineerEmail">email@domain.com</p>
+            </div>
+            <div id="portalRealVerdictBadge" class="px-4 py-1.5 rounded-xl font-bold font-mono-code text-xs uppercase bg-slate-800 text-slate-300 border border-slate-700">
+              Verdict Loading...
+            </div>
+          </div>
+
+          <!-- Formula Ledger Breakdown (D + F = G) -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+              <span class="text-[10px] text-slate-400 uppercase font-bold block">1. Site Expenses Balance</span>
+              <span class="text-sm font-mono-code font-bold text-white" id="statPortalSiteSettlement">₹0.00</span>
+              <span class="text-[10px] text-slate-500 block mt-0.5" id="lblPortalSiteStatus">(From Site Claims)</span>
+            </div>
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-amber-500/40">
+              <span class="text-[10px] text-amber-400 uppercase font-bold block">2. Past Pending Balance (Admin)</span>
+              <span class="text-sm font-mono-code font-bold text-amber-300" id="statPortalPastPending">₹0.00</span>
+              <span class="text-[10px] text-slate-500 block mt-0.5">(Carried over balance)</span>
+            </div>
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-emerald-500/40">
+              <span class="text-[10px] text-emerald-400 uppercase font-bold block">Final Real Settlement Balance</span>
+              <span class="text-base font-mono-code font-bold text-emerald-400" id="statPortalFinalRealAmount">₹0.00</span>
+              <span class="text-[10px] text-slate-500 block mt-0.5">Net Real Payable / Receivable</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 KPI Performance Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block">Total Bills Spent</span>
+            <span class="text-base font-mono-code font-bold text-white" id="statPortalTotalBills">₹0.00</span>
+          </div>
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block">Daily Allowance (<span id="statPortalDaysCount">0</span> Days)</span>
+            <span class="text-base font-mono-code font-bold text-white" id="statPortalTotalAllowance">₹0.00</span>
+          </div>
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block">Total Expenses (Bills+DA)</span>
+            <span class="text-base font-mono-code font-bold text-white" id="statPortalTotalExpenses">₹0.00</span>
+          </div>
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-amber-500/40">
+            <span class="text-[10px] text-amber-400 uppercase font-bold block">Total Advance Received</span>
+            <span class="text-base font-mono-code font-bold text-amber-400" id="statPortalTotalAdvance">₹0.00</span>
+          </div>
+        </div>
+
+        <!-- Category Breakdown Badges -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 flex flex-wrap items-center gap-2 text-xs">
+          <span class="text-[11px] font-industrial uppercase font-bold text-slate-400 mr-2 flex items-center gap-1">
+            <i data-lucide="tag" class="w-3.5 h-3.5"></i> Category Totals:
+          </span>
+          <span class="bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 font-mono-code text-white">Hotel: <strong id="catValHotel" class="text-amber-400">₹0</strong></span>
+          <span class="bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 font-mono-code text-white">Food: <strong id="catValFood" class="text-amber-400">₹0</strong></span>
+          <span class="bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 font-mono-code text-white">Travel: <strong id="catValTravel" class="text-amber-400">₹0</strong></span>
+          <span class="bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 font-mono-code text-white">Recharge: <strong id="catValRecharge" class="text-amber-400">₹0</strong></span>
+          <span class="bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 font-mono-code text-white">Other: <strong id="catValOther" class="text-amber-400">₹0</strong></span>
+        </div>
+
+        <!-- Interactive Filters Bar -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <span class="text-xs font-bold uppercase font-industrial text-amber-400 flex items-center gap-1.5">
+              <i data-lucide="filter" class="w-4 h-4"></i> Filter Statement Data
+            </span>
+            <button onclick="resetPortalFilters()" class="text-[11px] text-slate-400 hover:text-white underline">
+              Reset Filters
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            <div>
+              <label class="block text-slate-400 mb-1">Project / Site Name:</label>
+              <select id="filterPortalProject" onchange="applyPortalFilters()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
+                <option value="ALL">All Projects / Sites</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">From Date:</label>
+              <input type="date" id="filterPortalFromDate" onchange="applyPortalFilters()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-mono-code">
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">To Date:</label>
+              <input type="date" id="filterPortalToDate" onchange="applyPortalFilters()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-mono-code">
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">Category:</label>
+              <select id="filterPortalCategory" onchange="applyPortalFilters()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
+                <option value="ALL">All Categories</option>
+                <option value="Hotel">Hotel</option>
+                <option value="Travel">Travel</option>
+                <option value="Food">Food</option>
+                <option value="Mobile Recharge">Mobile Recharge</option>
+                <option value="Other Expenses">Other Expenses</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <input type="text" id="filterPortalSearch" oninput="applyPortalFilters()" placeholder="Search in description or bill specifics..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-400">
+          </div>
+        </div>
+
+        <!-- Merged Statement Table (Matches Site_Expenses Exactly) -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase text-slate-300 font-industrial" id="lblPortalFilteredCount">Expense Records</span>
+            <button onclick="window.print()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg flex items-center gap-1.5 shadow">
+              <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+              <span>Print Statement</span>
+            </button>
+          </div>
+
+          <div id="portalTablesContainer" class="space-y-6"></div>
         </div>
 
       </div>
@@ -739,9 +898,9 @@
           <span class="text-xs font-bold uppercase text-white font-industrial" id="lblLightboxTitle">Receipt Preview</span>
         </div>
         <div class="flex items-center gap-2">
-          <a id="btnDownloadReceipt" download="Site_Receipt.jpg" class="px-3 py-1 bg-amber-500 text-black text-xs font-bold rounded-lg flex items-center gap-1 hover:bg-amber-400 cursor-pointer">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i>
-            <span>Download</span>
+          <a id="btnDownloadReceipt" download="Site_Receipt.jpg" target="_blank" class="px-3 py-1 bg-amber-500 text-black text-xs font-bold rounded-lg flex items-center gap-1 hover:bg-amber-400 cursor-pointer">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            <span>Open Link</span>
           </a>
           <button onclick="closeReceiptLightbox()" class="text-slate-400 hover:text-white p-1">
             <i data-lucide="x" class="w-5 h-5"></i>
@@ -759,7 +918,7 @@
     // 1. CONFIGURATION & STATE
     const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoZsNa1eevLcBMk0la8IAO1BmDxp69JoGpp5D6_uCTfA8o_Tx7eyczhhA47sqNQQrQBQ/exec";
 
-    let currentAppMode = 'FAT'; // 'FAT', 'DWR', 'EXPENSES'
+    let currentAppMode = 'FAT'; // 'FAT', 'DWR', 'EXPENSES', 'PORTAL'
     let currentLanguage = 'en';
     let currentCategoryKey = '';
     let inspectionData = [];
@@ -773,6 +932,8 @@
     let isDwrProfileLocked = true;
     let activeDwrDayIndex = 0;
     let dwrDaysList = [];
+
+    let rawEmployeePortalData = null; // Stored payload for filtering
 
     const I18N = {
       en: {
@@ -807,7 +968,6 @@
       }
     };
 
-    // FAT TEMPLATES ONLY (E&I Commissioning Removed)
     const DEFAULT_TEMPLATES = {
       FAT: {
         "VFD_PANEL": {
@@ -884,38 +1044,51 @@
       const fatBtn = document.getElementById('modeFatBtn');
       const dwrBtn = document.getElementById('modeDwrBtn');
       const expBtn = document.getElementById('modeExpBtn');
+      const portalBtn = document.getElementById('modePortalBtn');
 
       const viewFatSite = document.getElementById('viewFatSite');
       const viewDwr = document.getElementById('viewDwr');
       const viewExpenses = document.getElementById('viewExpenses');
+      const viewPortal = document.getElementById('viewPortal');
       const pdfBtnLabel = document.getElementById('lblPrimaryPdfBtn');
 
-      [fatBtn, dwrBtn, expBtn].forEach(b => {
+      [fatBtn, dwrBtn, expBtn, portalBtn].forEach(b => {
         if (b) b.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white";
       });
+
+      viewFatSite.classList.add('hidden');
+      viewDwr.classList.add('hidden');
+      viewExpenses.classList.add('hidden');
+      viewPortal.classList.add('hidden');
 
       if (mode === 'FAT') {
         fatBtn.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-amber-500 text-black shadow-md";
         viewFatSite.classList.remove('hidden');
-        viewDwr.classList.add('hidden');
-        viewExpenses.classList.add('hidden');
         pdfBtnLabel.innerText = "Download FAT Certificate";
         document.getElementById('metadataHeaderTitle').innerText = "Panel & Job Specification (FAT)";
         refreshCategoryDropdown();
       } else if (mode === 'DWR') {
         dwrBtn.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-emerald-500 text-black shadow-md";
-        viewFatSite.classList.add('hidden');
         viewDwr.classList.remove('hidden');
-        viewExpenses.classList.add('hidden');
         pdfBtnLabel.innerText = "Download Daily Report (PDF)";
         initDwrCanvas();
       } else if (mode === 'EXPENSES') {
         expBtn.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-amber-500 text-black shadow-md";
-        viewFatSite.classList.add('hidden');
-        viewDwr.classList.add('hidden');
         viewExpenses.classList.remove('hidden');
         pdfBtnLabel.innerText = "Sync All to Google Sheet";
+      } else if (mode === 'PORTAL') {
+        portalBtn.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-blue-600 text-white shadow-md";
+        viewPortal.classList.remove('hidden');
+        pdfBtnLabel.innerText = "Print My Statement";
+
+        // Auto-fill email from saved profile if available
+        const savedEmail = document.getElementById('expEngineerEmail')?.value.trim();
+        if (savedEmail && !document.getElementById('portalEmailInput').value.trim()) {
+          document.getElementById('portalEmailInput').value = savedEmail;
+          loadEmployeeStatement();
+        }
       }
+      lucide.createIcons();
     }
 
     // 2. DAILY WORK REPORT (DWR) LOGIC
@@ -1340,6 +1513,8 @@
         generateConsolidatedDwrPDF();
       } else if (currentAppMode === 'EXPENSES') {
         syncExpensesToGoogleSheet();
+      } else if (currentAppMode === 'PORTAL') {
+        window.print();
       } else {
         generateOfficialInspectionPDF();
       }
@@ -1718,7 +1893,7 @@
       lucide.createIcons();
     }
 
-    // 6. SYNC TO GOOGLE SHEETS (FAT / DWR)
+    // 6. SYNC TO GOOGLE SHEETS
     async function syncInspectionToGoogleSheet() {
       const btn = document.getElementById('syncSheetBtn');
       const orig = btn.innerHTML;
@@ -1811,7 +1986,7 @@
       });
     }
 
-    // 7. FAT PDF REPORT (ALL PHOTOS + MULTI-PAGE AUTO-FLOW)
+    // 7. FAT PDF REPORT
     async function generateOfficialInspectionPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -1944,7 +2119,7 @@
       doc.save(`Aryavarta_FAT_${serial}_Certificate.pdf`);
     }
 
-    // 8. TEMPLATE MANAGER (FAIL-SAFE MODAL)
+    // 8. TEMPLATE MANAGER
     let editingCategoryKey = '';
     function openTemplateManagerModal() {
       const modal = document.getElementById('templateManagerModal');
@@ -2366,7 +2541,6 @@
       modal.classList.remove('flex');
     }
 
-    // CALCULATION & RECONCILIATION ENGINE
     function calculateExpTotals() {
       saveCurrentExpDay(false);
 
@@ -2380,11 +2554,9 @@
         grandAdvance += (day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0);
       });
 
-      // Fixed daily allowance multiplied across all logged days
       const fixedDA = parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0;
       const grandAllowance = expDaysList.length * fixedDA;
 
-      // Final Total Expenses = Total Receipts + Total Allowance (Own Money completely removed)
       const finalTotalExpenses = grandCategorized + grandAllowance;
       const netBalance = grandAdvance - finalTotalExpenses;
 
@@ -2441,7 +2613,6 @@
     }
 
     // SYNC EXPENSES TO GOOGLE SHEETS
-    // SYNC EXPENSES TO GOOGLE SHEETS (ALLOWANCE & ADVANCE LOGGED ONCE PER DAY)
     async function syncExpensesToGoogleSheet() {
       const engineerEmail = document.getElementById('expEngineerEmail').value.trim();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -2473,31 +2644,27 @@
       let flatItems = [];
       expDaysList.forEach(day => {
         if (day.expenses && day.expenses.length > 0) {
-          day.expenses.forEach((e, itemIdx) => {
-            // Allowance, Advance Received, and Demanded Advance appear ONLY ONCE per day (on the 1st expense row)
-            const isFirstItemOfDay = (itemIdx === 0);
+          day.expenses.forEach(e => {
             flatItems.push({
               date: day.date,
               category: e.category,
               description: e.description,
               amount: e.amount,
-              dailyAllowance: isFirstItemOfDay ? fixedDA : 0,
-              advanceReceived: isFirstItemOfDay && day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0,
-              demandedAdvance: isFirstItemOfDay && day.demandAdvance === "YES" ? (Number(day.demandAmount) || 0) : 0,
+              dailyAllowance: fixedDA,
+              advanceReceived: day.gotAdvance === "YES" ? day.advanceAmount : 0,
+              demandedAdvance: day.demandAdvance === "YES" ? day.demandAmount : 0,
               receiptPhotoBase64: e.receiptPhoto
             });
           });
         } else {
-          // If no receipts added for this day, still record the daily allowance and cash flow
           flatItems.push({
             date: day.date,
             category: "Allowance & Advances",
             description: "Daily Allowance & Cash Flow Log",
             amount: 0,
             dailyAllowance: fixedDA,
-            advanceReceived: day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0,
-            demandedAdvance: day.demandAdvance === "YES" ? (Number(day.demandAmount) || 0) : 0,
-            ownMoneyUsed: 0,
+            advanceReceived: day.gotAdvance === "YES" ? day.advanceAmount : 0,
+            demandedAdvance: day.demandAdvance === "YES" ? day.demandAmount : 0,
             receiptPhotoBase64: null
           });
         }
@@ -2532,7 +2699,6 @@
       }
     }
 
-    // EXPORT TO EXCEL / CSV REPORT (ALLOWANCE & ADVANCE LOGGED ONCE PER DAY)
     function exportExpensesToCsv() {
       const stats = calculateExpTotals();
       const siteName = document.getElementById('expSiteName').value.trim() || "Site";
@@ -2547,18 +2713,11 @@
 
       expDaysList.forEach(day => {
         if (day.expenses && day.expenses.length > 0) {
-          day.expenses.forEach((e, itemIdx) => {
-            // Only output Daily Allowance and Advance on the 1st row of that date
-            const isFirst = (itemIdx === 0);
-            const daVal = isFirst ? fixedDA : 0;
-            const advVal = isFirst && day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0;
-            const demVal = isFirst && day.demandAdvance === "YES" ? (Number(day.demandAmount) || 0) : 0;
-            csv += `"${day.date}","${e.category}","${e.description.replace(/"/g, '""')}",${e.amount},${daVal},${advVal},${demVal}\n`;
+          day.expenses.forEach(e => {
+            csv += `"${day.date}","${e.category}","${e.description.replace(/"/g, '""')}",${e.amount},${fixedDA},${day.advanceAmount || 0},${day.demandAmount || 0}\n`;
           });
         } else {
-          const advVal = day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0;
-          const demVal = day.demandAdvance === "YES" ? (Number(day.demandAmount) || 0) : 0;
-          csv += `"${day.date}","No Receipts","Daily Allowance Log",0,${fixedDA},${advVal},${demVal}\n`;
+          csv += `"${day.date}","No Receipts","Daily Allowance Log",0,${fixedDA},${day.advanceAmount || 0},${day.demandAmount || 0}\n`;
         }
       });
 
@@ -2578,6 +2737,329 @@
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+    }
+
+    // =========================================================================
+    // 10. IN-APP "MY STATEMENT" EMPLOYEE PORTAL ENGINE
+    // =========================================================================
+    function fetchEmployeeStatementData(email) {
+      return new Promise((resolve, reject) => {
+        const cbName = 'gasStatementCb_' + Math.floor(Math.random() * 1000000);
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error("Request timed out. Please check your internet connection or Google Apps Script deployment."));
+        }, 20000);
+
+        function cleanup() {
+          clearTimeout(timeout);
+          if (window[cbName]) delete window[cbName];
+          const el = document.getElementById(cbName);
+          if (el && el.parentNode) el.parentNode.removeChild(el);
+        }
+
+        window[cbName] = function(data) {
+          cleanup();
+          resolve(data);
+        };
+
+        const script = document.createElement('script');
+        script.id = cbName;
+        script.src = `${GOOGLE_APPS_SCRIPT_URL}?action=getEmployeeStatement&email=${encodeURIComponent(email)}&callback=${cbName}`;
+        script.onerror = function() {
+          cleanup();
+          reject(new Error("Failed to connect to Google Apps Script. Ensure the script is deployed with access set to Anyone."));
+        };
+        document.body.appendChild(script);
+      });
+    }
+
+    async function loadEmployeeStatement() {
+      const email = document.getElementById('portalEmailInput').value.trim().toLowerCase();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!email || !emailRegex.test(email)) {
+        alert("Please enter a valid email address to view your statement.");
+        document.getElementById('portalEmailInput').focus();
+        return;
+      }
+
+      const btn = document.getElementById('btnLoadPortalStatement');
+      const origText = btn.innerHTML;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-1">●</span> Loading...`;
+      btn.disabled = true;
+
+      document.getElementById('portalLoadingBox').classList.remove('hidden');
+      document.getElementById('portalContentBox').classList.add('hidden');
+
+      try {
+        const res = await fetchEmployeeStatementData(email);
+        if (res.status === "error") {
+          alert("Error: " + res.message);
+          return;
+        }
+
+        rawEmployeePortalData = res;
+        renderEmployeeStatement(res);
+        populatePortalProjectFilter(res.reports);
+        playAudioTone(880, 0.2);
+      } catch (err) {
+        alert(err.message || "Could not retrieve statement. Please check your network.");
+      } finally {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+        document.getElementById('portalLoadingBox').classList.add('hidden');
+        lucide.createIcons();
+      }
+    }
+
+    function renderEmployeeStatement(data) {
+      document.getElementById('portalContentBox').classList.remove('hidden');
+
+      const sum = data.summary || {};
+      const st = data.stats || {};
+      const engName = sum.engineerName || (data.reports.length > 0 ? data.reports[0].engineerName : "Valued Engineer");
+
+      document.getElementById('lblPortalEngineerName').innerText = engName;
+      document.getElementById('lblPortalEngineerEmail').innerText = data.email;
+
+      // Master Real Verdict & Ledger Breakdown
+      const siteSettlement = sum.siteExpensesSettlement !== undefined ? sum.siteExpensesSettlement : st.calculatedSiteBalance;
+      const pastPending = sum.pastPendingBalance !== undefined ? sum.pastPendingBalance : 0;
+      const realAmount = sum.finalRealSettlementAmount !== undefined ? sum.finalRealSettlementAmount : (siteSettlement + pastPending);
+      const realVerdict = sum.finalRealVerdict || (realAmount > 0 ? `CREDIT TO ENGINEER (Reimburse ₹${realAmount.toFixed(2)})` : realAmount < 0 ? `DEBIT FROM ENGINEER (Return ₹${Math.abs(realAmount).toFixed(2)})` : "BALANCED / SETTLED (₹0.00)");
+
+      document.getElementById('statPortalSiteSettlement').innerText = (siteSettlement < 0 ? "-₹" : "₹") + Math.abs(siteSettlement).toFixed(2);
+      document.getElementById('lblPortalSiteStatus').innerText = sum.siteExpensesStatus || (siteSettlement >= 0 ? "Credit Status" : "Debit Status");
+      document.getElementById('statPortalPastPending').innerText = (pastPending < 0 ? "-₹" : "₹") + Math.abs(pastPending).toFixed(2);
+      document.getElementById('statPortalFinalRealAmount').innerText = (realAmount < 0 ? "-₹" : "₹") + Math.abs(realAmount).toFixed(2);
+
+      const verdictBadge = document.getElementById('portalRealVerdictBadge');
+      verdictBadge.innerText = realVerdict;
+      if (realAmount < 0 || realVerdict.includes("DEBIT")) {
+        verdictBadge.className = "px-4 py-1.5 rounded-xl font-bold font-mono-code text-xs uppercase bg-rose-500/20 text-rose-400 border border-rose-500/50 shadow";
+      } else if (realAmount > 0 || realVerdict.includes("CREDIT")) {
+        verdictBadge.className = "px-4 py-1.5 rounded-xl font-bold font-mono-code text-xs uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 shadow";
+      } else {
+        verdictBadge.className = "px-4 py-1.5 rounded-xl font-bold font-mono-code text-xs uppercase bg-blue-500/20 text-blue-400 border border-blue-500/50 shadow";
+      }
+
+      // KPI Metric Cards
+      document.getElementById('statPortalTotalBills').innerText = `₹${(st.totalBillsAmount || 0).toFixed(2)}`;
+      document.getElementById('statPortalDaysCount').innerText = st.totalDays || 0;
+      document.getElementById('statPortalTotalAllowance').innerText = `₹${(st.totalDailyAllowance || 0).toFixed(2)}`;
+      document.getElementById('statPortalTotalExpenses').innerText = `₹${(st.totalExpenses || 0).toFixed(2)}`;
+      document.getElementById('statPortalTotalAdvance').innerText = `₹${(st.totalAdvanceReceived || 0).toFixed(2)}`;
+
+      // Category Badges
+      const catMap = st.categoryBreakdown || {};
+      document.getElementById('catValHotel').innerText = `₹${(catMap['Hotel'] || 0).toFixed(2)}`;
+      document.getElementById('catValFood').innerText = `₹${(catMap['Food'] || 0).toFixed(2)}`;
+      document.getElementById('catValTravel').innerText = `₹${(catMap['Travel'] || 0).toFixed(2)}`;
+      document.getElementById('catValRecharge').innerText = `₹${(catMap['Mobile Recharge'] || 0).toFixed(2)}`;
+      document.getElementById('catValOther').innerText = `₹${(catMap['Other Expenses'] || 0).toFixed(2)}`;
+
+      // Render Tables
+      renderPortalTables(data.reports);
+    }
+
+    function populatePortalProjectFilter(reports) {
+      const select = document.getElementById('filterPortalProject');
+      select.innerHTML = '<option value="ALL">All Projects / Sites</option>';
+      const seen = {};
+      (reports || []).forEach(r => {
+        const val = `${r.projectNo} - ${r.siteName}`;
+        if (!seen[val]) {
+          seen[val] = true;
+          const opt = document.createElement('option');
+          opt.value = r.projectNo;
+          opt.innerText = val;
+          select.appendChild(opt);
+        }
+      });
+    }
+
+    function applyPortalFilters() {
+      if (!rawEmployeePortalData) return;
+
+      const projFilter = document.getElementById('filterPortalProject').value;
+      const fromDate = document.getElementById('filterPortalFromDate').value;
+      const toDate = document.getElementById('filterPortalToDate').value;
+      const catFilter = document.getElementById('filterPortalCategory').value;
+      const searchKeyword = document.getElementById('filterPortalSearch').value.trim().toLowerCase();
+
+      // Deep clone reports to apply in-memory filters
+      const filteredReports = [];
+
+      (rawEmployeePortalData.reports || []).forEach(rep => {
+        if (projFilter !== "ALL" && rep.projectNo !== projFilter) return;
+
+        const matchingDays = [];
+        (rep.days || []).forEach(day => {
+          if (fromDate && day.date < fromDate) return;
+          if (toDate && day.date > toDate) return;
+
+          const matchingItems = (day.items || []).filter(item => {
+            if (catFilter !== "ALL" && item.category !== catFilter) return false;
+            if (searchKeyword) {
+              const fullText = (item.category + " " + item.description).toLowerCase();
+              if (!fullText.includes(searchKeyword)) return false;
+            }
+            return true;
+          });
+
+          if (matchingItems.length > 0) {
+            matchingDays.push({
+              ...day,
+              items: matchingItems
+            });
+          }
+        });
+
+        if (matchingDays.length > 0) {
+          filteredReports.push({
+            ...rep,
+            days: matchingDays
+          });
+        }
+      });
+
+      renderPortalTables(filteredReports);
+    }
+
+    function resetPortalFilters() {
+      document.getElementById('filterPortalProject').value = "ALL";
+      document.getElementById('filterPortalFromDate').value = "";
+      document.getElementById('filterPortalToDate').value = "";
+      document.getElementById('filterPortalCategory').value = "ALL";
+      document.getElementById('filterPortalSearch').value = "";
+      applyPortalFilters();
+    }
+
+    function renderPortalTables(reports) {
+      const container = document.getElementById('portalTablesContainer');
+      container.innerHTML = '';
+
+      if (!reports || reports.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-xs text-slate-500 bg-slate-950 border border-slate-800 rounded-2xl">No expense records found matching current criteria.</div>`;
+        document.getElementById('lblPortalFilteredCount').innerText = "0 Records Found";
+        return;
+      }
+
+      let totalFilteredItems = 0;
+      let totalFilteredDays = 0;
+
+      reports.forEach((rep, rIdx) => {
+        let repBillsTotal = 0;
+        let repAllowanceTotal = 0;
+        let repAdvanceTotal = 0;
+
+        const card = document.createElement('div');
+        card.className = "bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-xl";
+
+        // Report Header
+        let html = `
+          <div class="bg-gradient-to-r from-slate-900 to-slate-950 p-4 border-b border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-mono-code font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">REPORT #${rIdx + 1}</span>
+                <span class="text-xs font-bold text-white font-industrial uppercase">${rep.siteName}</span>
+                <span class="text-xs font-mono-code text-slate-400">(${rep.projectNo})</span>
+              </div>
+              <p class="text-[11px] text-slate-400 font-mono-code mt-0.5">Submitted: ${rep.timestamp}</p>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-slate-400 block font-mono-code">Report Verdict:</span>
+              <span class="text-xs font-bold font-mono-code ${rep.settlementVerdict.includes('DEBIT') ? 'text-rose-400' : 'text-emerald-400'}">${rep.settlementVerdict}</span>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead class="bg-slate-900/90 text-slate-400 font-industrial uppercase text-[11px] border-b border-slate-800">
+                <tr>
+                  <th class="p-3 border-r border-slate-800">Expense Date</th>
+                  <th class="p-3 border-r border-slate-800 text-center">Daily Allowance</th>
+                  <th class="p-3 border-r border-slate-800 text-center">Advance Received</th>
+                  <th class="p-3 border-r border-slate-800 text-center">Demanded Advance</th>
+                  <th class="p-3 border-r border-slate-800">Category</th>
+                  <th class="p-3 border-r border-slate-800">Description</th>
+                  <th class="p-3 border-r border-slate-800 text-right">Amount (₹)</th>
+                  <th class="p-3 text-center">Bill Link</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 font-mono-code">
+        `;
+
+        (rep.days || []).forEach(day => {
+          totalFilteredDays++;
+          repAllowanceTotal += day.dailyAllowance;
+          repAdvanceTotal += day.advanceReceived;
+
+          const rowSpan = day.items.length || 1;
+          totalFilteredItems += day.items.length;
+
+          (day.items || []).forEach((item, itmIdx) => {
+            repBillsTotal += item.amount;
+            const isFirst = (itmIdx === 0);
+
+            html += `<tr class="hover:bg-slate-900/40 transition-colors">`;
+
+            // Vertically merged daily cells (Date, Allowance, Advance, Demanded)
+            if (isFirst) {
+              html += `
+                <td rowspan="${rowSpan}" class="p-3 border-r border-slate-800 font-bold text-white align-middle bg-slate-900/30">${day.date}</td>
+                <td rowspan="${rowSpan}" class="p-3 border-r border-slate-800 text-center font-bold text-slate-200 align-middle bg-slate-900/30">₹${day.dailyAllowance.toFixed(2)}</td>
+                <td rowspan="${rowSpan}" class="p-3 border-r border-slate-800 text-center font-bold text-amber-400 align-middle bg-slate-900/30">₹${day.advanceReceived.toFixed(2)}</td>
+                <td rowspan="${rowSpan}" class="p-3 border-r border-slate-800 text-center font-bold text-blue-400 align-middle bg-slate-900/30">₹${day.demandedAdvance.toFixed(2)}</td>
+              `;
+            }
+
+            // Individual bill items
+            const linkBtn = (item.receiptLink && item.receiptLink.startsWith('http'))
+              ? `<a href="${item.receiptLink}" target="_blank" class="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-bold inline-flex items-center gap-1 transition-all">View Receipt ↗</a>`
+              : `<span class="text-[10px] text-slate-600">No Receipt</span>`;
+
+            html += `
+              <td class="p-3 border-r border-slate-800 font-bold text-amber-400">${item.category}</td>
+              <td class="p-3 border-r border-slate-800 text-slate-300 font-sans">${item.description}</td>
+              <td class="p-3 border-r border-slate-800 text-right font-bold text-white">₹${item.amount.toFixed(2)}</td>
+              <td class="p-3 text-center">${linkBtn}</td>
+            </tr>`;
+          });
+        });
+
+        // Report Subtotal Footer
+        const repExpenses = repBillsTotal + repAllowanceTotal;
+        const repBalance = repAdvanceTotal - repExpenses;
+
+        html += `
+              </tbody>
+              <tfoot class="bg-slate-900/95 font-mono-code font-bold text-xs border-t border-slate-800">
+                <tr>
+                  <td colspan="4" class="p-3 text-slate-400 border-r border-slate-800">
+                    REPORT TOTALS: <span class="text-white">${rep.days.length} Days Logged</span>
+                  </td>
+                  <td colspan="2" class="p-3 text-right text-slate-400 border-r border-slate-800">
+                    Bills Total: <span class="text-white">₹${repBillsTotal.toFixed(2)}</span> | DA Total: <span class="text-white">₹${repAllowanceTotal.toFixed(2)}</span>
+                  </td>
+                  <td class="p-3 text-right text-emerald-400 border-r border-slate-800">
+                    ₹${repExpenses.toFixed(2)}
+                  </td>
+                  <td class="p-3 text-center text-amber-400">
+                    Adv: ₹${repAdvanceTotal.toFixed(2)}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        `;
+
+        card.innerHTML = html;
+        container.appendChild(card);
+      });
+
+      document.getElementById('lblPortalFilteredCount').innerText = `Showing ${totalFilteredItems} bill(s) across ${totalFilteredDays} day(s)`;
+      lucide.createIcons();
     }
   </script>
 </body>
