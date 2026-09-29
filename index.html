@@ -76,15 +76,11 @@
       </div>
     </div>
 
-    <!-- 4-Mode Selector -->
-    <div class="max-w-6xl mx-auto mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+    <!-- 3-Mode Selector (E&I Commissioning Removed) -->
+    <div class="max-w-6xl mx-auto mt-3 grid grid-cols-3 gap-2 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
       <button id="modeFatBtn" onclick="switchAppMode('FAT')" class="py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-amber-500 text-black shadow-md">
         <i data-lucide="factory" class="w-4 h-4"></i>
         <span>SHOP FAT</span>
-      </button>
-      <button id="modeSiteBtn" onclick="switchAppMode('SITE')" class="py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white">
-        <i data-lucide="hard-hat" class="w-4 h-4"></i>
-        <span>E&I COMMISSION</span>
       </button>
       <button id="modeDwrBtn" onclick="switchAppMode('DWR')" class="py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white">
         <i data-lucide="calendar-check" class="w-4 h-4"></i>
@@ -101,7 +97,7 @@
   <main class="max-w-6xl mx-auto px-4 py-5 flex-1 w-full space-y-6">
 
     <!-- ========================================================================= -->
-    <!-- VIEW A: SHOP FLOOR FAT & E&I COMMISSIONING -->
+    <!-- VIEW A: SHOP FLOOR FAT -->
     <!-- ========================================================================= -->
     <div id="viewFatSite" class="space-y-6">
       <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
@@ -119,7 +115,7 @@
             <input type="text" id="metaClient" placeholder="e.g. Baramati Agro / Praj Ind." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none">
           </div>
           <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1" id="lblSerialTag">Panel Serial Number</label>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Panel Serial Number</label>
             <input type="text" id="metaSerialTag" placeholder="e.g. AA-2026-VFD-091" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none font-mono-code">
           </div>
           <div>
@@ -134,10 +130,10 @@
 
         <div class="mt-4 pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div class="w-full sm:w-2/3">
-            <label class="block text-xs font-medium text-slate-400 mb-1" id="lblCategory">Panel Product Line / Category</label>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Panel Product Line / Category</label>
             <select id="categorySelector" onchange="onCategoryChanged(this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none cursor-pointer"></select>
           </div>
-          <button onclick="openTemplateManagerModal()" class="w-full sm:w-auto mt-2 sm:mt-5 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-semibold text-amber-400 flex items-center justify-center gap-2">
+          <button type="button" onclick="openTemplateManagerModal()" class="w-full sm:w-auto mt-2 sm:mt-5 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-semibold text-amber-400 flex items-center justify-center gap-2 transition-all">
             <i data-lucide="sliders" class="w-4 h-4"></i>
             <span>Customize / Add Steps</span>
           </button>
@@ -220,7 +216,7 @@
         </div>
       </div>
 
-      <!-- Signatures for FAT / Commissioning -->
+      <!-- Signatures for FAT -->
       <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
         <div class="pb-3 border-b border-slate-800 mb-4">
           <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 font-industrial flex items-center gap-2">
@@ -430,7 +426,7 @@
     <!-- ========================================================================= -->
     <div id="viewExpenses" class="space-y-6 hidden">
       
-      <!-- Day 1 Setup: Fixed Project & Engineer Profile (With Compulsory Email) -->
+      <!-- Day 1 Setup: Fixed Project & Engineer Profile (With Compulsory Email + Fixed Daily Allowance) -->
       <div class="bg-gradient-to-r from-amber-950/30 to-slate-900 border border-amber-500/30 rounded-2xl p-4 sm:p-5 shadow-xl">
         <div class="flex items-center justify-between pb-3 border-b border-amber-500/20 mb-3">
           <div>
@@ -446,7 +442,8 @@
           </button>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+        <!-- 5-Column Grid with Email & Fixed Daily Allowance -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
           <div>
             <label class="block font-medium text-slate-400 mb-1">Site Name:</label>
             <input type="text" id="expSiteName" placeholder="e.g. Baramati Agro Ltd" class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed">
@@ -462,6 +459,10 @@
           <div>
             <label class="block font-medium text-slate-400 mb-1">Project No:</label>
             <input type="text" id="expProjectNo" placeholder="e.g. PRJ-2026-ETHANOL-04" class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono-code disabled:opacity-60 disabled:cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-400 mb-1">Per Day Allowance (₹):</label>
+            <input type="number" id="expFixedDailyAllowance" placeholder="e.g. 500" oninput="calculateExpTotals()" class="w-full bg-slate-950/80 border border-amber-500/50 rounded-lg px-3 py-2 text-white font-mono-code font-bold disabled:opacity-60 disabled:cursor-not-allowed">
           </div>
         </div>
       </div>
@@ -481,7 +482,7 @@
         <div id="expDaysNav" class="flex flex-wrap items-center gap-2 mt-3"></div>
       </div>
 
-      <!-- Active Day Financial Flow Form -->
+      <!-- Active Day Form -->
       <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl space-y-6">
         
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-950 p-3.5 rounded-xl border border-slate-800">
@@ -495,7 +496,7 @@
           </div>
         </div>
 
-        <!-- 4 Daily Cash Flow Questions -->
+        <!-- Cash Flow: Got Advance & Demand Advance (Used Own Money & DA Removed) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
             <div class="flex items-center justify-between">
@@ -519,17 +520,6 @@
 
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-200 uppercase font-industrial">Daily Allowance (DA)</span>
-              <span class="text-[10px] text-slate-400">Fixed Company Rate</span>
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Per Day Allowance Amount (₹):</label>
-              <input type="number" id="expAllowanceAmount" placeholder="e.g. 500.00" oninput="calculateExpTotals()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-mono-code">
-            </div>
-          </div>
-
-          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-            <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-slate-200 uppercase font-industrial">Demand Advance for Next Days?</span>
               <div class="flex items-center gap-3 text-xs">
                 <label class="flex items-center gap-1 cursor-pointer">
@@ -545,26 +535,6 @@
             <div id="boxDemandAmount" class="hidden">
               <label class="block text-[11px] text-blue-400 mb-1">Demanded Advance Amount (₹):</label>
               <input type="number" id="expDemandAmount" placeholder="0.00" class="w-full bg-slate-900 border border-blue-500/50 rounded-lg px-3 py-2 text-xs text-white font-mono-code">
-            </div>
-          </div>
-
-          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-200 uppercase font-industrial">Used Own Money?</span>
-              <div class="flex items-center gap-3 text-xs">
-                <label class="flex items-center gap-1 cursor-pointer">
-                  <input type="radio" name="expUsedOwnMoney" value="YES" onchange="toggleOwnMoneyBox(true)" class="accent-emerald-500">
-                  <span class="text-emerald-400 font-bold">YES</span>
-                </label>
-                <label class="flex items-center gap-1 cursor-pointer">
-                  <input type="radio" name="expUsedOwnMoney" value="NO" checked onchange="toggleOwnMoneyBox(false)" class="accent-slate-500">
-                  <span class="text-slate-400 font-bold">NO</span>
-                </label>
-              </div>
-            </div>
-            <div id="boxOwnMoneyAmount" class="hidden">
-              <label class="block text-[11px] text-emerald-400 mb-1">Own Money Used Amount (₹):</label>
-              <input type="number" id="expOwnMoneyAmount" placeholder="0.00" oninput="calculateExpTotals()" class="w-full bg-slate-900 border border-emerald-500/50 rounded-lg px-3 py-2 text-xs text-white font-mono-code">
             </div>
           </div>
         </div>
@@ -594,14 +564,12 @@
             <div>
               <label class="block text-[11px] text-slate-400 mb-1">Receipt / Bill Photographic Evidence:</label>
               <div class="grid grid-cols-2 gap-2">
-                <!-- Option A: Take Photo via Camera -->
                 <label class="flex items-center justify-center gap-1.5 px-2 py-2 bg-slate-900 border border-dashed border-slate-700 hover:border-amber-400 rounded-lg text-xs text-slate-300 cursor-pointer transition-all hover:bg-slate-800">
                   <i data-lucide="camera" class="w-4 h-4 text-amber-400 flex-shrink-0"></i>
                   <span class="truncate">Camera</span>
                   <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptUpload(event)">
                 </label>
 
-                <!-- Option B: Upload Photo from Storage / Gallery -->
                 <label class="flex items-center justify-center gap-1.5 px-2 py-2 bg-slate-900 border border-dashed border-slate-700 hover:border-amber-400 rounded-lg text-xs text-slate-300 cursor-pointer transition-all hover:bg-slate-800">
                   <i data-lucide="upload" class="w-4 h-4 text-amber-400 flex-shrink-0"></i>
                   <span class="truncate">Upload Bill</span>
@@ -634,7 +602,7 @@
           <div id="dayExpensesTableContainer" class="overflow-x-auto rounded-xl border border-slate-800"></div>
         </div>
 
-        <!-- Final Financial Reconciliation & Settlement Card -->
+        <!-- Final Financial Reconciliation & Settlement Card (Own Money Removed) -->
         <div class="bg-gradient-to-br from-slate-950 via-[#071324] to-slate-950 border-2 border-amber-500/40 rounded-2xl p-5 shadow-2xl space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-slate-800">
             <h4 class="text-sm font-bold uppercase font-industrial text-amber-400 flex items-center gap-2">
@@ -644,22 +612,18 @@
             <span class="text-[11px] font-mono-code text-slate-400">All Logged Days Consolidated</span>
           </div>
 
-          <!-- Formula Breakdown -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <!-- Formula Breakdown (3 Columns) -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
               <span class="text-[10px] text-slate-400 uppercase font-bold block">1. Total Receipts</span>
               <span class="text-sm font-mono-code font-bold text-white" id="statCategorizedExpenses">₹0.00</span>
             </div>
             <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
-              <span class="text-[10px] text-slate-400 uppercase font-bold block">2. Total Allowance</span>
+              <span class="text-[10px] text-slate-400 uppercase font-bold block">2. Total Allowance (<span id="lblDaysCountSummary">0 Days</span>)</span>
               <span class="text-sm font-mono-code font-bold text-white" id="statTotalAllowance">₹0.00</span>
             </div>
             <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
-              <span class="text-[10px] text-slate-400 uppercase font-bold block">3. Own Money Used</span>
-              <span class="text-sm font-mono-code font-bold text-white" id="statOwnMoneyUsed">₹0.00</span>
-            </div>
-            <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
-              <span class="text-[10px] text-amber-400 uppercase font-bold block">Total Advance Got</span>
+              <span class="text-[10px] text-amber-400 uppercase font-bold block">Total Advance Received</span>
               <span class="text-sm font-mono-code font-bold text-amber-400" id="statTotalAdvance">₹0.00</span>
             </div>
           </div>
@@ -667,7 +631,7 @@
           <!-- Final Calculation Banner -->
           <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <span class="text-xs text-slate-400 block font-mono-code">Final Total Expenses = (Receipts + Allowance + Own Money)</span>
+              <span class="text-xs text-slate-400 block font-mono-code">Final Total Expenses = (Receipts + Total Allowance)</span>
               <span class="text-lg font-bold font-mono-code text-white" id="statFinalTotalExpenses">₹0.00</span>
             </div>
 
@@ -724,7 +688,7 @@
   </footer>
 
   <!-- ================= MODAL: PROTOCOL STEP BUILDER ================= -->
-  <div id="templateManagerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div id="templateManagerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="p-4 border-b border-slate-800 flex items-center justify-between">
         <div>
@@ -734,7 +698,7 @@
           </h3>
           <p class="text-xs text-slate-400">Create new panel categories or customize inspection steps.</p>
         </div>
-        <button onclick="closeTemplateManagerModal()" class="text-slate-400 hover:text-white p-1">
+        <button type="button" onclick="closeTemplateManagerModal()" class="text-slate-400 hover:text-white p-1">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
@@ -743,7 +707,7 @@
           <label class="block text-xs font-medium text-slate-400 mb-1">Active Category to Edit</label>
           <div class="flex gap-2">
             <select id="modalCategorySelect" onchange="loadCategoryForEditing(this.value)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></select>
-            <button onclick="promptAddNewCategory()" class="px-3 py-2 bg-amber-500 text-black text-xs font-bold rounded-lg hover:bg-amber-400 flex items-center gap-1">
+            <button type="button" onclick="promptAddNewCategory()" class="px-3 py-2 bg-amber-500 text-black text-xs font-bold rounded-lg hover:bg-amber-400 flex items-center gap-1">
               <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
               <span>New Category</span>
             </button>
@@ -752,7 +716,7 @@
         <div>
           <div class="flex items-center justify-between mb-2">
             <label class="text-xs font-bold uppercase text-slate-300 font-industrial">Protocol Steps for this Category</label>
-            <button onclick="addNewStepToCurrentCategory()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
+            <button type="button" onclick="addNewStepToCurrentCategory()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Step
             </button>
           </div>
@@ -760,14 +724,14 @@
         </div>
       </div>
       <div class="p-4 border-t border-slate-800 flex items-center justify-between bg-slate-950">
-        <button onclick="resetCurrentCategoryToDefaults()" class="text-xs text-rose-400 hover:underline">Reset to Factory Default</button>
-        <button onclick="saveCategoryEditsAndClose()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs rounded-xl shadow">Save & Apply</button>
+        <button type="button" onclick="resetCurrentCategoryToDefaults()" class="text-xs text-rose-400 hover:underline">Reset to Factory Default</button>
+        <button type="button" onclick="saveCategoryEditsAndClose()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs rounded-xl shadow">Save & Apply</button>
       </div>
     </div>
   </div>
 
   <!-- ================= MODAL: RECEIPT IMAGE LIGHTBOX ================= -->
-  <div id="receiptLightboxModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+  <div id="receiptLightboxModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full flex flex-col overflow-hidden shadow-2xl">
       <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950">
         <div class="flex items-center gap-2">
@@ -795,7 +759,7 @@
     // 1. CONFIGURATION & STATE
     const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoZsNa1eevLcBMk0la8IAO1BmDxp69JoGpp5D6_uCTfA8o_Tx7eyczhhA47sqNQQrQBQ/exec";
 
-    let currentAppMode = 'FAT'; // 'FAT', 'SITE', 'DWR', 'EXPENSES'
+    let currentAppMode = 'FAT'; // 'FAT', 'DWR', 'EXPENSES'
     let currentLanguage = 'en';
     let currentCategoryKey = '';
     let inspectionData = [];
@@ -843,6 +807,7 @@
       }
     };
 
+    // FAT TEMPLATES ONLY (E&I Commissioning Removed)
     const DEFAULT_TEMPLATES = {
       FAT: {
         "VFD_PANEL": {
@@ -871,30 +836,17 @@
             { id: "p3", title: "Ethernet Comm Status", prompt: "Verify communication ping between PLC and HMI/SCADA.", unit: "Status", standard: "Zero Packet Loss" }
           ]
         }
-      },
-      SITE: {
-        "INSTRUMENT_LOOP": {
-          name: "Field Instrumentation Loop Check",
-          steps: [
-            { id: "s1", title: "0% (4mA) Loop Calibration", prompt: "Inject 4.00 mA from field transmitter and verify 0.0% reading at SCADA.", unit: "mA", standard: "4.00 mA ±0.1%" },
-            { id: "s2", title: "50% (12mA) Loop Calibration", prompt: "Inject 12.00 mA and verify 50.0% engineering scale at PLC.", unit: "mA", standard: "12.00 mA ±0.1%" },
-            { id: "s3", title: "100% (20mA) Loop Calibration", prompt: "Inject 20.00 mA and confirm full span pressure/temperature on HMI.", unit: "mA", standard: "20.00 mA ±0.1%" }
-          ]
-        },
-        "MOTOR_TRIALS": {
-          name: "Motor & Drive On-Site Trials",
-          steps: [
-            { id: "mt1", title: "Motor Bump Test (Direction)", prompt: "Momentarily energize starter and verify shaft rotation matches pump arrow.", unit: "Status", standard: "Clockwise / Correct" },
-            { id: "mt2", title: "No-Load Current Check", prompt: "Measure motor uncoupled running current across all three phases.", unit: "Amps", standard: "Balanced Current" }
-          ]
-        }
       }
     };
 
     function getStoredTemplates() {
       try {
         const saved = localStorage.getItem('aryavarta_custom_templates');
-        return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.FAT) return parsed;
+        }
+        return JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
       } catch (e) {
         return JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
       }
@@ -930,7 +882,6 @@
     function switchAppMode(mode) {
       currentAppMode = mode;
       const fatBtn = document.getElementById('modeFatBtn');
-      const siteBtn = document.getElementById('modeSiteBtn');
       const dwrBtn = document.getElementById('modeDwrBtn');
       const expBtn = document.getElementById('modeExpBtn');
 
@@ -939,7 +890,7 @@
       const viewExpenses = document.getElementById('viewExpenses');
       const pdfBtnLabel = document.getElementById('lblPrimaryPdfBtn');
 
-      [fatBtn, siteBtn, dwrBtn, expBtn].forEach(b => {
+      [fatBtn, dwrBtn, expBtn].forEach(b => {
         if (b) b.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:text-white";
       });
 
@@ -950,18 +901,6 @@
         viewExpenses.classList.add('hidden');
         pdfBtnLabel.innerText = "Download FAT Certificate";
         document.getElementById('metadataHeaderTitle').innerText = "Panel & Job Specification (FAT)";
-        document.getElementById('lblSerialTag').innerText = "Panel Serial Number";
-        document.getElementById('lblCategory').innerText = "Panel Product Line / Category";
-        refreshCategoryDropdown();
-      } else if (mode === 'SITE') {
-        siteBtn.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-blue-600 text-white shadow-md";
-        viewFatSite.classList.remove('hidden');
-        viewDwr.classList.add('hidden');
-        viewExpenses.classList.add('hidden');
-        pdfBtnLabel.innerText = "Download Commissioning PDF";
-        document.getElementById('metadataHeaderTitle').innerText = "Site & Commissioning Specification";
-        document.getElementById('lblSerialTag').innerText = "Equipment / Field Tag No";
-        document.getElementById('lblCategory').innerText = "Site Service Protocol Package";
         refreshCategoryDropdown();
       } else if (mode === 'DWR') {
         dwrBtn.className = "py-2 rounded-lg font-industrial text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all bg-emerald-500 text-black shadow-md";
@@ -1252,7 +1191,6 @@
         if (i > 0) doc.addPage();
         const day = dwrDaysList[i];
 
-        // 1. TOP HEADER BANNER
         doc.autoTable({
           startY: 12,
           margin: { left: 12, right: 12 },
@@ -1264,15 +1202,9 @@
               { content: '(1 sheet per day)', styles: { fontStyle: 'normal', fontSize: 8.5, halign: 'right', valign: 'middle', textColor: [70, 70, 70], cellWidth: 40 } }
             ]
           ],
-          styles: {
-            lineColor: borderDark,
-            lineWidth: 0.3,
-            minCellHeight: 8,
-            cellPadding: 1.5
-          }
+          styles: { lineColor: borderDark, lineWidth: 0.3, minCellHeight: 8, cellPadding: 1.5 }
         });
 
-        // 2. METADATA SPECIFICATION GRID (EXACT 6 COLUMNS - COMPACT ROW HEIGHT)
         const metaGrid = [
           [
             { content: 'Customer :(Site Name)', styles: { fontStyle: 'bold', fillColor: excelYellow } },
@@ -1301,26 +1233,10 @@
           margin: { left: 12, right: 12 },
           theme: 'grid',
           body: metaGrid,
-          styles: {
-            fontSize: 7.8,
-            cellPadding: 1.8,
-            valign: 'middle',
-            textColor: [0, 0, 0],
-            lineColor: borderDark,
-            lineWidth: 0.25,
-            minCellHeight: 8
-          },
-          columnStyles: {
-            0: { cellWidth: 35 },
-            1: { cellWidth: 43 },
-            2: { cellWidth: 23 },
-            3: { cellWidth: 33 },
-            4: { cellWidth: 22 },
-            5: { cellWidth: 30 }
-          }
+          styles: { fontSize: 7.8, cellPadding: 1.8, valign: 'middle', textColor: [0, 0, 0], lineColor: borderDark, lineWidth: 0.25, minCellHeight: 8 },
+          columnStyles: { 0: { cellWidth: 35 }, 1: { cellWidth: 43 }, 2: { cellWidth: 23 }, 3: { cellWidth: 33 }, 4: { cellWidth: 22 }, 5: { cellWidth: 30 } }
         });
 
-        // 3. SAFETY QUESTION SECTION
         const isSafeYes = day.isSafe === "YES";
         const safetyContent = isSafeYes
           ? "Yes   [ X ]       No   [   ]                If not safe, specify why?  N/A"
@@ -1335,7 +1251,6 @@
           styles: { fontSize: 7.8, cellPadding: 2, lineColor: borderDark, lineWidth: 0.25 }
         });
 
-        // 4. MAIN ACTIVITIES BOX
         doc.autoTable({
           startY: doc.lastAutoTable.finalY + 1,
           margin: { left: 12, right: 12 },
@@ -1345,7 +1260,6 @@
           styles: { fontSize: 7.8, lineColor: borderDark, lineWidth: 0.25 }
         });
 
-        // 5. ISSUES & DELAYS GRID (CLIENT & CUSTOMER SCOPE)
         const issuesRows = [
           [
             { content: "Issue within Client Company's scope of Work", styles: { fontStyle: 'bold', fillColor: lightGreyHeader } },
@@ -1375,14 +1289,9 @@
           theme: 'grid',
           body: issuesRows,
           styles: { fontSize: 7.5, cellPadding: 2, textColor: [0, 0, 0], lineColor: borderDark, lineWidth: 0.25 },
-          columnStyles: {
-            0: { cellWidth: 80 },
-            1: { cellWidth: 80 },
-            2: { cellWidth: 26 }
-          }
+          columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 80 }, 2: { cellWidth: 26 } }
         });
 
-        // 6. DOCUMENTATION UPDATES SECTION
         doc.autoTable({
           startY: doc.lastAutoTable.finalY + 1,
           margin: { left: 12, right: 12 },
@@ -1392,7 +1301,6 @@
           styles: { fontSize: 7.5, lineColor: borderDark, lineWidth: 0.25 }
         });
 
-        // 7. SIGNATURE BOXES (MATCHES EXCEL BOTTOM ROW)
         const sigStartY = doc.lastAutoTable.finalY + 3;
         const sigBoxHeight = 21;
         const totalTableWidth = 186;
@@ -1418,12 +1326,8 @@
         doc.text(day.engName || "Authorized Signatory", 15, sigStartY + 13.5);
         doc.text(day.inchargeName || siteIncharge, 108, sigStartY + 13.5);
 
-        if (day.engSigData) {
-          doc.addImage(day.engSigData, 'PNG', 58, sigStartY + 7, 44, 13);
-        }
-        if (day.inchargeSigData) {
-          doc.addImage(day.inchargeSigData, 'PNG', 150, sigStartY + 7, 44, 13);
-        }
+        if (day.engSigData) doc.addImage(day.engSigData, 'PNG', 58, sigStartY + 7, 44, 13);
+        if (day.inchargeSigData) doc.addImage(day.inchargeSigData, 'PNG', 150, sigStartY + 7, 44, 13);
       }
 
       const cleanCustomer = (customer || "Daily_Report").replace(/[^a-zA-Z0-9_-]/g, "_");
@@ -1444,9 +1348,9 @@
     // 4. CHECKLIST UI & VOICE ENGINE
     function refreshCategoryDropdown() {
       const templates = getStoredTemplates();
-      const currentModeTemplates = templates[currentAppMode];
+      const currentModeTemplates = templates.FAT || {};
       const select = document.getElementById('categorySelector');
-      if (!select || !currentModeTemplates) return;
+      if (!select) return;
       select.innerHTML = '';
 
       const keys = Object.keys(currentModeTemplates);
@@ -1463,7 +1367,7 @@
     function onCategoryChanged(catKey) {
       currentCategoryKey = catKey;
       const templates = getStoredTemplates();
-      const cat = templates[currentAppMode][catKey];
+      const cat = templates.FAT ? templates.FAT[catKey] : null;
       if (!cat) return;
 
       inspectionData = cat.steps.map(s => ({
@@ -1678,13 +1582,11 @@
         }
 
         let recordedValue = rawText;
-        let isPass = true;
         let isFail = false;
 
         if (text.includes('pass') || text.includes('ok') || text.includes('पास') || text.includes('बरोबर')) {
           recordedValue = langCfg.pass;
         } else if (text.includes('fail') || text.includes('फेल') || text.includes('चूक')) {
-          isPass = false;
           isFail = true;
           recordedValue = langCfg.fail;
         }
@@ -1855,11 +1757,11 @@
 
         payload = {
           timestamp: now,
-          serviceType: currentAppMode === 'FAT' ? "SHOP_FAT" : "EI_COMMISSIONING",
+          serviceType: "SHOP_FAT",
           equipmentIdentifier: document.getElementById('metaSerialTag').value.trim() || "N/A",
           clientName: document.getElementById('metaClient').value.trim() || "N/A",
           projectScope: document.getElementById('metaProjectPo').value.trim() || "N/A",
-          facilityLocation: currentAppMode === 'FAT' ? "Aryavarta Plant, Chikhali Pune" : document.getElementById('metaClient').value.trim(),
+          facilityLocation: "Aryavarta Plant, Chikhali Pune",
           leadEngineer: document.getElementById('metaEngineer').value.trim() || "N/A",
           testVerdict: verdict,
           clientRepresentative: document.getElementById('sigClientName').value.trim() || "Pending Sign",
@@ -1889,8 +1791,7 @@
       }
     }
 
-    // 7. FAT / COMMISSIONING PDF REPORT
-    // HELPER: ASYNC LOGO LOADER (LOCAL FILE WITH GITHUB RAW FALLBACK)
+    // HELPER: ASYNC LOGO LOADER
     function loadLogoImage() {
       const urls = [
         'logo.png',
@@ -1910,8 +1811,7 @@
       });
     }
 
-    // 7. FAT / COMMISSIONING PDF REPORT (WITH OFFICIAL COMPANY LOGO IMAGE)
-    // 7. FAT / COMMISSIONING PDF REPORT (ALL PHOTOS IN 2-COLUMN GRID + AUTO-PAGINATION)
+    // 7. FAT PDF REPORT (ALL PHOTOS + MULTI-PAGE AUTO-FLOW)
     async function generateOfficialInspectionPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -1920,10 +1820,8 @@
       const serial = document.getElementById('metaSerialTag').value.trim() || "AA-PANEL-QC";
       const po = document.getElementById('metaProjectPo').value.trim() || "PO-REF";
       const engineer = document.getElementById('metaEngineer').value.trim() || "Aryavarta Engineer";
-      const isFat = currentAppMode === 'FAT';
-      const docTitle = isFat ? "FACTORY ACCEPTANCE TEST (FAT) CERTIFICATE" : "E&I SITE COMMISSIONING CERTIFICATE";
+      const docTitle = "FACTORY ACCEPTANCE TEST (FAT) CERTIFICATE";
 
-      // 1. EMBED ARYAVARTA LOGO VIA URL
       const logoImg = await loadLogoImage();
       if (logoImg) {
         doc.addImage(logoImg, 'PNG', 14, 7, 50, 24);
@@ -1934,7 +1832,6 @@
         doc.text("ARYAVARTA AUTOMATION", 14, 16);
       }
 
-      // 2. RIGHT-ALIGNED OFFICIAL FACILITY DETAILS
       doc.setFont("helvetica", "bold");
       doc.setFontSize(9.5);
       doc.setTextColor(15, 23, 42);
@@ -1948,7 +1845,6 @@
       doc.text("ISO 9001:2015 & ISO 14001:2015 Certified", 196, 25.5, { align: "right" });
       doc.text("Web: www.aryavartaautomation.in", 196, 30, { align: "right" });
 
-      // 3. TITLE BANNER
       doc.setFillColor(11, 25, 44);
       doc.rect(14, 33, 182, 10, 'F');
       doc.setTextColor(245, 158, 11);
@@ -1956,11 +1852,10 @@
       doc.setFont("helvetica", "bold");
       doc.text(docTitle, 18, 39.5);
 
-      // 4. METADATA SPECIFICATIONS
       const metaRows = [
         [
           { content: "Client Name:", styles: { fontStyle: 'bold' } }, client,
-          { content: isFat ? "Panel Serial No:" : "Field Tag No:", styles: { fontStyle: 'bold' } }, serial
+          { content: "Panel Serial No:", styles: { fontStyle: 'bold' } }, serial
         ],
         [
           { content: "PO / Project:", styles: { fontStyle: 'bold' } }, po,
@@ -1975,7 +1870,6 @@
         styles: { fontSize: 8, cellPadding: 2.2, lineColor: [15, 23, 42], lineWidth: 0.2 }
       });
 
-      // 5. TEST PARAMETERS TABLE
       const tableData = inspectionData.map((item, idx) => [
         idx + 1, item.title, item.standard, item.measuredValue || "N/A", item.status
       ]);
@@ -1988,7 +1882,6 @@
         styles: { fontSize: 7.5, cellPadding: 2, lineColor: [203, 213, 225], lineWidth: 0.2 }
       });
 
-      // 6. ALL PHOTOGRAPHIC EVIDENCE (NO LIMIT - 2 PER ROW WITH AUTO-PAGING)
       let photoY = doc.lastAutoTable.finalY + 6;
       if (photosList.length > 0) {
         if (photoY > 215) {
@@ -2007,10 +1900,9 @@
         const rowGap = 5;
 
         for (let i = 0; i < photosList.length; i++) {
-          const col = i % 2; // 0 = Left column, 1 = Right column
+          const col = i % 2;
           const posX = 14 + col * (imgW + colGap);
 
-          // If starting a new row and it exceeds page boundary, create a new page
           if (col === 0 && (photoY + imgH > 270)) {
             doc.addPage();
             photoY = 20;
@@ -2018,14 +1910,12 @@
 
           doc.addImage(photosList[i], 'JPEG', posX, photoY, imgW, imgH);
 
-          // Advance vertical cursor after placing right image or on the final image
           if (col === 1 || i === photosList.length - 1) {
             photoY += imgH + rowGap;
           }
         }
       }
 
-      // 7. JOINT SIGN-OFF (ALWAYS PLACED SAFELY BELOW PHOTOS)
       let sigY;
       if (photoY > 235) {
         doc.addPage();
@@ -2051,34 +1941,68 @@
       doc.text("Aryavarta Testing Engineer", 14, sigY + 4);
       doc.text("Client / Inspector Representative", 120, sigY + 4);
 
-      doc.save(`Aryavarta_${currentAppMode}_${serial}_Certificate.pdf`);
+      doc.save(`Aryavarta_FAT_${serial}_Certificate.pdf`);
     }
+
+    // 8. TEMPLATE MANAGER (FAIL-SAFE MODAL)
+    let editingCategoryKey = '';
+    function openTemplateManagerModal() {
+      const modal = document.getElementById('templateManagerModal');
+      let templates = getStoredTemplates();
+      if (!templates || !templates.FAT) {
+        templates = JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+        saveTemplates(templates);
+      }
+      const currentModeTemplates = templates.FAT || {};
+      const select = document.getElementById('modalCategorySelect');
+      select.innerHTML = '';
+
+      const keys = Object.keys(currentModeTemplates);
+      keys.forEach(k => {
+        const opt = document.createElement('option');
+        opt.value = k;
+        opt.innerText = currentModeTemplates[k].name;
+        select.appendChild(opt);
+      });
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      if (keys.length > 0) {
+        const targetKey = (currentCategoryKey && currentModeTemplates[currentCategoryKey]) ? currentCategoryKey : keys[0];
+        select.value = targetKey;
+        loadCategoryForEditing(targetKey);
+      }
+    }
+
     function closeTemplateManagerModal() {
-      document.getElementById('templateManagerModal').classList.add('hidden');
+      const modal = document.getElementById('templateManagerModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
     }
 
     function loadCategoryForEditing(catKey) {
       editingCategoryKey = catKey;
       const templates = getStoredTemplates();
-      const cat = templates[currentAppMode][catKey];
+      const cat = templates.FAT ? templates.FAT[catKey] : null;
       if (!cat) return;
 
       const list = document.getElementById('modalStepsList');
       list.innerHTML = '';
 
-      cat.steps.forEach((st, idx) => {
+      (cat.steps || []).forEach((st, idx) => {
         const item = document.createElement('div');
         item.className = "p-3 bg-slate-900 border border-slate-800 rounded-xl space-y-2";
         item.innerHTML = `
           <div class="flex items-center justify-between gap-2">
             <span class="text-xs font-mono-code font-bold text-amber-400">Step #${idx + 1}</span>
-            <button onclick="removeStepFromEditingCategory(${idx})" class="text-xs text-rose-400">Delete</button>
+            <button type="button" onclick="removeStepFromEditingCategory(${idx})" class="text-xs text-rose-400 hover:underline">Delete</button>
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${st.title}" placeholder="Step Title" id="stepTitle_${idx}" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
-            <input type="text" value="${st.standard}" placeholder="Standard" id="stepStd_${idx}" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+            <input type="text" value="${st.title || ''}" placeholder="Step Title" id="stepTitle_${idx}" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+            <input type="text" value="${st.standard || ''}" placeholder="Standard" id="stepStd_${idx}" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
           </div>
-          <textarea id="stepPrompt_${idx}" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white h-12">${st.prompt}</textarea>
+          <textarea id="stepPrompt_${idx}" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white h-12">${st.prompt || ''}</textarea>
         `;
         list.appendChild(item);
       });
@@ -2090,7 +2014,8 @@
       if (!name || !name.trim()) return;
       const key = "CUSTOM_" + Date.now();
       const templates = getStoredTemplates();
-      templates[currentAppMode][key] = {
+      if (!templates.FAT) templates.FAT = {};
+      templates.FAT[key] = {
         name: name.trim(),
         steps: [{ id: "c1", title: "Visual Inspection", prompt: "Inspect panel wiring and earth continuity.", standard: "OK", unit: "Status" }]
       };
@@ -2100,7 +2025,9 @@
 
     function addNewStepToCurrentCategory() {
       const templates = getStoredTemplates();
-      const cat = templates[currentAppMode][editingCategoryKey];
+      const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
+      if (!cat) return;
+      if (!cat.steps) cat.steps = [];
       cat.steps.push({ id: "step_" + Date.now(), title: "New Step", prompt: "Verify component status.", standard: "Normal", unit: "Status" });
       saveTemplates(templates);
       loadCategoryForEditing(editingCategoryKey);
@@ -2108,7 +2035,8 @@
 
     function removeStepFromEditingCategory(idx) {
       const templates = getStoredTemplates();
-      const cat = templates[currentAppMode][editingCategoryKey];
+      const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
+      if (!cat) return;
       if (cat.steps.length <= 1) return alert("Must retain at least 1 step.");
       cat.steps.splice(idx, 1);
       saveTemplates(templates);
@@ -2117,8 +2045,9 @@
 
     function saveCategoryEditsAndClose() {
       const templates = getStoredTemplates();
-      const cat = templates[currentAppMode][editingCategoryKey];
-      cat.steps.forEach((st, idx) => {
+      const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
+      if (!cat) return;
+      (cat.steps || []).forEach((st, idx) => {
         const titleEl = document.getElementById(`stepTitle_${idx}`);
         const stdEl = document.getElementById(`stepStd_${idx}`);
         const promptEl = document.getElementById(`stepPrompt_${idx}`);
@@ -2155,6 +2084,7 @@
           document.getElementById('expEngineerName').value = p.engineerName || '';
           document.getElementById('expEngineerEmail').value = p.engineerEmail || '';
           document.getElementById('expProjectNo').value = p.projectNo || '';
+          document.getElementById('expFixedDailyAllowance').value = p.fixedDailyAllowance || '';
         }
       } catch (e) {}
 
@@ -2181,18 +2111,15 @@
         date: dateStr,
         gotAdvance: "NO",
         advanceAmount: 0,
-        dailyAllowance: 0,
         demandAdvance: "NO",
         demandAmount: 0,
-        usedOwnMoney: "NO",
-        ownMoneyAmount: 0,
         expenses: []
       };
     }
 
     function lockExpProfile(shouldLock) {
       isExpProfileLocked = shouldLock;
-      ['expSiteName', 'expEngineerName', 'expEngineerEmail', 'expProjectNo'].forEach(f => {
+      ['expSiteName', 'expEngineerName', 'expEngineerEmail', 'expProjectNo', 'expFixedDailyAllowance'].forEach(f => {
         document.getElementById(f).disabled = shouldLock;
       });
       document.getElementById('lblExpProfileLock').innerText = shouldLock ? "Unlock to Edit" : "Lock Profile";
@@ -2214,12 +2141,14 @@
           siteName: document.getElementById('expSiteName').value.trim(),
           engineerName: document.getElementById('expEngineerName').value.trim(),
           engineerEmail: email,
-          projectNo: document.getElementById('expProjectNo').value.trim()
+          projectNo: document.getElementById('expProjectNo').value.trim(),
+          fixedDailyAllowance: parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0
         };
         try {
           localStorage.setItem('aryavarta_exp_profile', JSON.stringify(profile));
         } catch(e) {}
         lockExpProfile(true);
+        calculateExpTotals();
         playAudioTone(880, 0.1);
       }
     }
@@ -2257,19 +2186,11 @@
       toggleAdvanceBox(isAdv);
       document.getElementById('expAdvanceAmount').value = day.advanceAmount || '';
 
-      document.getElementById('expAllowanceAmount').value = day.dailyAllowance || '';
-
       const isDem = day.demandAdvance === "YES";
       document.getElementsByName('expDemandAdvance')[0].checked = isDem;
       document.getElementsByName('expDemandAdvance')[1].checked = !isDem;
       toggleDemandBox(isDem);
       document.getElementById('expDemandAmount').value = day.demandAmount || '';
-
-      const isOwn = day.usedOwnMoney === "YES";
-      document.getElementsByName('expUsedOwnMoney')[0].checked = isOwn;
-      document.getElementsByName('expUsedOwnMoney')[1].checked = !isOwn;
-      toggleOwnMoneyBox(isOwn);
-      document.getElementById('expOwnMoneyAmount').value = day.ownMoneyAmount || '';
 
       currentReceiptBase64 = null;
       const statusEl = document.getElementById('lblReceiptStatus');
@@ -2288,9 +2209,6 @@
     function toggleDemandBox(show) {
       document.getElementById('boxDemandAmount').classList.toggle('hidden', !show);
     }
-    function toggleOwnMoneyBox(show) {
-      document.getElementById('boxOwnMoneyAmount').classList.toggle('hidden', !show);
-    }
 
     function onExpDateChanged(newDate) {
       expDaysList[activeExpDayIndex].date = newDate;
@@ -2307,10 +2225,10 @@
         localStorage.setItem('aryavarta_exp_days', JSON.stringify(expDaysList));
       } catch (e) {}
       loadExpDayIntoForm(expDaysList.length - 1);
+      calculateExpTotals();
       playAudioTone(880, 0.15);
     }
 
-    // Handles both Camera & Storage uploads cleanly
     function handleReceiptUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -2437,36 +2355,42 @@
       document.getElementById('lightboxFullImage').src = imgSrc;
       document.getElementById('lblLightboxTitle').innerText = title || "Receipt Preview";
       document.getElementById('btnDownloadReceipt').href = imgSrc;
-      document.getElementById('receiptLightboxModal').classList.remove('hidden');
+      const modal = document.getElementById('receiptLightboxModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
     }
 
     function closeReceiptLightbox() {
-      document.getElementById('receiptLightboxModal').classList.add('hidden');
+      const modal = document.getElementById('receiptLightboxModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
     }
 
+    // CALCULATION & RECONCILIATION ENGINE
     function calculateExpTotals() {
       saveCurrentExpDay(false);
 
       let grandCategorized = 0;
-      let grandAllowance = 0;
-      let grandOwnMoney = 0;
       let grandAdvance = 0;
 
       expDaysList.forEach(day => {
         if (day.expenses) {
           day.expenses.forEach(e => { grandCategorized += (Number(e.amount) || 0); });
         }
-        grandAllowance += (Number(day.dailyAllowance) || 0);
-        grandOwnMoney += (day.usedOwnMoney === "YES" ? (Number(day.ownMoneyAmount) || 0) : 0);
         grandAdvance += (day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0);
       });
 
-      const finalTotalExpenses = grandCategorized + grandAllowance + grandOwnMoney;
+      // Fixed daily allowance multiplied across all logged days
+      const fixedDA = parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0;
+      const grandAllowance = expDaysList.length * fixedDA;
+
+      // Final Total Expenses = Total Receipts + Total Allowance (Own Money completely removed)
+      const finalTotalExpenses = grandCategorized + grandAllowance;
       const netBalance = grandAdvance - finalTotalExpenses;
 
       document.getElementById('statCategorizedExpenses').innerText = `₹${grandCategorized.toFixed(2)}`;
       document.getElementById('statTotalAllowance').innerText = `₹${grandAllowance.toFixed(2)}`;
-      document.getElementById('statOwnMoneyUsed').innerText = `₹${grandOwnMoney.toFixed(2)}`;
+      document.getElementById('lblDaysCountSummary').innerText = `${expDaysList.length} Day${expDaysList.length > 1 ? 's' : ''} × ₹${fixedDA}`;
       document.getElementById('statTotalAdvance').innerText = `₹${grandAdvance.toFixed(2)}`;
       document.getElementById('statFinalTotalExpenses').innerText = `₹${finalTotalExpenses.toFixed(2)}`;
 
@@ -2483,7 +2407,7 @@
       }
 
       return {
-        grandCategorized, grandAllowance, grandOwnMoney, grandAdvance, finalTotalExpenses, netBalance
+        grandCategorized, grandAllowance, grandAdvance, finalTotalExpenses, netBalance
       };
     }
 
@@ -2494,17 +2418,15 @@
       day.date = document.getElementById('expDailyDate').value || new Date().toISOString().split('T')[0];
       day.gotAdvance = document.querySelector('input[name="expGotAdvance"]:checked')?.value || "NO";
       day.advanceAmount = parseFloat(document.getElementById('expAdvanceAmount').value) || 0;
-      day.dailyAllowance = parseFloat(document.getElementById('expAllowanceAmount').value) || 0;
       day.demandAdvance = document.querySelector('input[name="expDemandAdvance"]:checked')?.value || "NO";
       day.demandAmount = parseFloat(document.getElementById('expDemandAmount').value) || 0;
-      day.usedOwnMoney = document.querySelector('input[name="expUsedOwnMoney"]:checked')?.value || "NO";
-      day.ownMoneyAmount = parseFloat(document.getElementById('expOwnMoneyAmount').value) || 0;
 
       const profile = {
         siteName: document.getElementById('expSiteName').value.trim(),
         engineerName: document.getElementById('expEngineerName').value.trim(),
         engineerEmail: document.getElementById('expEngineerEmail').value.trim(),
-        projectNo: document.getElementById('expProjectNo').value.trim()
+        projectNo: document.getElementById('expProjectNo').value.trim(),
+        fixedDailyAllowance: parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0
       };
 
       try {
@@ -2539,6 +2461,7 @@
       const siteName = document.getElementById('expSiteName').value.trim() || "Site";
       const engineerName = document.getElementById('expEngineerName').value.trim() || "Engineer";
       const projectNo = document.getElementById('expProjectNo').value.trim() || "PRJ-01";
+      const fixedDA = parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0;
 
       const verdictText = stats.netBalance > 0
         ? `DEBIT ENGINEER (Return ₹${stats.netBalance.toFixed(2)})`
@@ -2555,10 +2478,10 @@
               category: e.category,
               description: e.description,
               amount: e.amount,
-              dailyAllowance: day.dailyAllowance || 0,
+              dailyAllowance: fixedDA,
               advanceReceived: day.gotAdvance === "YES" ? day.advanceAmount : 0,
               demandedAdvance: day.demandAdvance === "YES" ? day.demandAmount : 0,
-              ownMoneyUsed: day.usedOwnMoney === "YES" ? day.ownMoneyAmount : 0,
+              ownMoneyUsed: 0,
               receiptPhotoBase64: e.receiptPhoto
             });
           });
@@ -2568,10 +2491,10 @@
             category: "Allowance & Advances",
             description: "Daily Allowance & Cash Flow Log",
             amount: 0,
-            dailyAllowance: day.dailyAllowance || 0,
+            dailyAllowance: fixedDA,
             advanceReceived: day.gotAdvance === "YES" ? day.advanceAmount : 0,
             demandedAdvance: day.demandAdvance === "YES" ? day.demandAmount : 0,
-            ownMoneyUsed: day.usedOwnMoney === "YES" ? day.ownMoneyAmount : 0,
+            ownMoneyUsed: 0,
             receiptPhotoBase64: null
           });
         }
@@ -2596,7 +2519,7 @@
           body: JSON.stringify(payload)
         });
         playAudioTone(880, 0.2);
-        alert("✓ Site Expenses successfully synced to Google Sheets with receipt links!");
+        alert("✓ Site Expenses successfully synced to Google Sheets!");
       } catch (err) {
         alert("Sync request failed. Please check network connection.");
       } finally {
@@ -2612,26 +2535,26 @@
       const engineerName = document.getElementById('expEngineerName').value.trim() || "Engineer";
       const engineerEmail = document.getElementById('expEngineerEmail').value.trim() || "N/A";
       const projectNo = document.getElementById('expProjectNo').value.trim() || "Project";
+      const fixedDA = parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0;
 
       let csv = "ARYAVARTA AUTOMATION - SITE EXPENSES & SETTLEMENT REPORT\n";
       csv += `Site Name:,${siteName},Project No:,${projectNo},Engineer Name:,${engineerName},Email:,${engineerEmail}\n\n`;
-      csv += "Date,Category,Description,Receipt Amount (INR),Daily Allowance (INR),Advance Received (INR),Demanded Advance (INR),Own Money Used (INR)\n";
+      csv += "Date,Category,Description,Receipt Amount (INR),Daily Allowance (INR),Advance Received (INR),Demanded Advance (INR)\n";
 
       expDaysList.forEach(day => {
         if (day.expenses && day.expenses.length > 0) {
           day.expenses.forEach(e => {
-            csv += `"${day.date}","${e.category}","${e.description.replace(/"/g, '""')}",${e.amount},${day.dailyAllowance || 0},${day.advanceAmount || 0},${day.demandAmount || 0},${day.ownMoneyAmount || 0}\n`;
+            csv += `"${day.date}","${e.category}","${e.description.replace(/"/g, '""')}",${e.amount},${fixedDA},${day.advanceAmount || 0},${day.demandAmount || 0}\n`;
           });
         } else {
-          csv += `"${day.date}","No Receipts","Daily Allowance Log",0,${day.dailyAllowance || 0},${day.advanceAmount || 0},${day.demandAmount || 0},${day.ownMoneyAmount || 0}\n`;
+          csv += `"${day.date}","No Receipts","Daily Allowance Log",0,${fixedDA},${day.advanceAmount || 0},${day.demandAmount || 0}\n`;
         }
       });
 
       csv += `\nSUMMARY TOTALS:\n`;
       csv += `Total Receipts Amount:,${stats.grandCategorized.toFixed(2)}\n`;
-      csv += `Total Daily Allowance:,${stats.grandAllowance.toFixed(2)}\n`;
-      csv += `Total Own Money Used:,${stats.grandOwnMoney.toFixed(2)}\n`;
-      csv += `FINAL TOTAL EXPENSES (Receipts + Allowance + Own Money):,${stats.finalTotalExpenses.toFixed(2)}\n`;
+      csv += `Total Daily Allowance (${expDaysList.length} Days × ₹${fixedDA}):,${stats.grandAllowance.toFixed(2)}\n`;
+      csv += `FINAL TOTAL EXPENSES (Receipts + Allowance):,${stats.finalTotalExpenses.toFixed(2)}\n`;
       csv += `TOTAL ADVANCE RECEIVED:,${stats.grandAdvance.toFixed(2)}\n`;
       csv += `NET SETTLEMENT BALANCE (Advance - Expenses):,${stats.netBalance.toFixed(2)}\n`;
       csv += `FINAL VERDICT:,${stats.netBalance > 0 ? "DEBIT ENGINEER (Return balance to company)" : stats.netBalance < 0 ? "CREDIT ENGINEER (Company reimbursement)" : "SETTLED"}\n`;
