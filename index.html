@@ -165,15 +165,14 @@
             <label class="block text-xs font-medium text-slate-400 mb-1">Panel Category / Product Line</label>
             <select id="categorySelector" onchange="onCategoryChanged(this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none cursor-pointer"></select>
           </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Panel Subcategory (Type / Rating)</label>
-            <select id="subcategorySelector" onchange="onSubcategoryChanged(this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none cursor-pointer"></select>
-          </div>
-          <div class="sm:pt-5">
-            <button type="button" onclick="openTemplateManagerModal()" class="w-full px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-semibold text-amber-400 flex items-center justify-center gap-2 transition-all">
-              <i data-lucide="sliders" class="w-4 h-4"></i>
-              <span>Customize Categories & Steps</span>
-            </button>
+          <div class="sm:col-span-2">
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-medium text-slate-400">Select & Sequence Subcategories (Multi-Select)</label>
+              <button type="button" onclick="openTemplateManagerModal()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
+                <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Customize Categories & Steps
+              </button>
+            </div>
+            <div id="subcategoriesCheckboxContainer" class="bg-slate-950 border border-slate-700 rounded-lg p-2.5 max-h-36 overflow-y-auto space-y-2"></div>
           </div>
         </div>
       </div>
@@ -835,12 +834,12 @@
               <span class="text-[10px] text-slate-500 block mt-0.5" id="lblPortalSiteStatus">(From Site Claims)</span>
             </div>
             <div class="bg-slate-900/90 p-3 rounded-xl border border-amber-500/40">
-              <span class="text-[10px] text-slate-400 uppercase font-bold block">2. Past Pending Balance (Admin)</span>
+              <span class="text-[10px] text-amber-400 uppercase font-bold block">2. Past Pending Balance (Admin)</span>
               <span class="text-sm font-mono-code font-bold text-amber-300" id="statPortalPastPending">₹0.00</span>
               <span class="text-[10px] text-slate-500 block mt-0.5">(Carried over balance)</span>
             </div>
             <div class="bg-slate-900/90 p-3 rounded-xl border border-emerald-500/40">
-              <span class="text-[10px] text-slate-400 uppercase font-bold block">Final Real Settlement Balance</span>
+              <span class="text-[10px] text-emerald-400 uppercase font-bold block">Final Real Settlement Balance</span>
               <span class="text-base font-mono-code font-bold text-emerald-400" id="statPortalFinalRealAmount">₹0.00</span>
               <span class="text-[10px] text-slate-500 block mt-0.5">Net Real Payable / Receivable</span>
             </div>
@@ -986,7 +985,7 @@
     </div>
   </footer>
 
-  <!-- ================= MODAL: PROTOCOL STEP BUILDER ================= -->
+  <!-- ================= MODAL: PROTOCOL STEP BUILDER (WITH SUBCATEGORY & ORDERING) ================= -->
   <div id="templateManagerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="p-4 border-b border-slate-800 flex items-center justify-between">
@@ -995,14 +994,13 @@
             <i data-lucide="sliders" class="w-4 h-4 text-amber-400"></i>
             <span>Protocol & Category Customizer</span>
           </h3>
-          <p class="text-xs text-slate-400">Create new panel categories, subcategories, or customize inspection steps.</p>
+          <p class="text-xs text-slate-400">Manage categories, subcategories, and inspection steps.</p>
         </div>
         <button type="button" onclick="closeTemplateManagerModal()" class="text-slate-400 hover:text-white p-1">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
       <div class="p-4 overflow-y-auto space-y-4 flex-1">
-        <!-- Category & Subcategory Config -->
         <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-3">
           <div class="flex gap-2 items-end">
             <div class="flex-1">
@@ -1069,13 +1067,11 @@
 
   <!-- ================= APPLICATION ENGINE SCRIPT ================= -->
   <script>
-    // 1. GLOBAL CONFIGURATION & STATE
     const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoZsNa1eevLcBMk0la8IAO1BmDxp69JoGpp5D6_uCTfA8o_Tx7eyczhhA47sqNQQrQBQ/exec";
 
     let currentAppMode = 'FAT'; // 'FAT' | 'DWR' | 'EXPENSES' | 'PORTAL'
     let currentLanguage = 'en';
     let currentCategoryKey = '';
-    let currentSubcategoryKey = '';
     let inspectionData = [];
     let photosList = [];
     
@@ -1094,6 +1090,9 @@
     let currentReceiptBase64 = null;
 
     let rawEmployeePortalData = null;
+    let portalSessionToken = null;
+    let portalSessionEmail = null;
+    let otpCooldownInterval = null;
 
     const I18N = {
       en: {
@@ -1131,7 +1130,6 @@
       }
     };
 
-    // FACTORY DEFAULT TEMPLATES WITH SUBCATEGORIES
     const DEFAULT_TEMPLATES = {
       FAT: {
         "VFD_PANEL": {
@@ -1186,7 +1184,6 @@
       }
     };
 
-    // CLOUD SYNC & LOCAL STORAGE TEMPLATES
     function getStoredTemplates() {
       try {
         const saved = localStorage.getItem('aryavarta_custom_templates');
@@ -1206,7 +1203,6 @@
       } catch (e) {}
     }
 
-    // Push templates to Google Sheets so all devices share the same categories & subcategories
     async function syncTemplatesToCloud(tpl) {
       try {
         await fetch(GOOGLE_APPS_SCRIPT_URL, {
@@ -1218,7 +1214,6 @@
       } catch (e) {}
     }
 
-    // Pull templates from Google Sheets on startup
     async function fetchCloudTemplates() {
       try {
         const script = document.createElement('script');
@@ -1245,7 +1240,7 @@
 
       loadFatMeta();
       initSignatures();
-      fetchCloudTemplates(); // Sync categories from cloud
+      fetchCloudTemplates();
       refreshCategoryDropdown();
       initDwrModule();
       initExpensesModule();
@@ -1442,7 +1437,6 @@
         };
         nav.appendChild(btn);
       });
-      lucide.createIcons();
     }
 
     function loadDwrDayIntoForm(idx) {
@@ -1804,7 +1798,7 @@
       }
     }
 
-    // 4. CHECKLIST UI & VOICE ENGINE (WITH N/A SUPPORT)
+    // 4. CHECKLIST UI & VOICE ENGINE (WITH N/A & ORDERED MULTI-SUBCATEGORY SUPPORT)
     function refreshCategoryDropdown() {
       const templates = getStoredTemplates();
       const currentModeTemplates = templates.FAT || {};
@@ -1823,48 +1817,83 @@
       if (keys.length > 0) {
         currentCategoryKey = keys[0];
         select.value = currentCategoryKey;
-        refreshSubcategoryDropdown(currentCategoryKey);
+        refreshSubcategoryCheckboxes(currentCategoryKey);
       }
     }
 
-    function refreshSubcategoryDropdown(catKey) {
+    function refreshSubcategoryCheckboxes(catKey) {
       currentCategoryKey = catKey;
       const templates = getStoredTemplates();
       const cat = templates.FAT ? templates.FAT[catKey] : null;
-      const subSelect = document.getElementById('subcategorySelector');
-      if (!subSelect || !cat || !cat.subcategories) return;
-      subSelect.innerHTML = '';
+      const container = document.getElementById('subcategoriesCheckboxContainer');
+      if (!container || !cat || !cat.subcategories) return;
+      container.innerHTML = '';
 
       const subKeys = Object.keys(cat.subcategories);
-      subKeys.forEach(sk => {
-        const opt = document.createElement('option');
-        opt.value = sk;
-        opt.innerText = cat.subcategories[sk].name;
-        subSelect.appendChild(opt);
+      subKeys.forEach((sk, idx) => {
+        const subObj = cat.subcategories[sk];
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800";
+        row.innerHTML = `
+          <label class="flex items-center gap-2 cursor-pointer flex-1 text-xs text-white select-none">
+            <input type="checkbox" value="${sk}" ${idx === 0 ? 'checked' : ''} onchange="onSubcategorySelectionChanged()" class="subcat-chk accent-amber-500 w-4 h-4">
+            <span class="font-medium">${subObj.name}</span>
+          </label>
+          <div class="flex items-center gap-1">
+            <button type="button" onclick="moveSubcategoryRow(this, -1)" class="p-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Move Up">▲</button>
+            <button type="button" onclick="moveSubcategoryRow(this, 1)" class="p-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Move Down">▼</button>
+          </div>
+        `;
+        container.appendChild(row);
       });
 
-      if (subKeys.length > 0) {
-        onSubcategoryChanged(subKeys[0]);
-      }
+      rebuildChecklistFromSelectedSubcategories();
     }
 
     function onCategoryChanged(catKey) {
-      refreshSubcategoryDropdown(catKey);
+      refreshSubcategoryCheckboxes(catKey);
     }
 
-    function onSubcategoryChanged(subKey) {
-      currentSubcategoryKey = subKey;
+    function moveSubcategoryRow(btn, direction) {
+      const row = btn.closest('div.flex.items-center');
+      if (!row) return;
+      const container = row.parentNode;
+      if (direction === -1 && row.previousElementSibling) {
+        container.insertBefore(row, row.previousElementSibling);
+      } else if (direction === 1 && row.nextElementSibling) {
+        container.insertBefore(row.nextElementSibling, row);
+      }
+      onSubcategorySelectionChanged();
+    }
+
+    function onSubcategorySelectionChanged() {
+      rebuildChecklistFromSelectedSubcategories();
+    }
+
+    function rebuildChecklistFromSelectedSubcategories() {
       const templates = getStoredTemplates();
       const cat = templates.FAT ? templates.FAT[currentCategoryKey] : null;
-      if (!cat || !cat.subcategories || !cat.subcategories[subKey]) return;
+      if (!cat || !cat.subcategories) return;
 
-      const steps = cat.subcategories[subKey].steps || [];
-      inspectionData = steps.map(s => ({
-        ...s,
-        measuredValue: null,
-        status: 'PENDING' // PENDING | PASSED | FAILED | NA
-      }));
+      const container = document.getElementById('subcategoriesCheckboxContainer');
+      const checkboxes = container.querySelectorAll('input.subcat-chk:checked');
+      
+      let combinedSteps = [];
+      checkboxes.forEach(chk => {
+        const subKey = chk.value;
+        if (cat.subcategories[subKey] && cat.subcategories[subKey].steps) {
+          cat.subcategories[subKey].steps.forEach(st => {
+            combinedSteps.push({
+              ...st,
+              subName: cat.subcategories[subKey].name,
+              measuredValue: null,
+              status: 'PENDING'
+            });
+          });
+        }
+      });
 
+      inspectionData = combinedSteps;
       renderChecklistUI();
       updateVerdictBadges();
       if (voiceInspector) voiceInspector.stop();
@@ -1873,6 +1902,11 @@
     function renderChecklistUI() {
       const container = document.getElementById('checklistContainer');
       container.innerHTML = '';
+
+      if (inspectionData.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-xs text-slate-500">Please select at least one subcategory above to generate protocol checklist.</div>`;
+        return;
+      }
 
       inspectionData.forEach((item, index) => {
         const isPassed = item.status === 'PASSED';
@@ -1889,8 +1923,9 @@
 
         row.innerHTML = `
           <div class="flex-1">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
               <span class="text-xs font-mono-code font-bold px-2 py-0.5 rounded bg-slate-800 text-amber-400">#${index + 1}</span>
+              <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-mono-code">${item.subName}</span>
               <h4 class="text-sm font-semibold text-white font-industrial">${item.title}</h4>
               <span class="text-[11px] font-mono-code text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">Criteria: ${item.standard}</span>
             </div>
@@ -1940,9 +1975,7 @@
 
     function setTestStatus(index, status) {
       inspectionData[index].status = status;
-      if (!inspectionData[index].measuredValue || inspectionData[index].measuredValue === 'PASS' || inspectionData[index].measuredValue === 'FAIL' || inspectionData[index].measuredValue === 'N/A') {
-        inspectionData[index].measuredValue = (status === 'PASSED' ? 'PASS' : status === 'NA' ? 'N/A' : 'FAIL');
-      }
+      inspectionData[index].measuredValue = (status === 'PASSED' ? 'PASS' : status === 'NA' ? 'N/A' : 'FAIL');
       renderChecklistUI();
       updateVerdictBadges();
     }
@@ -2029,7 +2062,7 @@
         }
 
         const step = inspectionData[this.currentIndex];
-        document.getElementById('voiceStepIndicator').innerText = `Step ${this.currentIndex + 1} of ${inspectionData.length}`;
+        document.getElementById('voiceStepIndicator').innerText = `Step ${this.currentIndex + 1} of ${inspectionData.length} [${step.subName}]`;
         document.getElementById('voiceCurrentStepTitle').innerText = step.title;
         document.getElementById('voiceCurrentStepPrompt').innerText = step.prompt;
 
@@ -2288,7 +2321,7 @@
           passedSteps: passed,
           failedSteps: failed,
           openSnags: failed,
-          inspectionSummary: inspectionData.map(i => `${i.title}: ${i.measuredValue || 'N/A'} [${i.status}]`).join(" | ")
+          inspectionSummary: inspectionData.map(i => `${i.subName} - ${i.title}: ${i.measuredValue || 'N/A'} [${i.status}]`).join(" | ")
         };
       }
 
@@ -2390,12 +2423,12 @@
       });
 
       const tableData = inspectionData.map((item, idx) => [
-        idx + 1, item.title, item.standard, item.measuredValue || "N/A", item.status
+        idx + 1, `${item.subName}: ${item.title}`, item.standard, item.measuredValue || "N/A", item.status
       ]);
 
       doc.autoTable({
         startY: doc.lastAutoTable.finalY + 4,
-        head: [['#', 'Test Parameter', 'Acceptance Standard', 'Measured Value', 'Status']],
+        head: [['#', 'Test Parameter & Subcategory', 'Acceptance Standard', 'Measured Value', 'Status']],
         body: tableData,
         headStyles: { fillColor: [15, 23, 42], textColor: [245, 158, 11], fontSize: 8, fontStyle: 'bold' },
         styles: { fontSize: 7.5, cellPadding: 2, lineColor: [203, 213, 225], lineWidth: 0.2 }
@@ -2656,7 +2689,7 @@
       }
     }
 
-    // 9. TEMPLATE MANAGER (WITH SUBCATEGORY & CLOUD SYNC)
+    // 9. TEMPLATE MANAGER (WITH SUBCATEGORY & ORDERING)
     let editingCategoryKey = '';
     let editingSubcategoryKey = '';
 
@@ -2828,7 +2861,7 @@
         });
       }
       saveTemplatesLocally(templates);
-      syncTemplatesToCloud(templates); // Push changes to cloud so all devices sync instantly
+      syncTemplatesToCloud(templates);
       closeTemplateManagerModal();
       refreshCategoryDropdown();
       alert("✓ Categories, subcategories, and steps updated successfully across all devices!");
@@ -2842,517 +2875,8 @@
       refreshCategoryDropdown();
     }
 
-    // 10. SITE EXPENSE ENGINE & RECONCILIATION
-    function initExpensesModule() {
-      try {
-        const savedProfile = localStorage.getItem('aryavarta_exp_profile');
-        if (savedProfile) {
-          const p = JSON.parse(savedProfile);
-          document.getElementById('expSiteName').value = p.siteName || '';
-          document.getElementById('expEngineerName').value = p.engineerName || '';
-          document.getElementById('expEngineerEmail').value = p.engineerEmail || '';
-          document.getElementById('expProjectNo').value = p.projectNo || '';
-          document.getElementById('expFixedDailyAllowance').value = p.fixedDailyAllowance || '';
-        }
-      } catch (e) {}
-
-      lockExpProfile(true);
-
-      try {
-        const storedDays = localStorage.getItem('aryavarta_exp_days');
-        if (storedDays) {
-          expDaysList = JSON.parse(storedDays);
-        } else {
-          expDaysList = [createBlankExpDay(1, new Date().toISOString().split('T')[0])];
-        }
-      } catch (e) {
-        expDaysList = [createBlankExpDay(1, new Date().toISOString().split('T')[0])];
-      }
-
-      renderExpDaysNav();
-      loadExpDayIntoForm(0);
-    }
-
-    function createBlankExpDay(dayNum, dateStr) {
-      return {
-        dayNumber: dayNum,
-        date: dateStr,
-        gotAdvance: "NO",
-        advanceAmount: 0,
-        demandAdvance: "NO",
-        demandAmount: 0,
-        expenses: []
-      };
-    }
-
-    function lockExpProfile(shouldLock) {
-      isExpProfileLocked = shouldLock;
-      ['expSiteName', 'expEngineerName', 'expEngineerEmail', 'expProjectNo', 'expFixedDailyAllowance'].forEach(f => {
-        document.getElementById(f).disabled = shouldLock;
-      });
-      document.getElementById('lblExpProfileLock').innerText = shouldLock ? "Unlock to Edit" : "Lock Profile";
-    }
-
-    function toggleExpProfileLock() {
-      if (isExpProfileLocked) {
-        lockExpProfile(false);
-      } else {
-        const email = document.getElementById('expEngineerEmail').value.trim();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!email || !emailRegex.test(email)) {
-          alert("Please enter a valid compulsory Email Address before locking the profile.");
-          document.getElementById('expEngineerEmail').focus();
-          return;
-        }
-
-        const profile = {
-          siteName: document.getElementById('expSiteName').value.trim(),
-          engineerName: document.getElementById('expEngineerName').value.trim(),
-          engineerEmail: email,
-          projectNo: document.getElementById('expProjectNo').value.trim(),
-          fixedDailyAllowance: parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0
-        };
-        try {
-          localStorage.setItem('aryavarta_exp_profile', JSON.stringify(profile));
-        } catch(e) {}
-        lockExpProfile(true);
-        calculateExpTotals();
-        playAudioTone(880, 0.1);
-      }
-    }
-
-    function renderExpDaysNav() {
-      const nav = document.getElementById('expDaysNav');
-      nav.innerHTML = '';
-      expDaysList.forEach((day, idx) => {
-        const btn = document.createElement('button');
-        const isActive = idx === activeExpDayIndex;
-        btn.className = `px-3 py-1.5 rounded-lg text-xs font-mono-code font-bold transition-all ${
-          isActive ? 'bg-amber-500 text-black shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-        }`;
-        btn.innerText = `Day ${day.dayNumber}: ${day.date}`;
-        btn.onclick = () => {
-          saveCurrentExpDay(false);
-          loadExpDayIntoForm(idx);
-        };
-        nav.appendChild(btn);
-      });
-      lucide.createIcons();
-    }
-
-    function loadExpDayIntoForm(idx) {
-      activeExpDayIndex = idx;
-      renderExpDaysNav();
-      const day = expDaysList[idx];
-
-      document.getElementById('lblExpDayTitle').innerText = `EXPENSES FOR: DAY ${day.dayNumber} (${day.date})`;
-      document.getElementById('expDailyDate').value = day.date;
-
-      const isAdv = day.gotAdvance === "YES";
-      document.getElementsByName('expGotAdvance')[0].checked = isAdv;
-      document.getElementsByName('expGotAdvance')[1].checked = !isAdv;
-      toggleAdvanceBox(isAdv);
-      document.getElementById('expAdvanceAmount').value = day.advanceAmount || '';
-
-      const isDem = day.demandAdvance === "YES";
-      document.getElementsByName('expDemandAdvance')[0].checked = isDem;
-      document.getElementsByName('expDemandAdvance')[1].checked = !isDem;
-      toggleDemandBox(isDem);
-      document.getElementById('expDemandAmount').value = day.demandAmount || '';
-
-      currentReceiptBase64 = null;
-      const statusEl = document.getElementById('lblReceiptStatus');
-      if (statusEl) {
-        statusEl.innerText = "No bill attached yet";
-        statusEl.className = "text-[10px] text-slate-500 font-mono-code mt-1 text-center truncate";
-      }
-
-      renderDayExpensesTable();
-      calculateExpTotals();
-    }
-
-    function toggleAdvanceBox(show) {
-      document.getElementById('boxAdvanceAmount').classList.toggle('hidden', !show);
-    }
-    function toggleDemandBox(show) {
-      document.getElementById('boxDemandAmount').classList.toggle('hidden', !show);
-    }
-
-    function onExpDateChanged(newDate) {
-      expDaysList[activeExpDayIndex].date = newDate;
-      document.getElementById('lblExpDayTitle').innerText = `EXPENSES FOR: DAY ${expDaysList[activeExpDayIndex].dayNumber} (${newDate})`;
-      renderExpDaysNav();
-    }
-
-    function addNewExpDay() {
-      saveCurrentExpDay(false);
-      const nextNum = expDaysList.length + 1;
-      const today = new Date().toISOString().split('T')[0];
-      expDaysList.push(createBlankExpDay(nextNum, today));
-      try {
-        localStorage.setItem('aryavarta_exp_days', JSON.stringify(expDaysList));
-      } catch (e) {}
-      loadExpDayIntoForm(expDaysList.length - 1);
-      calculateExpTotals();
-      playAudioTone(880, 0.15);
-    }
-
-    function deleteCurrentExpDay() {
-      if (expDaysList.length <= 1) {
-        alert("At least one expense day must remain in the dossier.");
-        return;
-      }
-      if (!confirm(`Are you sure you want to delete Day ${expDaysList[activeExpDayIndex].dayNumber} (${expDaysList[activeExpDayIndex].date})?`)) return;
-
-      expDaysList.splice(activeExpDayIndex, 1);
-      expDaysList.forEach((d, i) => { d.dayNumber = i + 1; });
-      activeExpDayIndex = Math.max(0, activeExpDayIndex - 1);
-      try {
-        localStorage.setItem('aryavarta_exp_days', JSON.stringify(expDaysList));
-      } catch (e) {}
-      loadExpDayIntoForm(activeExpDayIndex);
-      calculateExpTotals();
-      playAudioTone(660, 0.15);
-    }
-
-    function handleReceiptUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          const maxDim = 1200;
-          let w = img.width, h = img.height;
-          if (w > maxDim || h > maxDim) {
-            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
-            else { w = Math.round((w * maxDim) / h); h = maxDim; }
-          }
-          canvas.width = w; canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-          currentReceiptBase64 = canvas.toDataURL('image/jpeg', 0.85);
-
-          const statusEl = document.getElementById('lblReceiptStatus');
-          if (statusEl) {
-            statusEl.innerText = `✓ Attached: ${file.name || 'Receipt Image'}`;
-            statusEl.className = "text-[10px] text-emerald-400 font-mono-code mt-1 text-center truncate font-bold";
-          }
-          playAudioTone(880, 0.1);
-        };
-        img.src = evt.target.result;
-      };
-      reader.readAsDataURL(file);
-      e.target.value = '';
-    }
-
-    function addExpenseItemToActiveDay() {
-      const cat = document.getElementById('expCategorySelect').value;
-      const amount = parseFloat(document.getElementById('expItemAmount').value);
-      const desc = document.getElementById('expItemDescription').value.trim();
-
-      if (isNaN(amount) || amount <= 0) {
-        alert("Please enter a valid expense amount.");
-        return;
-      }
-
-      const day = expDaysList[activeExpDayIndex];
-      day.expenses.push({
-        id: "exp_" + Date.now(),
-        category: cat,
-        description: desc || `${cat} Expense`,
-        amount: amount,
-        receiptPhoto: currentReceiptBase64
-      });
-
-      document.getElementById('expItemAmount').value = '';
-      document.getElementById('expItemDescription').value = '';
-      currentReceiptBase64 = null;
-      
-      const statusEl = document.getElementById('lblReceiptStatus');
-      if (statusEl) {
-        statusEl.innerText = "No bill attached yet";
-        statusEl.className = "text-[10px] text-slate-500 font-mono-code mt-1 text-center truncate";
-      }
-
-      renderDayExpensesTable();
-      calculateExpTotals();
-      playAudioTone(750, 0.15);
-    }
-
-    function deleteExpenseItem(itemIdx) {
-      const day = expDaysList[activeExpDayIndex];
-      day.expenses.splice(itemIdx, 1);
-      renderDayExpensesTable();
-      calculateExpTotals();
-    }
-
-    function renderDayExpensesTable() {
-      const container = document.getElementById('dayExpensesTableContainer');
-      const day = expDaysList[activeExpDayIndex];
-
-      if (!day.expenses || day.expenses.length === 0) {
-        container.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 bg-slate-950">No categorized expenses added for this day yet.</div>`;
-        document.getElementById('lblDayCategorizedTotal').innerText = `Day Receipts: ₹0.00`;
-        return;
-      }
-
-      let dayTotal = 0;
-      let html = `
-        <table class="w-full text-left text-xs text-slate-300">
-          <thead class="bg-slate-950 text-slate-400 font-industrial uppercase border-b border-slate-800">
-            <tr>
-              <th class="p-2.5">Category</th>
-              <th class="p-2.5">Description</th>
-              <th class="p-2.5">Amount (₹)</th>
-              <th class="p-2.5 text-center">Receipt Evidence</th>
-              <th class="p-2.5 text-right">Action</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-800 bg-slate-900/60 font-mono-code">
-      `;
-
-      day.expenses.forEach((item, idx) => {
-        dayTotal += item.amount;
-        const photoCell = item.receiptPhoto
-          ? `<img src="${item.receiptPhoto}" onclick="openReceiptLightbox('${item.receiptPhoto}', '${item.category} - ₹${item.amount}')" class="w-10 h-10 object-cover rounded-md border border-slate-700 mx-auto cursor-pointer hover:scale-110 transition-transform">`
-          : `<span class="text-[10px] text-slate-500 italic">No Photo</span>`;
-
-        html += `
-          <tr>
-            <td class="p-2.5 font-bold text-amber-400">${item.category}</td>
-            <td class="p-2.5 text-slate-300 font-sans">${item.description}</td>
-            <td class="p-2.5 font-bold text-white">₹${item.amount.toFixed(2)}</td>
-            <td class="p-2.5 text-center">${photoCell}</td>
-            <td class="p-2.5 text-right">
-              <button onclick="deleteExpenseItem(${idx})" class="text-rose-400 hover:text-rose-300 text-xs font-sans">Delete</button>
-            </td>
-          </tr>
-        `;
-      });
-
-      html += `</tbody></table>`;
-      container.innerHTML = html;
-      document.getElementById('lblDayCategorizedTotal').innerText = `Day Receipts: ₹${dayTotal.toFixed(2)}`;
-    }
-
-    function openReceiptLightbox(imgSrc, title) {
-      document.getElementById('lightboxFullImage').src = imgSrc;
-      document.getElementById('lblLightboxTitle').innerText = title || "Receipt Preview";
-      document.getElementById('btnDownloadReceipt').href = imgSrc;
-      const modal = document.getElementById('receiptLightboxModal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
-
-    function closeReceiptLightbox() {
-      const modal = document.getElementById('receiptLightboxModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
-    function calculateExpTotals() {
-      saveCurrentExpDay(false);
-
-      let grandCategorized = 0;
-      let grandAdvance = 0;
-
-      expDaysList.forEach(day => {
-        if (day.expenses) {
-          day.expenses.forEach(e => { grandCategorized += (Number(e.amount) || 0); });
-        }
-        grandAdvance += (day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0);
-      });
-
-      const fixedDA = parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0;
-      const grandAllowance = expDaysList.length * fixedDA;
-
-      const finalTotalExpenses = grandCategorized + grandAllowance;
-      const netBalance = grandAdvance - finalTotalExpenses;
-
-      document.getElementById('statCategorizedExpenses').innerText = `₹${grandCategorized.toFixed(2)}`;
-      document.getElementById('statTotalAllowance').innerText = `₹${grandAllowance.toFixed(2)}`;
-      document.getElementById('lblDaysCountSummary').innerText = `${expDaysList.length} Day${expDaysList.length > 1 ? 's' : ''} × ₹${fixedDA}`;
-      document.getElementById('statTotalAdvance').innerText = `₹${grandAdvance.toFixed(2)}`;
-      document.getElementById('statFinalTotalExpenses').innerText = `₹${finalTotalExpenses.toFixed(2)}`;
-
-      const badge = document.getElementById('statSettlementBadge');
-      if (netBalance > 0) {
-        badge.className = "inline-block mt-1 px-4 py-1.5 rounded-lg text-xs font-bold font-mono-code uppercase bg-rose-500/20 text-rose-400 border border-rose-500/50";
-        badge.innerText = `DEBIT FROM ENGINEER: Return ₹${netBalance.toFixed(2)} to Company`;
-      } else if (netBalance < 0) {
-        badge.className = "inline-block mt-1 px-4 py-1.5 rounded-lg text-xs font-bold font-mono-code uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/50";
-        badge.innerText = `CREDIT TO ENGINEER: Reimburse ₹${Math.abs(netBalance).toFixed(2)} to Engineer`;
-      } else {
-        badge.className = "inline-block mt-1 px-4 py-1.5 rounded-lg text-xs font-bold font-mono-code uppercase bg-blue-500/20 text-blue-400 border border-blue-500/50";
-        badge.innerText = `BALANCED / SETTLED: ₹0.00`;
-      }
-
-      return {
-        grandCategorized, grandAllowance, grandAdvance, finalTotalExpenses, netBalance
-      };
-    }
-
-    function saveCurrentExpDay(showAlert = true) {
-      const day = expDaysList[activeExpDayIndex];
-      if (!day) return;
-
-      day.date = document.getElementById('expDailyDate').value || new Date().toISOString().split('T')[0];
-      day.gotAdvance = document.querySelector('input[name="expGotAdvance"]:checked')?.value || "NO";
-      day.advanceAmount = parseFloat(document.getElementById('expAdvanceAmount').value) || 0;
-      day.demandAdvance = document.querySelector('input[name="expDemandAdvance"]:checked')?.value || "NO";
-      day.demandAmount = parseFloat(document.getElementById('expDemandAmount').value) || 0;
-
-      const profile = {
-        siteName: document.getElementById('expSiteName').value.trim(),
-        engineerName: document.getElementById('expEngineerName').value.trim(),
-        engineerEmail: document.getElementById('expEngineerEmail').value.trim(),
-        projectNo: document.getElementById('expProjectNo').value.trim(),
-        fixedDailyAllowance: parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0
-      };
-
-      try {
-        localStorage.setItem('aryavarta_exp_profile', JSON.stringify(profile));
-        localStorage.setItem('aryavarta_exp_days', JSON.stringify(expDaysList));
-      } catch (e) {}
-
-      if (showAlert) {
-        playAudioTone(880, 0.2);
-        alert(`✓ Day ${day.dayNumber} expense sheet saved successfully!`);
-      }
-    }
-
-    // SYNC EXPENSES TO GOOGLE SHEETS
-    async function syncExpensesToGoogleSheet() {
-      const engineerEmail = document.getElementById('expEngineerEmail').value.trim();
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      
-      if (!engineerEmail || !emailRegex.test(engineerEmail)) {
-        alert("⚠️ Compulsory Email Address is required!\n\nPlease enter a valid email address in the Fixed Site Profile before syncing.");
-        if (isExpProfileLocked) lockExpProfile(false);
-        document.getElementById('expEngineerEmail').focus();
-        return;
-      }
-
-      const stats = calculateExpTotals();
-      const btn = document.getElementById('btnSyncExpenseSheet');
-      const origText = btn.innerHTML;
-      btn.innerHTML = `<span class="animate-spin inline-block mr-1">●</span> Syncing to Sheet...`;
-      btn.disabled = true;
-
-      const siteName = document.getElementById('expSiteName').value.trim() || "Site";
-      const engineerName = document.getElementById('expEngineerName').value.trim() || "Engineer";
-      const projectNo = document.getElementById('expProjectNo').value.trim() || "PRJ-01";
-      const fixedDA = parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0;
-
-      const verdictText = stats.netBalance > 0
-        ? `DEBIT ENGINEER (Return ₹${stats.netBalance.toFixed(2)})`
-        : stats.netBalance < 0
-          ? `CREDIT ENGINEER (Reimburse ₹${Math.abs(stats.netBalance).toFixed(2)})`
-          : "SETTLED (₹0.00)";
-
-      let flatItems = [];
-      expDaysList.forEach(day => {
-        if (day.expenses && day.expenses.length > 0) {
-          day.expenses.forEach(e => {
-            flatItems.push({
-              date: day.date,
-              category: e.category,
-              description: e.description,
-              amount: e.amount,
-              dailyAllowance: fixedDA,
-              advanceReceived: day.gotAdvance === "YES" ? day.advanceAmount : 0,
-              demandedAdvance: day.demandAdvance === "YES" ? day.demandAmount : 0,
-              receiptPhotoBase64: e.receiptPhoto
-            });
-          });
-        } else {
-          flatItems.push({
-            date: day.date,
-            category: "Allowance & Advances",
-            description: "Daily Allowance & Cash Flow Log",
-            amount: 0,
-            dailyAllowance: fixedDA,
-            advanceReceived: day.gotAdvance === "YES" ? day.advanceAmount : 0,
-            demandedAdvance: day.demandAdvance === "YES" ? day.demandAmount : 0,
-            receiptPhotoBase64: null
-          });
-        }
-      });
-
-      const payload = {
-        timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-        serviceType: "EXPENSES",
-        siteName: siteName,
-        engineerName: engineerName,
-        engineerEmail: engineerEmail,
-        projectNo: projectNo,
-        settlementVerdict: verdictText,
-        items: flatItems
-      };
-
-      try {
-        await fetch(GOOGLE_APPS_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        playAudioTone(880, 0.2);
-        alert("✓ Site Expenses successfully synced to Google Sheets!");
-      } catch (err) {
-        alert("Sync request failed. Please check network connection.");
-      } finally {
-        btn.innerHTML = origText;
-        btn.disabled = false;
-        lucide.createIcons();
-      }
-    }
-
-    function exportExpensesToCsv() {
-      const stats = calculateExpTotals();
-      const siteName = document.getElementById('expSiteName').value.trim() || "Site";
-      const engineerName = document.getElementById('expEngineerName').value.trim() || "Engineer";
-      const engineerEmail = document.getElementById('expEngineerEmail').value.trim() || "N/A";
-      const projectNo = document.getElementById('expProjectNo').value.trim() || "Project";
-      const fixedDA = parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0;
-
-      let csv = "ARYAVARTA AUTOMATION - SITE EXPENSES & SETTLEMENT REPORT\n";
-      csv += `Site Name:,${siteName},Project No:,${projectNo},Engineer Name:,${engineerName},Email:,${engineerEmail}\n\n`;
-      csv += "Date,Category,Description,Receipt Amount (INR),Daily Allowance (INR),Advance Received (INR),Demanded Advance (INR)\n";
-
-      expDaysList.forEach(day => {
-        if (day.expenses && day.expenses.length > 0) {
-          day.expenses.forEach(e => {
-            csv += `"${day.date}","${e.category}","${e.description.replace(/"/g, '""')}",${e.amount},${fixedDA},${day.advanceAmount || 0},${day.demandAmount || 0}\n`;
-          });
-        } else {
-          csv += `"${day.date}","No Receipts","Daily Allowance Log",0,${fixedDA},${day.advanceAmount || 0},${day.demandAmount || 0}\n`;
-        }
-      });
-
-      csv += `\nSUMMARY TOTALS:\n`;
-      csv += `Total Receipts Amount:,${stats.grandCategorized.toFixed(2)}\n`;
-      csv += `Total Daily Allowance (${expDaysList.length} Days × ₹${fixedDA}):,${stats.grandAllowance.toFixed(2)}\n`;
-      csv += `FINAL TOTAL EXPENSES (Receipts + Allowance):,${stats.finalTotalExpenses.toFixed(2)}\n`;
-      csv += `TOTAL ADVANCE RECEIVED:,${stats.grandAdvance.toFixed(2)}\n`;
-      csv += `NET SETTLEMENT BALANCE (Advance - Expenses):,${stats.netBalance.toFixed(2)}\n`;
-      csv += `FINAL VERDICT:,${stats.netBalance > 0 ? "DEBIT ENGINEER (Return balance to company)" : stats.netBalance < 0 ? "CREDIT ENGINEER (Company reimbursement)" : "SETTLED"}\n`;
-
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Site_Expenses_${siteName}_${projectNo}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-
     // =========================================================================
-    // 11. AUTHENTICATED "MY STATEMENT" EMPLOYEE PORTAL ENGINE
+    // 12. IN-APP "MY STATEMENT" EMPLOYEE PORTAL ENGINE
     // =========================================================================
     function initPortalState() {
       try {
