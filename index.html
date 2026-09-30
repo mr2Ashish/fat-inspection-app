@@ -7,7 +7,7 @@
   
   <!-- Manifest & Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
   
   <!-- External Libraries -->
@@ -162,7 +162,12 @@
 
         <div class="mt-4 pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div class="w-full sm:w-2/3">
-            <label class="block text-xs font-medium text-slate-400 mb-1">Panel Product Line / Category</label>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-medium text-slate-400">Panel Product Line / Category</label>
+              <span id="cloudSyncStatus" class="text-[10px] text-emerald-400 font-mono-code flex items-center gap-1">
+                <i data-lucide="cloud-check" class="w-3 h-3"></i> Cloud Synced
+              </span>
+            </div>
             <select id="categorySelector" onchange="onCategoryChanged(this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none cursor-pointer"></select>
           </div>
           <button type="button" onclick="openTemplateManagerModal()" class="w-full sm:w-auto mt-2 sm:mt-5 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-semibold text-amber-400 flex items-center justify-center gap-2 transition-all">
@@ -180,7 +185,7 @@
               <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
               <h2 class="text-base font-bold font-industrial uppercase text-white tracking-wide">Voice-Guided Hands-Free Loop</h2>
             </div>
-            <p class="text-xs text-slate-400 mt-0.5">Two-way audio inspection loop with multimeter reading recognition.</p>
+            <p class="text-xs text-slate-400 mt-0.5">Two-way audio inspection loop with multimeter reading & N/A recognition.</p>
           </div>
           <button id="voiceControlBtn" onclick="toggleVoiceSession()" class="w-full md:w-auto px-5 py-2.5 rounded-xl font-industrial font-bold text-sm flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black hover:brightness-110 shadow-lg">
             <i data-lucide="mic" class="w-5 h-5"></i>
@@ -204,9 +209,9 @@
           <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3.5 text-xs">
             <span class="font-bold uppercase font-industrial text-[11px] block mb-2 text-amber-400">Voice Commands Guide</span>
             <ul class="space-y-1 text-slate-400 font-mono-code text-[11px]">
-              <li>• English: <span class="text-white">"415 volts", "Pass", "Repeat"</span></li>
-              <li>• Hindi: <span class="text-white">"415 वोल्ट", "पास", "फिर से"</span></li>
-              <li>• Marathi: <span class="text-white">"बरोबर", "झाले", "पुन्हा सांगा"</span></li>
+              <li>• English: <span class="text-white">"415 volts", "Pass", "Fail", "N/A"</span></li>
+              <li>• Hindi: <span class="text-white">"415 वोल्ट", "पास", "फेल", "लागू नहीं"</span></li>
+              <li>• Marathi: <span class="text-white">"बरोबर", "चूक", "लागू नाही", "पुन्हा सांगा"</span></li>
             </ul>
           </div>
         </div>
@@ -223,9 +228,11 @@
             <span class="text-emerald-400 font-bold" id="passedCountBadge">0 PASSED</span>
             <span class="text-slate-600">|</span>
             <span class="text-rose-400 font-bold" id="failedCountBadge">0 FAILED</span>
+            <span class="text-slate-600">|</span>
+            <span class="text-amber-400 font-bold" id="naCountBadge">0 N/A</span>
           </div>
         </div>
-        <div id="checklistContainer" class="space-y-3"></div>
+        <div id="checklistContainer" class="space-y-4"></div>
       </div>
 
       <!-- Watermarked Photo Evidence -->
@@ -715,7 +722,6 @@
           <p class="text-xs text-slate-400">Authenticate your identity to view your site expenses & settlement ledger.</p>
         </div>
 
-        <!-- Registered Email Input -->
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1.5">Official Registered Email Address:</label>
           <div class="relative">
@@ -782,10 +788,8 @@
         <p class="text-xs text-slate-300 font-mono-code">Validating security credentials & decrypting records...</p>
       </div>
 
-      <!-- STATEMENT WORKSPACE (UNLOCKED ONLY AFTER AUTHENTICATION) -->
+      <!-- STATEMENT WORKSPACE -->
       <div id="portalContentBox" class="space-y-6 hidden">
-        
-        <!-- Authenticated Header Bar -->
         <div class="bg-gradient-to-r from-slate-900 via-[#0a1424] to-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <div class="flex items-center gap-2">
@@ -839,7 +843,7 @@
           </div>
         </div>
 
-        <!-- 4 KPI Performance Cards -->
+        <!-- 4 KPI Cards -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
           <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
             <span class="text-[10px] text-slate-400 uppercase font-bold block">Total Bills Spent</span>
@@ -927,7 +931,6 @@
 
           <div id="portalTablesContainer" class="space-y-6"></div>
         </div>
-
       </div>
 
       <!-- MODAL: SET 4-DIGIT PIN -->
@@ -978,45 +981,75 @@
     </div>
   </footer>
 
-  <!-- ================= MODAL: PROTOCOL STEP BUILDER ================= -->
+  <!-- ================= MODAL: PROTOCOL STEP BUILDER (WITH SUBCATEGORIES) ================= -->
   <div id="templateManagerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="p-4 border-b border-slate-800 flex items-center justify-between">
         <div>
           <h3 class="text-base font-bold text-white font-industrial uppercase flex items-center gap-2">
             <i data-lucide="sliders" class="w-4 h-4 text-amber-400"></i>
             <span>Protocol & Category Customizer</span>
           </h3>
-          <p class="text-xs text-slate-400">Create new panel categories or customize inspection steps.</p>
+          <p class="text-xs text-slate-400">Manage categories, add subcategories, and customize inspection steps with instant cloud sync.</p>
         </div>
         <button type="button" onclick="closeTemplateManagerModal()" class="text-slate-400 hover:text-white p-1">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
+      
       <div class="p-4 overflow-y-auto space-y-4 flex-1">
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-          <label class="block text-xs font-medium text-slate-400 mb-1">Active Category to Edit</label>
-          <div class="flex gap-2">
-            <select id="modalCategorySelect" onchange="loadCategoryForEditing(this.value)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></select>
-            <button type="button" onclick="promptAddNewCategory()" class="px-3 py-2 bg-amber-500 text-black text-xs font-bold rounded-lg hover:bg-amber-400 flex items-center gap-1">
-              <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
-              <span>New Category</span>
-            </button>
+        <!-- 1. CATEGORY SELECTION & CONTROLS -->
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold uppercase tracking-wider text-amber-400 font-industrial">1. Active Category</label>
+            <div class="flex gap-2">
+              <button type="button" onclick="promptAddNewCategory()" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-lg flex items-center gap-1 shadow">
+                <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
+                <span>+ New Category</span>
+              </button>
+              <button type="button" onclick="promptDeleteCategory()" class="px-2 py-1 bg-rose-950/60 hover:bg-rose-900/60 text-rose-400 border border-rose-500/30 text-xs rounded-lg flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
           </div>
+          <select id="modalCategorySelect" onchange="loadCategoryForEditing(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></select>
         </div>
+
+        <!-- 2. SUBCATEGORY SELECTION & CONTROLS -->
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold uppercase tracking-wider text-emerald-400 font-industrial">2. Active Subcategory</label>
+            <div class="flex gap-2">
+              <button type="button" onclick="promptAddNewSubcategory()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg flex items-center gap-1 shadow">
+                <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                <span>+ New Subcategory</span>
+              </button>
+              <button type="button" onclick="promptDeleteSubcategory()" class="px-2 py-1 bg-rose-950/60 hover:bg-rose-900/60 text-rose-400 border border-rose-500/30 text-xs rounded-lg flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+          <select id="modalSubcategorySelect" onchange="loadSubcategoryForEditing(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></select>
+        </div>
+
+        <!-- 3. STEPS IN ACTIVE SUBCATEGORY -->
         <div>
           <div class="flex items-center justify-between mb-2">
-            <label class="text-xs font-bold uppercase text-slate-300 font-industrial">Protocol Steps for this Category</label>
-            <button type="button" onclick="addNewStepToCurrentCategory()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
+            <label class="text-xs font-bold uppercase text-slate-300 font-industrial">Steps in this Subcategory</label>
+            <button type="button" onclick="addNewStepToCurrentSubcategory()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Step
             </button>
           </div>
           <div id="modalStepsList" class="space-y-2.5"></div>
         </div>
       </div>
+
       <div class="p-4 border-t border-slate-800 flex items-center justify-between bg-slate-950">
         <button type="button" onclick="resetCurrentCategoryToDefaults()" class="text-xs text-rose-400 hover:underline">Reset to Factory Default</button>
-        <button type="button" onclick="saveCategoryEditsAndClose()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs rounded-xl shadow">Save & Apply</button>
+        <button type="button" onclick="saveCategoryEditsAndClose()" id="btnSaveTemplateModal" class="px-5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:brightness-110 text-black font-bold text-xs rounded-xl shadow flex items-center gap-1.5">
+          <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+          <span>Save & Apply (Cloud Sync)</span>
+        </button>
       </div>
     </div>
   </div>
@@ -1048,103 +1081,155 @@
   <!-- ================= APPLICATION ENGINE SCRIPT ================= -->
   <script>
     // 1. GLOBAL CONFIGURATION & STATE
-    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoZsNa1eevLcBMk0la8IAO1BmDxp69JoGpp5D6_uCTfA8o_Tx7eyczhhA47sqNQQrQBQ/exec";
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoZsNa1eevLcBMk0la8IAO1BmDxp69JoGpp5D6_uCTfA8o_Tx7eyczhhA47sqNQQrQBQ/exec";[cite: 1]
 
     let currentAppMode = 'FAT'; // 'FAT' | 'DWR' | 'EXPENSES' | 'PORTAL'
-    let currentLanguage = 'en';
-    let currentCategoryKey = '';
-    let inspectionData = [];
-    let photosList = [];
+    let currentLanguage = 'en';[cite: 1]
+    let currentCategoryKey = '';[cite: 1]
+    let inspectionData = [];[cite: 1]
+    let photosList = [];[cite: 1]
     
-    let engineerSigPad = null;
-    let clientSigPad = null;
-    let dwrEngSigPad = null;
-    let dwrInchargeSigPad = null;
+    let engineerSigPad = null;[cite: 1]
+    let clientSigPad = null;[cite: 1]
+    let dwrEngSigPad = null;[cite: 1]
+    let dwrInchargeSigPad = null;[cite: 1]
 
-    let isDwrProfileLocked = true;
-    let activeDwrDayIndex = 0;
-    let dwrDaysList = [];
+    let isDwrProfileLocked = true;[cite: 1]
+    let activeDwrDayIndex = 0;[cite: 1]
+    let dwrDaysList = [];[cite: 1]
 
-    let isExpProfileLocked = true;
-    let activeExpDayIndex = 0;
-    let expDaysList = [];
-    let currentReceiptBase64 = null;
+    let isExpProfileLocked = true;[cite: 1]
+    let activeExpDayIndex = 0;[cite: 1]
+    let expDaysList = [];[cite: 1]
+    let currentReceiptBase64 = null;[cite: 1]
 
-    let rawEmployeePortalData = null;
-    let portalSessionToken = null;
-    let portalSessionEmail = null;
-    let otpCooldownInterval = null;
+    let rawEmployeePortalData = null;[cite: 1]
+    let portalSessionToken = null;[cite: 1]
+    let portalSessionEmail = null;[cite: 1]
+    let otpCooldownInterval = null;[cite: 1]
 
     const I18N = {
       en: {
         voiceCode: 'en-IN',
         stepPrefix: "Step",
-        repeatPrompt: "Waiting for response. Please state multimeter reading, say pass, or say repeat.",
+        repeatPrompt: "Waiting for response. State multimeter reading, say pass, fail, N/A, or say repeat.",
         logged: "Logged",
         movingNext: "Next test.",
         completed: "All inspection steps are finished.",
         pass: "PASS",
-        fail: "FAIL"
+        fail: "FAIL",
+        na: "N/A"
       },
       hi: {
         voiceCode: 'hi-IN',
         stepPrefix: "कदम",
-        repeatPrompt: "प्रतीक्षा कर रहे हैं। कृपया मल्टीमीटर रीडिंग बताएं, पास कहें, या दोहराने को कहें।",
+        repeatPrompt: "प्रतीक्षा कर रहे हैं। रीडिंग बताएं, पास, फेल, लागू नहीं कहें, या दोहराने को कहें।",
         logged: "दर्ज किया गया",
         movingNext: "अगला टेस्ट।",
         completed: "सभी निरीक्षण चरण पूरे हो गए हैं।",
         pass: "पास",
-        fail: "फेल"
+        fail: "फेल",
+        na: "लागू नहीं"
       },
       mr: {
         voiceCode: 'mr-IN',
         stepPrefix: "पायरी",
-        repeatPrompt: "प्रतीक्षा करत आहे. कृपया मल्टीमीटर वाचन सांगा, बरोबर म्हणा, किंवा पुन्हा सांगा.",
+        repeatPrompt: "प्रतीक्षा करत आहे. वाचन सांगा, बरोबर, चूक, लागू नाही म्हणा, किंवा पुन्हा सांगा.",
         logged: "नोंदवले",
         movingNext: "पुढील चाचणी.",
         completed: "सर्व तपासणी पायऱ्या पूर्ण झाल्या आहेत.",
         pass: "बरोबर",
-        fail: "चूक"
+        fail: "चूक",
+        na: "लागू नाही"
       }
-    };
+    };[cite: 1]
 
+    // Default template with Category -> Subcategory -> Steps hierarchy
     const DEFAULT_TEMPLATES = {
       FAT: {
         "VFD_PANEL": {
           name: "VFD Control Panel",
-          steps: [
-            { id: "v1", title: "Incoming Voltage R-Y", prompt: "Measure incoming voltage between R and Y phase. Nominal is 415V AC ±5%.", unit: "V AC", standard: "415 V ±5%" },
-            { id: "v2", title: "Incoming Voltage Y-B", prompt: "Measure incoming voltage between Y and B phase. Nominal is 415V AC.", unit: "V AC", standard: "415 V ±5%" },
-            { id: "v3", title: "Earth Bus Continuity", prompt: "Verify earth bus continuity to main ground electrode.", unit: "Ohms", standard: "< 1.0 Ohm" },
-            { id: "v4", title: "24V DC Auxiliary Power", prompt: "Measure 24V DC switch mode power supply terminal output voltage.", unit: "V DC", standard: "24.0 V ±2%" },
-            { id: "v5", title: "VFD Forward Command", prompt: "Trigger digital forward run command to drive and verify display frequency.", unit: "Status", standard: "50.0 Hz Achieved" }
-          ]
+          subcategories: {
+            "POWER_CIRCUIT": {
+              name: "Power Circuit & Incoming",
+              steps: [
+                { id: "v1", title: "Incoming Voltage R-Y", prompt: "Measure incoming voltage between R and Y phase. Nominal is 415V AC ±5%.", unit: "V AC", standard: "415 V ±5%" },
+                { id: "v2", title: "Incoming Voltage Y-B", prompt: "Measure incoming voltage between Y and B phase. Nominal is 415V AC.", unit: "V AC", standard: "415 V ±5%" },
+                { id: "v3", title: "Earth Bus Continuity", prompt: "Verify earth bus continuity to main ground electrode.", unit: "Ohms", standard: "< 1.0 Ohm" }
+              ]
+            },
+            "CONTROL_LOGIC": {
+              name: "Control & Drive Functionality",
+              steps: [
+                { id: "v4", title: "24V DC Auxiliary Power", prompt: "Measure 24V DC switch mode power supply terminal output voltage.", unit: "V DC", standard: "24.0 V ±2%" },
+                { id: "v5", title: "VFD Forward Command", prompt: "Trigger digital forward run command to drive and verify display frequency.", unit: "Status", standard: "50.0 Hz Achieved" }
+              ]
+            }
+          }
         },
         "MCC_PANEL": {
           name: "Motor Control Center (MCC)",
-          steps: [
-            { id: "m1", title: "Phase-to-Phase Insulation (Megger)", prompt: "500V DC insulation resistance between phases R-Y, Y-B, B-R.", unit: "M-Ohms", standard: "> 100 MΩ" },
-            { id: "m2", title: "Phase-to-Earth Insulation", prompt: "500V DC insulation resistance between phases and panel earth busbar.", unit: "M-Ohms", standard: "> 50 MΩ" },
-            { id: "m3", title: "Contactor Interlocking Check", prompt: "Verify mechanical and electrical interlocking on Star-Delta starters.", unit: "Status", standard: "Interlock Verified" }
-          ]
+          subcategories: {
+            "INSULATION": {
+              name: "Megger & Insulation Tests",
+              steps: [
+                { id: "m1", title: "Phase-to-Phase Insulation (Megger)", prompt: "500V DC insulation resistance between phases R-Y, Y-B, B-R.", unit: "M-Ohms", standard: "> 100 MΩ" },
+                { id: "m2", title: "Phase-to-Earth Insulation", prompt: "500V DC insulation resistance between phases and panel earth busbar.", unit: "M-Ohms", standard: "> 50 MΩ" }
+              ]
+            },
+            "STARTERS": {
+              name: "Starters & Mechanical Interlocks",
+              steps: [
+                { id: "m3", title: "Contactor Interlocking Check", prompt: "Verify mechanical and electrical interlocking on Star-Delta starters.", unit: "Status", standard: "Interlock Verified" }
+              ]
+            }
+          }
         },
         "PLC_PANEL": {
           name: "PLC & SCADA Automation Panel",
-          steps: [
-            { id: "p1", title: "SMPS 24V DC Ripple & Noise", prompt: "Measure DC bus voltage stability for PLC CPU and I/O cards.", unit: "V DC", standard: "24.0 V ±1%" },
-            { id: "p2", title: "Digital Input Loop Check", prompt: "Inject 24V DC to DI channel 1 and confirm LED & SCADA bit state.", unit: "Status", standard: "Channel Active" },
-            { id: "p3", title: "Ethernet Comm Status", prompt: "Verify communication ping between PLC and HMI/SCADA.", unit: "Status", standard: "Zero Packet Loss" }
-          ]
+          subcategories: {
+            "POWER_STABILITY": {
+              name: "DC Power & Stability",
+              steps: [
+                { id: "p1", title: "SMPS 24V DC Ripple & Noise", prompt: "Measure DC bus voltage stability for PLC CPU and I/O cards.", unit: "V DC", standard: "24.0 V ±1%" }
+              ]
+            },
+            "IO_COMM": {
+              name: "IO Loop Checks & Communications",
+              steps: [
+                { id: "p2", title: "Digital Input Loop Check", prompt: "Inject 24V DC to DI channel 1 and confirm LED & SCADA bit state.", unit: "Status", standard: "Channel Active" },
+                { id: "p3", title: "Ethernet Comm Status", prompt: "Verify communication ping between PLC and HMI/SCADA.", unit: "Status", standard: "Zero Packet Loss" }
+              ]
+            }
+          }
         }
       }
     };
+
+    // Auto-migrates flat legacy steps structure to subcategories
+    function normalizeTemplates(tpl) {
+      if (!tpl || !tpl.FAT) return JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+      for (let catKey in tpl.FAT) {
+        let cat = tpl.FAT[catKey];
+        if (!cat.subcategories) {
+          cat.subcategories = {
+            "GENERAL": {
+              name: "General Inspection",
+              steps: cat.steps || []
+            }
+          };
+          delete cat.steps;
+        }
+      }
+      return tpl;
+    }
 
     function getStoredTemplates() {
       try {
         const saved = localStorage.getItem('aryavarta_custom_templates');
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (parsed && parsed.FAT) return parsed;
+          if (parsed && parsed.FAT) return normalizeTemplates(parsed);
         }
         return JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
       } catch (e) {
@@ -1156,6 +1241,34 @@
       try {
         localStorage.setItem('aryavarta_custom_templates', JSON.stringify(tpl));
       } catch (e) {}
+    }
+
+    // CLOUD SYNC: Pull latest templates from Google Apps Script
+    async function syncTemplatesFromCloud() {
+      const syncStatusEl = document.getElementById('cloudSyncStatus');
+      if (syncStatusEl) {
+        syncStatusEl.innerHTML = `<span class="animate-spin inline-block mr-1">●</span> Syncing Cloud...`;
+        syncStatusEl.className = "text-[10px] text-amber-400 font-mono-code flex items-center";
+      }
+
+      try {
+        const res = await callGasAuth({ action: "getTemplates" });
+        if (res && res.status === "success" && res.templates) {
+          const norm = normalizeTemplates(res.templates);
+          saveTemplates(norm);
+          refreshCategoryDropdown();
+          if (syncStatusEl) {
+            syncStatusEl.innerHTML = `<i data-lucide="cloud-check" class="w-3 h-3 inline mr-0.5 text-emerald-400"></i> Cloud Synced`;
+            syncStatusEl.className = "text-[10px] text-emerald-400 font-mono-code flex items-center";
+            lucide.createIcons();
+          }
+        }
+      } catch (e) {
+        if (syncStatusEl) {
+          syncStatusEl.innerText = "Offline Cache";
+          syncStatusEl.className = "text-[10px] text-slate-400 font-mono-code";
+        }
+      }
     }
 
     // App Initialization
@@ -1170,6 +1283,9 @@
       refreshCategoryDropdown();
       initDwrModule();
       initExpensesModule();
+
+      // Trigger cross-device cloud sync
+      syncTemplatesFromCloud();
 
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
@@ -1267,7 +1383,953 @@
       lucide.createIcons();
     }
 
-    // 2. DAILY WORK REPORT (DWR) LOGIC
+    // 2. CHECKLIST UI & VOICE ENGINE (WITH SUBCATEGORIES & N/A BUTTON)
+    function refreshCategoryDropdown() {
+      const templates = getStoredTemplates();
+      const currentModeTemplates = templates.FAT || {};
+      const select = document.getElementById('categorySelector');
+      if (!select) return;
+      select.innerHTML = '';
+
+      const keys = Object.keys(currentModeTemplates);
+      keys.forEach(key => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.innerText = currentModeTemplates[key].name;
+        select.appendChild(opt);
+      });
+
+      if (keys.length > 0) {
+        if (!currentCategoryKey || !currentModeTemplates[currentCategoryKey]) {
+          currentCategoryKey = keys[0];
+        }
+        select.value = currentCategoryKey;
+        onCategoryChanged(currentCategoryKey);
+      }
+    }
+
+    function onCategoryChanged(catKey) {
+      currentCategoryKey = catKey;
+      const templates = getStoredTemplates();
+      const cat = templates.FAT ? templates.FAT[catKey] : null;
+      if (!cat) return;
+
+      inspectionData = [];
+      const subcats = cat.subcategories || {};
+      Object.keys(subcats).forEach(subKey => {
+        const sub = subcats[subKey];
+        (sub.steps || []).forEach(s => {
+          inspectionData.push({
+            ...s,
+            subcatKey: subKey,
+            subcatName: sub.name,
+            measuredValue: null,
+            status: 'PENDING'
+          });
+        });
+      });
+
+      renderChecklistUI();
+      updateVerdictBadges();
+      if (voiceInspector) voiceInspector.stop();
+    }
+
+    function renderChecklistUI() {
+      const container = document.getElementById('checklistContainer');
+      container.innerHTML = '';
+
+      if (inspectionData.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 bg-slate-950 rounded-xl border border-slate-800">No inspection steps defined for this category. Click 'Customize / Add Steps' to add protocol steps.</div>`;
+        return;
+      }
+
+      // Group steps by Subcategory
+      const groups = {};
+      inspectionData.forEach((item, index) => {
+        const sub = item.subcatName || "General Inspection";
+        if (!groups[sub]) groups[sub] = [];
+        groups[sub].push({ item, index });
+      });
+
+      for (let subName in groups) {
+        const subCard = document.createElement('div');
+        subCard.className = "bg-slate-950/60 border border-slate-800 rounded-xl overflow-hidden";
+        
+        let html = `
+          <div class="bg-slate-900/90 px-3.5 py-2 border-b border-slate-800 flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-400 font-industrial flex items-center gap-1.5">
+              <i data-lucide="folder" class="w-3.5 h-3.5 text-amber-400"></i> ${subName}
+            </span>
+            <span class="text-[10px] font-mono-code text-slate-500">${groups[subName].length} step(s)</span>
+          </div>
+          <div class="p-3 space-y-3">
+        `;
+
+        groups[subName].forEach(({ item, index }) => {
+          const isPassed = item.status === 'PASSED';
+          const isFailed = item.status === 'FAILED';
+          const isNA = item.status === 'NA';
+
+          html += `
+            <div class="p-3 rounded-xl border transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-3 ${
+              isPassed ? 'bg-emerald-950/20 border-emerald-500/40' : 
+              isFailed ? 'bg-rose-950/20 border-rose-500/40' : 
+              isNA ? 'bg-slate-800/40 border-slate-600' :
+              'bg-slate-950/90 border-slate-800'
+            }">
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-mono-code font-bold px-2 py-0.5 rounded bg-slate-800 text-amber-400">#${index + 1}</span>
+                  <h4 class="text-sm font-semibold text-white font-industrial">${item.title}</h4>
+                  <span class="text-[11px] font-mono-code text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">Criteria: ${item.standard}</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">${item.prompt}</p>
+              </div>
+
+              <div class="flex items-center gap-1.5 w-full md:w-auto justify-end">
+                <input type="text" value="${item.measuredValue || ''}" placeholder="Spoken / Value"
+                  onchange="updateManualValue(${index}, this.value)"
+                  class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono-code w-32 text-center focus:border-amber-500 focus:outline-none">
+                
+                <button onclick="setTestStatus(${index}, 'PASSED')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold font-mono-code transition-all ${
+                  isPassed ? 'bg-emerald-500 text-black shadow' : 'bg-slate-800 text-slate-400 hover:text-emerald-400'
+                }">PASS</button>
+
+                <button onclick="setTestStatus(${index}, 'FAILED')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold font-mono-code transition-all ${
+                  isFailed ? 'bg-rose-500 text-white shadow' : 'bg-slate-800 text-slate-400 hover:text-rose-400'
+                }">FAIL</button>
+
+                <button onclick="setTestStatus(${index}, 'NA')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold font-mono-code transition-all ${
+                  isNA ? 'bg-amber-500 text-black shadow' : 'bg-slate-800 text-slate-400 hover:text-amber-400'
+                }">N/A</button>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `</div>`;
+        subCard.innerHTML = html;
+        container.appendChild(subCard);
+      }
+
+      lucide.createIcons();
+    }
+
+    function updateManualValue(index, val) {
+      inspectionData[index].measuredValue = val;
+      if (val.trim()) {
+        const lower = val.toLowerCase();
+        if (lower.includes('fail') || lower.includes('चूक') || lower.includes('फेल')) {
+          inspectionData[index].status = 'FAILED';
+        } else if (lower.includes('n/a') || lower.includes('na') || lower.includes('लागू नाही') || lower.includes('लागू नहीं')) {
+          inspectionData[index].status = 'NA';
+        } else {
+          inspectionData[index].status = 'PASSED';
+        }
+      }
+      renderChecklistUI();
+      updateVerdictBadges();
+    }
+
+    function setTestStatus(index, status) {
+      inspectionData[index].status = status;
+      if (!inspectionData[index].measuredValue) {
+        inspectionData[index].measuredValue = (status === 'NA') ? 'N/A' : status;
+      }
+      renderChecklistUI();
+      updateVerdictBadges();
+    }
+
+    function updateVerdictBadges() {
+      const passed = inspectionData.filter(i => i.status === 'PASSED').length;
+      const failed = inspectionData.filter(i => i.status === 'FAILED').length;
+      const na = inspectionData.filter(i => i.status === 'NA').length;
+      document.getElementById('passedCountBadge').innerText = `${passed} PASSED`;
+      document.getElementById('failedCountBadge').innerText = `${failed} FAILED`;
+      document.getElementById('naCountBadge').innerText = `${na} N/A`;
+    }
+
+    class VoiceInspectorEngine {
+      constructor() {
+        this.synth = window.speechSynthesis;
+        this.recognition = null;
+        this.currentIndex = 0;
+        this.isActive = false;
+        this.repeatTimer = null;
+        this.silenceTimeoutSec = 10;
+
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRec) {
+          this.recognition = new SpeechRec();
+          this.recognition.continuous = true;
+          this.recognition.interimResults = false;
+        }
+      }
+
+      start() {
+        if (!this.recognition) {
+          alert("Speech recognition is not supported on this browser. Please use Chrome on Android/Desktop.");
+          return;
+        }
+        this.isActive = true;
+        this.currentIndex = 0;
+        this.setupRecognition();
+        this.askCurrentStep();
+
+        document.getElementById('voiceControlBtnText').innerText = "STOP VOICE INSPECTION";
+        document.getElementById('voiceControlBtn').className = "w-full md:w-auto px-5 py-2.5 rounded-xl font-industrial font-bold text-sm flex items-center justify-center gap-2 bg-rose-600 text-white shadow-lg";
+        playAudioTone(600, 0.15);
+      }
+
+      stop() {
+        this.isActive = false;
+        clearTimeout(this.repeatTimer);
+        if (this.synth) this.synth.cancel();
+        if (this.recognition) {
+          try { this.recognition.stop(); } catch(e) {}
+        }
+
+        document.getElementById('voiceControlBtnText').innerText = "START VOICE INSPECTION";
+        document.getElementById('voiceControlBtn').className = "w-full md:w-auto px-5 py-2.5 rounded-xl font-industrial font-bold text-sm flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black hover:brightness-110 shadow-lg";
+      }
+
+      restartWithLanguage(lang) {
+        if (!this.isActive) return;
+        this.synth.cancel();
+        clearTimeout(this.repeatTimer);
+        this.askCurrentStep();
+      }
+
+      speak(text, onEnd) {
+        this.synth.cancel();
+        if (this.recognition) {
+          try { this.recognition.stop(); } catch(e) {}
+        }
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = I18N[currentLanguage].voiceCode;
+        utter.rate = 0.95;
+        if (onEnd) utter.onend = onEnd;
+        this.synth.speak(utter);
+      }
+
+      askCurrentStep() {
+        if (!this.isActive) return;
+        clearTimeout(this.repeatTimer);
+
+        if (this.currentIndex >= inspectionData.length) {
+          this.speak(I18N[currentLanguage].completed, () => this.stop());
+          return;
+        }
+
+        const step = inspectionData[this.currentIndex];
+        document.getElementById('voiceStepIndicator').innerText = `Step ${this.currentIndex + 1} of ${inspectionData.length} (${step.subcatName || ''})`;
+        document.getElementById('voiceCurrentStepTitle').innerText = step.title;
+        document.getElementById('voiceCurrentStepPrompt').innerText = step.prompt;
+
+        const langCfg = I18N[currentLanguage];
+        const speechPrompt = `${langCfg.stepPrefix} ${this.currentIndex + 1}: ${step.title}. ${step.prompt}`;
+
+        this.speak(speechPrompt, () => {
+          this.startListening();
+          this.armRepeatTimer();
+        });
+      }
+
+      armRepeatTimer() {
+        clearTimeout(this.repeatTimer);
+        if (!this.isActive) return;
+
+        this.repeatTimer = setTimeout(() => {
+          if (!this.isActive) return;
+          playAudioTone(440, 0.2);
+          const langCfg = I18N[currentLanguage];
+          const reminder = `${langCfg.repeatPrompt} ${langCfg.stepPrefix} ${this.currentIndex + 1}: ${inspectionData[this.currentIndex].title}`;
+          this.speak(reminder, () => this.armRepeatTimer());
+        }, this.silenceTimeoutSec * 1000);
+      }
+
+      startListening() {
+        try {
+          this.recognition.lang = I18N[currentLanguage].voiceCode;
+          this.recognition.start();
+        } catch(e) {}
+      }
+
+      setupRecognition() {
+        this.recognition.onresult = (e) => {
+          const transcript = e.results[e.results.length - 1][0].transcript.trim();
+          document.getElementById('voiceLiveTranscript').innerText = `"${transcript}"`;
+          this.handleSpokenInput(transcript);
+        };
+        this.recognition.onend = () => {
+          if (this.isActive) {
+            try { this.recognition.start(); } catch(e) {}
+          }
+        };
+      }
+
+      handleSpokenInput(rawText) {
+        const text = rawText.toLowerCase();
+        const langCfg = I18N[currentLanguage];
+
+        if (text.includes('repeat') || text.includes('फिर से') || text.includes('पुन्हा')) {
+          clearTimeout(this.repeatTimer);
+          playAudioTone(520, 0.1);
+          this.askCurrentStep();
+          return;
+        }
+
+        let recordedValue = rawText;
+        let determinedStatus = 'PASSED';
+
+        if (text.includes('n/a') || text.includes('na') || text.includes('not applicable') || text.includes('लागू नाही') || text.includes('लागू नहीं') || text.includes('skip')) {
+          determinedStatus = 'NA';
+          recordedValue = 'N/A';
+        } else if (text.includes('fail') || text.includes('फेल') || text.includes('चूक')) {
+          determinedStatus = 'FAILED';
+          recordedValue = langCfg.fail;
+        } else if (text.includes('pass') || text.includes('ok') || text.includes('पास') || text.includes('बरोबर')) {
+          determinedStatus = 'PASSED';
+          recordedValue = langCfg.pass;
+        }
+
+        clearTimeout(this.repeatTimer);
+        playAudioTone(880, 0.15);
+
+        inspectionData[this.currentIndex].measuredValue = recordedValue;
+        inspectionData[this.currentIndex].status = determinedStatus;
+        renderChecklistUI();
+        updateVerdictBadges();
+
+        const confirmation = `${langCfg.logged} ${recordedValue}. ${langCfg.movingNext}`;
+        this.speak(confirmation, () => {
+          this.currentIndex++;
+          this.askCurrentStep();
+        });
+      }
+    }
+
+    let voiceInspector = null;
+    function toggleVoiceSession() {
+      if (!voiceInspector) voiceInspector = new VoiceInspectorEngine();
+      if (voiceInspector.isActive) voiceInspector.stop();
+      else voiceInspector.start();
+    }
+
+    function playAudioTone(freq, duration) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    // 3. SIGNATURES & PHOTO WATERMARKING
+    function initSignatures() {
+      const c1 = document.getElementById('canvasEngineerSig');
+      const c2 = document.getElementById('canvasClientSig');
+
+      function resizeCanvas(canvas) {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        if (canvas.offsetWidth === 0) return;
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+      }
+
+      resizeCanvas(c1);
+      resizeCanvas(c2);
+
+      engineerSigPad = new SignaturePad(c1, { penColor: '#f59e0b' });
+      clientSigPad = new SignaturePad(c2, { penColor: '#38bdf8' });
+    }
+
+    function clearSignature(type) {
+      if (type === 'engineer' && engineerSigPad) engineerSigPad.clear();
+      if (type === 'client' && clientSigPad) clientSigPad.clear();
+    }
+
+    function handlePhotoCapture(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 1200;
+          let w = img.width, h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          const barHeight = Math.max(50, Math.round(h * 0.09));
+          ctx.fillStyle = "rgba(7, 14, 26, 0.88)";
+          ctx.fillRect(0, h - barHeight, w, barHeight);
+
+          ctx.fillStyle = "#f59e0b";
+          ctx.font = `bold ${Math.round(barHeight * 0.32)}px 'Chakra Petch', sans-serif`;
+          ctx.fillText("ARYAVARTA AUTOMATION - QC VERIFIED", 15, h - barHeight + Math.round(barHeight * 0.42));
+
+          const serial = document.getElementById('metaSerialTag').value.trim() || 'PANEL-QC';
+          const eng = document.getElementById('metaEngineer').value.trim() || 'Engineer';
+          const stamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+          ctx.fillStyle = "#e2e8f0";
+          ctx.font = `${Math.round(barHeight * 0.26)}px 'JetBrains Mono', monospace`;
+          ctx.fillText(`SN: ${serial} | ENG: ${eng} | PUNE | ${stamp}`, 15, h - barHeight + Math.round(barHeight * 0.82));
+
+          photosList.push(canvas.toDataURL('image/jpeg', 0.85));
+          renderPhotosGrid();
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
+    }
+
+    function renderPhotosGrid() {
+      const grid = document.getElementById('photosGrid');
+      grid.innerHTML = '';
+      if (photosList.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-8 border-2 border-dashed border-slate-800 rounded-xl text-slate-500 text-xs">No inspection photos captured yet.</div>`;
+        return;
+      }
+      photosList.forEach((src, idx) => {
+        const item = document.createElement('div');
+        item.className = "relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950";
+        item.innerHTML = `
+          <img src="${src}" class="w-full h-44 object-cover">
+          <button onclick="photosList.splice(${idx},1); renderPhotosGrid();" class="absolute top-2 right-2 bg-rose-600 text-white p-1.5 rounded-lg text-xs hover:bg-rose-500 transition-all">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+        `;
+        grid.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    // 4. SYNC INSPECTION DATA TO GOOGLE SHEETS
+    async function syncInspectionToGoogleSheet() {
+      if (currentAppMode === 'EXPENSES') {
+        return syncExpensesToGoogleSheet();
+      }
+      if (currentAppMode === 'PORTAL') {
+        return loadEmployeeStatement();
+      }
+
+      const btn = document.getElementById('syncSheetBtn');
+      const orig = btn.innerHTML;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-2">●</span> Syncing...`;
+      btn.disabled = true;
+
+      let payload = {};
+      const now = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+
+      if (currentAppMode === 'DWR') {
+        saveCurrentDwrDay(false);
+        const activeDay = dwrDaysList[activeDwrDayIndex] || createBlankDay(1, new Date().toISOString().split('T')[0]);
+        const safeDays = dwrDaysList.filter(d => d.isSafe === 'YES').length;
+        const unsafeDays = dwrDaysList.filter(d => d.isSafe === 'NO').length;
+        
+        payload = {
+          timestamp: now,
+          serviceType: "DAILY_WORK_REPORT",
+          equipmentIdentifier: document.getElementById('dwrProjectNo').value.trim() || activeDay.pageNo,
+          clientName: document.getElementById('dwrCustomer').value.trim() || "N/A",
+          projectScope: document.getElementById('dwrScope').value.trim() || "N/A",
+          facilityLocation: document.getElementById('dwrLocation').value.trim() || "N/A",
+          leadEngineer: document.getElementById('dwrSiteIncharge').value.trim() || "N/A",
+          testVerdict: activeDay.isSafe === "YES" ? "SAFE ENVIRONMENT" : `UNSAFE: ${activeDay.unsafeReason}`,
+          clientRepresentative: activeDay.inchargeName || document.getElementById('dwrEngName').value || "N/A",
+          totalSteps: dwrDaysList.length,
+          passedSteps: safeDays,
+          failedSteps: unsafeDays,
+          naSteps: 0,
+          openSnags: parseInt(activeDay.clientHrs || "0", 10) + parseInt(activeDay.customerHrs || "0", 10),
+          inspectionSummary: `Day ${activeDay.dayNumber} (${activeDay.date}): ${activeDay.mainActivities.substring(0, 150)} | Issues: ${activeDay.clientIssue || 'None'}`
+        };
+      } else {
+        const passed = inspectionData.filter(i => i.status === 'PASSED').length;
+        const failed = inspectionData.filter(i => i.status === 'FAILED').length;
+        const naCount = inspectionData.filter(i => i.status === 'NA').length;
+        const verdict = failed > 0 ? "FAILED / PENDING SNAGS" : "PASSED / ACCEPTED";
+
+        payload = {
+          timestamp: now,
+          serviceType: "SHOP_FAT",
+          equipmentIdentifier: document.getElementById('metaSerialTag').value.trim() || "N/A",
+          clientName: document.getElementById('metaClient').value.trim() || "N/A",
+          projectScope: document.getElementById('metaProjectPo').value.trim() || "N/A",
+          facilityLocation: "Aryavarta Plant, Chikhali Pune",
+          leadEngineer: document.getElementById('metaEngineer').value.trim() || "N/A",
+          testVerdict: verdict,
+          clientRepresentative: document.getElementById('sigClientName').value.trim() || "Pending Sign",
+          totalSteps: inspectionData.length,
+          passedSteps: passed,
+          failedSteps: failed,
+          naSteps: naCount,
+          openSnags: failed,
+          inspectionSummary: inspectionData.map(i => `[${i.subcatName}] ${i.title}: ${i.measuredValue || 'N/A'} (${i.status})`).join(" | ")
+        };
+      }
+
+      try {
+        await fetch(GOOGLE_APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        playAudioTone(880, 0.2);
+        alert("✓ Report successfully synced to Google Sheet!");
+      } catch (e) {
+        alert("Sync request failed. Please check network connection.");
+      } finally {
+        btn.innerHTML = orig;
+        btn.disabled = false;
+        lucide.createIcons();
+      }
+    }
+
+    function loadLogoImage() {
+      const urls = [
+        'logo.png',
+        'https://raw.githubusercontent.com/mr2Ashish/fat-inspection-app/main/logo.png'
+      ];
+      return new Promise((resolve) => {
+        let idx = 0;
+        function tryNext() {
+          if (idx >= urls.length) return resolve(null);
+          const img = new Image();
+          img.crossOrigin = 'Anonymous';
+          img.onload = () => resolve(img);
+          img.onerror = () => { idx++; tryNext(); };
+          img.src = urls[idx];
+        }
+        tryNext();
+      });
+    }
+
+    // 5. FAT OFFICIAL PDF REPORT GENERATOR (INCLUDES SUBCATEGORIES & N/A)
+    async function generateOfficialInspectionPDF() {
+      saveFatMeta();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      const client = document.getElementById('metaClient').value.trim() || "Valued Client";
+      const serial = document.getElementById('metaSerialTag').value.trim() || "AA-PANEL-QC";
+      const po = document.getElementById('metaProjectPo').value.trim() || "PO-REF";
+      const engineer = document.getElementById('metaEngineer').value.trim() || "Aryavarta Engineer";
+      const docTitle = "FACTORY ACCEPTANCE TEST (FAT) CERTIFICATE";
+
+      const logoImg = await loadLogoImage();
+      if (logoImg) {
+        doc.addImage(logoImg, 'PNG', 14, 7, 50, 24);
+      } else {
+        doc.setTextColor(220, 38, 38);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text("ARYAVARTA AUTOMATION", 14, 16);
+      }
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text("ARYAVARTA AUTOMATION", 196, 12, { align: "right" });
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(71, 85, 105);
+      doc.text("Site & Plant Engineering Operations", 196, 16.5, { align: "right" });
+      doc.text("Chikhali, Pune - 411062, Maharashtra, India", 196, 21, { align: "right" });
+      doc.text("ISO 9001:2015 & ISO 14001:2015 Certified", 196, 25.5, { align: "right" });
+      doc.text("Web: www.aryavartaautomation.in", 196, 30, { align: "right" });
+
+      doc.setFillColor(11, 25, 44);
+      doc.rect(14, 33, 182, 10, 'F');
+      doc.setTextColor(245, 158, 11);
+      doc.setFontSize(10.5);
+      doc.setFont("helvetica", "bold");
+      doc.text(docTitle, 18, 39.5);
+
+      const metaRows = [
+        [
+          { content: "Client Name:", styles: { fontStyle: 'bold' } }, client,
+          { content: "Panel Serial No:", styles: { fontStyle: 'bold' } }, serial
+        ],
+        [
+          { content: "PO / Project:", styles: { fontStyle: 'bold' } }, po,
+          { content: "Testing Engineer:", styles: { fontStyle: 'bold' } }, engineer
+        ]
+      ];
+
+      doc.autoTable({
+        startY: 45,
+        theme: 'grid',
+        body: metaRows,
+        styles: { fontSize: 8, cellPadding: 2.2, lineColor: [15, 23, 42], lineWidth: 0.2 }
+      });
+
+      const tableData = [];
+      let lastSubcat = "";
+
+      inspectionData.forEach((item, idx) => {
+        if (item.subcatName && item.subcatName !== lastSubcat) {
+          lastSubcat = item.subcatName;
+          tableData.push([
+            { content: `Section: ${lastSubcat}`, colSpan: 5, styles: { fillColor: [241, 245, 249], fontStyle: 'bold', textColor: [15, 23, 42] } }
+          ]);
+        }
+        tableData.push([
+          idx + 1,
+          item.title,
+          item.standard,
+          item.measuredValue || "N/A",
+          item.status === 'NA' ? 'N/A' : item.status
+        ]);
+      });
+
+      doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 4,
+        head: [['#', 'Test Parameter', 'Acceptance Standard', 'Measured Value', 'Status']],
+        body: tableData,
+        headStyles: { fillColor: [15, 23, 42], textColor: [245, 158, 11], fontSize: 8, fontStyle: 'bold' },
+        styles: { fontSize: 7.5, cellPadding: 2, lineColor: [203, 213, 225], lineWidth: 0.2 }
+      });
+
+      let photoY = doc.lastAutoTable.finalY + 6;
+      if (photosList.length > 0) {
+        if (photoY > 215) {
+          doc.addPage();
+          photoY = 20;
+        }
+        doc.setFontSize(8.5);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(15, 23, 42);
+        doc.text(`Photographic Verification (${photosList.length} photos):`, 14, photoY);
+        photoY += 4;
+
+        const imgW = 88;
+        const imgH = 48;
+        const colGap = 6;
+        const rowGap = 5;
+
+        for (let i = 0; i < photosList.length; i++) {
+          const col = i % 2;
+          const posX = 14 + col * (imgW + colGap);
+
+          if (col === 0 && (photoY + imgH > 270)) {
+            doc.addPage();
+            photoY = 20;
+          }
+
+          doc.addImage(photosList[i], 'JPEG', posX, photoY, imgW, imgH);
+
+          if (col === 1 || i === photosList.length - 1) {
+            photoY += imgH + rowGap;
+          }
+        }
+      }
+
+      let sigY;
+      if (photoY > 235) {
+        doc.addPage();
+        sigY = 35;
+      } else {
+        sigY = Math.max(photoY + 8, 235);
+      }
+
+      doc.setDrawColor(203, 213, 225);
+      doc.line(14, sigY, 90, sigY);
+      doc.line(120, sigY, 196, sigY);
+
+      if (engineerSigPad && !engineerSigPad.isEmpty()) {
+        doc.addImage(engineerSigPad.toDataURL(), 'PNG', 14, sigY - 16, 50, 14);
+      }
+      if (clientSigPad && !clientSigPad.isEmpty()) {
+        doc.addImage(clientSigPad.toDataURL(), 'PNG', 120, sigY - 16, 50, 14);
+      }
+
+      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("Aryavarta Testing Engineer", 14, sigY + 4);
+      doc.text("Client / Inspector Representative", 120, sigY + 4);
+
+      doc.save(`Aryavarta_FAT_${serial}_Certificate.pdf`);
+    }
+
+    // 6. PROTOCOL & SUBCATEGORY TEMPLATE MANAGER (MODAL ENGINE)
+    let editingCategoryKey = '';
+    let editingSubcatKey = '';
+
+    function openTemplateManagerModal() {
+      const modal = document.getElementById('templateManagerModal');
+      const templates = getStoredTemplates();
+      const currentModeTemplates = templates.FAT || {};
+      const catSelect = document.getElementById('modalCategorySelect');
+      catSelect.innerHTML = '';
+
+      const keys = Object.keys(currentModeTemplates);
+      keys.forEach(k => {
+        const opt = document.createElement('option');
+        opt.value = k;
+        opt.innerText = currentModeTemplates[k].name;
+        catSelect.appendChild(opt);
+      });
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      if (keys.length > 0) {
+        const targetKey = (currentCategoryKey && currentModeTemplates[currentCategoryKey]) ? currentCategoryKey : keys[0];
+        catSelect.value = targetKey;
+        loadCategoryForEditing(targetKey);
+      }
+    }
+
+    function closeTemplateManagerModal() {
+      const modal = document.getElementById('templateManagerModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function loadCategoryForEditing(catKey) {
+      editingCategoryKey = catKey;
+      const templates = getStoredTemplates();
+      const cat = templates.FAT ? templates.FAT[catKey] : null;
+      if (!cat) return;
+
+      const subSelect = document.getElementById('modalSubcategorySelect');
+      subSelect.innerHTML = '';
+
+      const subkeys = Object.keys(cat.subcategories || {});
+      subkeys.forEach(sk => {
+        const opt = document.createElement('option');
+        opt.value = sk;
+        opt.innerText = cat.subcategories[sk].name;
+        subSelect.appendChild(opt);
+      });
+
+      if (subkeys.length > 0) {
+        editingSubcatKey = subkeys[0];
+        subSelect.value = editingSubcatKey;
+        loadSubcategoryForEditing(editingSubcatKey);
+      } else {
+        document.getElementById('modalStepsList').innerHTML = `<p class="text-xs text-slate-500 py-3 text-center">No subcategories in this category. Click '+ New Subcategory' above.</p>`;
+      }
+    }
+
+    function loadSubcategoryForEditing(subKey) {
+      editingSubcatKey = subKey;
+      const templates = getStoredTemplates();
+      const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
+      if (!cat || !cat.subcategories || !cat.subcategories[subKey]) return;
+
+      const sub = cat.subcategories[subKey];
+      const list = document.getElementById('modalStepsList');
+      list.innerHTML = '';
+
+      if (!sub.steps || sub.steps.length === 0) {
+        list.innerHTML = `<p class="text-xs text-slate-500 py-2 text-center">No steps in this subcategory yet. Click '+ Add Step'.</p>`;
+        return;
+      }
+
+      sub.steps.forEach((st, idx) => {
+        const item = document.createElement('div');
+        item.className = "p-3 bg-slate-900 border border-slate-800 rounded-xl space-y-2";
+        item.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-mono-code font-bold text-amber-400">Step #${idx + 1}</span>
+            <button type="button" onclick="removeStepFromEditingSubcategory(${idx})" class="text-xs text-rose-400 hover:underline">Delete</button>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" value="${st.title || ''}" placeholder="Step Title" id="stepTitle_${idx}" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+            <input type="text" value="${st.standard || ''}" placeholder="Criteria / Standard" id="stepStd_${idx}" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+          </div>
+          <textarea id="stepPrompt_${idx}" placeholder="Inspection instruction / Spoken voice prompt" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white h-12">${st.prompt || ''}</textarea>
+        `;
+        list.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    function promptAddNewCategory() {
+      const name = prompt("Enter new Category name (e.g., HT PANEL, SYNCHRONIZATION PANEL):");
+      if (!name || !name.trim()) return;
+      const key = "CAT_" + Date.now();
+      const templates = getStoredTemplates();
+      if (!templates.FAT) templates.FAT = {};
+      templates.FAT[key] = {
+        name: name.trim(),
+        subcategories: {
+          "SUBCAT_1": {
+            name: "Incoming & Power Checks",
+            steps: [{ id: "s1", title: "Visual & Physical Check", prompt: "Inspect wiring, busbars, and earth terminals.", standard: "OK", unit: "Status" }]
+          }
+        }
+      };
+      saveTemplates(templates);
+      openTemplateManagerModal();
+      document.getElementById('modalCategorySelect').value = key;
+      loadCategoryForEditing(key);
+    }
+
+    function promptDeleteCategory() {
+      const templates = getStoredTemplates();
+      const catCount = Object.keys(templates.FAT || {}).length;
+      if (catCount <= 1) {
+        alert("At least one category must remain.");
+        return;
+      }
+      if (!confirm(`Delete category '${templates.FAT[editingCategoryKey].name}'?`)) return;
+      delete templates.FAT[editingCategoryKey];
+      saveTemplates(templates);
+      openTemplateManagerModal();
+    }
+
+    function promptAddNewSubcategory() {
+      const name = prompt("Enter new Subcategory name (e.g., Control Circuit, Megger Test, Loop Check):");
+      if (!name || !name.trim()) return;
+      const templates = getStoredTemplates();
+      const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
+      if (!cat) return;
+      if (!cat.subcategories) cat.subcategories = {};
+
+      const subKey = "SUB_" + Date.now();
+      cat.subcategories[subKey] = {
+        name: name.trim(),
+        steps: [{ id: "step_" + Date.now(), title: "Sample Check", prompt: "Perform component verification.", standard: "Normal", unit: "Status" }]
+      };
+      saveTemplates(templates);
+      loadCategoryForEditing(editingCategoryKey);
+      document.getElementById('modalSubcategorySelect').value = subKey;
+      loadSubcategoryForEditing(subKey);
+    }
+
+    function promptDeleteSubcategory() {
+      const templates = getStoredTemplates();
+      const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
+      if (!cat || !cat.subcategories) return;
+
+      const subKeys = Object.keys(cat.subcategories);
+      if (subKeys.length <= 1) {
+        alert("Each category must have at least one subcategory.");
+        return;
+      }
+      if (!confirm(`Delete subcategory '${cat.subcategories[editingSubcatKey].name}'?`)) return;
+      delete cat.subcategories[editingSubcatKey];
+      saveTemplates(templates);
+      loadCategoryForEditing(editingCategoryKey);
+    }
+
+    function addNewStepToCurrentSubcategory() {
+      saveModalInputsToMemory();
+      const templates = getStoredTemplates();
+      const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
+      if (!cat || !cat.subcategories || !cat.subcategories[editingSubcatKey]) return;
+
+      if (!cat.subcategories[editingSubcatKey].steps) cat.subcategories[editingSubcatKey].steps = [];
+      cat.subcategories[editingSubcatKey].steps.push({
+        id: "step_" + Date.now(),
+        title: "New Step",
+        prompt: "Verify component status.",
+        standard: "Normal",
+        unit: "Status"
+      });
+      saveTemplates(templates);
+      loadSubcategoryForEditing(editingSubcatKey);
+    }
+
+    function removeStepFromEditingSubcategory(idx) {
+      saveModalInputsToMemory();
+      const templates = getStoredTemplates();
+      const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
+      if (!cat || !cat.subcategories || !cat.subcategories[editingSubcatKey]) return;
+
+      cat.subcategories[editingSubcatKey].steps.splice(idx, 1);
+      saveTemplates(templates);
+      loadSubcategoryForEditing(editingSubcatKey);
+    }
+
+    function saveModalInputsToMemory() {
+      const templates = getStoredTemplates();
+      const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
+      if (!cat || !cat.subcategories || !cat.subcategories[editingSubcatKey]) return;
+
+      const sub = cat.subcategories[editingSubcatKey];
+      (sub.steps || []).forEach((st, idx) => {
+        const titleEl = document.getElementById(`stepTitle_${idx}`);
+        const stdEl = document.getElementById(`stepStd_${idx}`);
+        const promptEl = document.getElementById(`stepPrompt_${idx}`);
+        if (titleEl) st.title = titleEl.value.trim();
+        if (stdEl) st.standard = stdEl.value.trim();
+        if (promptEl) st.prompt = promptEl.value.trim();
+      });
+      saveTemplates(templates);
+    }
+
+    // CLOUD PERSISTENCE: Save edits & sync across all devices via Apps Script
+    async function saveCategoryEditsAndClose() {
+      saveModalInputsToMemory();
+      const templates = getStoredTemplates();
+
+      const btn = document.getElementById('btnSaveTemplateModal');
+      const origText = btn.innerHTML;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-1">●</span> Saving to Cloud...`;
+      btn.disabled = true;
+
+      try {
+        await fetch(GOOGLE_APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            serviceType: "SAVE_TEMPLATES",
+            action: "saveTemplates",
+            templates: templates
+          })
+        });
+
+        playAudioTone(880, 0.2);
+        closeTemplateManagerModal();
+        refreshCategoryDropdown();
+        alert("✓ Changes saved locally and synchronized across ALL devices via Cloud!");
+      } catch (err) {
+        closeTemplateManagerModal();
+        refreshCategoryDropdown();
+        alert("Saved locally. Could not push to cloud, please check your network connection.");
+      } finally {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+        lucide.createIcons();
+      }
+    }
+
+    function resetCurrentCategoryToDefaults() {
+      if (!confirm("Reset all templates to factory default?")) return;
+      saveTemplates(DEFAULT_TEMPLATES);
+      closeTemplateManagerModal();
+      refreshCategoryDropdown();
+    }
+
+    // =========================================================================
+    // 7. DAILY WORK REPORT (DWR) LOGIC
+    // =========================================================================
     function initDwrModule() {
       try {
         const savedProfile = localStorage.getItem('aryavarta_dwr_profile');
@@ -1549,7 +2611,7 @@
       };
     }
 
-    // 3. CONSOLIDATED DWR PDF GENERATOR
+    // Consolidated DWR PDF
     async function generateConsolidatedDwrPDF() {
       saveCurrentDwrDay(false);
       const { jsPDF } = window.jspdf;
@@ -1713,934 +2775,9 @@
       doc.save(`Daily_Work_Report_${cleanCustomer}_${cleanProject}.pdf`);
     }
 
-    // 4. CHECKLIST UI & VOICE ENGINE
-    function refreshCategoryDropdown() {
-      const templates = getStoredTemplates();
-      const currentModeTemplates = templates.FAT || {};
-      const select = document.getElementById('categorySelector');
-      if (!select) return;
-      select.innerHTML = '';
-
-      const keys = Object.keys(currentModeTemplates);
-      keys.forEach(key => {
-        const opt = document.createElement('option');
-        opt.value = key;
-        opt.innerText = currentModeTemplates[key].name;
-        select.appendChild(opt);
-      });
-
-      if (keys.length > 0) onCategoryChanged(keys[0]);
-    }
-
-    function onCategoryChanged(catKey) {
-      currentCategoryKey = catKey;
-      const templates = getStoredTemplates();
-      const cat = templates.FAT ? templates.FAT[catKey] : null;
-      if (!cat) return;
-
-      inspectionData = cat.steps.map(s => ({
-        ...s,
-        measuredValue: null,
-        status: 'PENDING'
-      }));
-
-      renderChecklistUI();
-      updateVerdictBadges();
-      if (voiceInspector) voiceInspector.stop();
-    }
-
-    function renderChecklistUI() {
-      const container = document.getElementById('checklistContainer');
-      container.innerHTML = '';
-
-      inspectionData.forEach((item, index) => {
-        const isPassed = item.status === 'PASSED';
-        const isFailed = item.status === 'FAILED';
-        
-        const row = document.createElement('div');
-        row.className = `p-3.5 rounded-xl border transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-3 ${
-          isPassed ? 'bg-emerald-950/20 border-emerald-500/40' : 
-          isFailed ? 'bg-rose-950/20 border-rose-500/40' : 
-          'bg-slate-950/60 border-slate-800'
-        }`;
-
-        row.innerHTML = `
-          <div class="flex-1">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-mono-code font-bold px-2 py-0.5 rounded bg-slate-800 text-amber-400">#${index + 1}</span>
-              <h4 class="text-sm font-semibold text-white font-industrial">${item.title}</h4>
-              <span class="text-[11px] font-mono-code text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">Criteria: ${item.standard}</span>
-            </div>
-            <p class="text-xs text-slate-400 mt-1">${item.prompt}</p>
-          </div>
-
-          <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-            <input type="text" value="${item.measuredValue || ''}" placeholder="Spoken / Input"
-              onchange="updateManualValue(${index}, this.value)"
-              class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono-code w-36 text-center focus:border-amber-500 focus:outline-none">
-            
-            <button onclick="setTestStatus(${index}, 'PASSED')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold font-mono-code transition-all ${
-              isPassed ? 'bg-emerald-500 text-black shadow' : 'bg-slate-800 text-slate-400 hover:text-emerald-400'
-            }">PASS</button>
-
-            <button onclick="setTestStatus(${index}, 'FAILED')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold font-mono-code transition-all ${
-              isFailed ? 'bg-rose-500 text-white shadow' : 'bg-slate-800 text-slate-400 hover:text-rose-400'
-            }">FAIL</button>
-          </div>
-        `;
-        container.appendChild(row);
-      });
-
-      lucide.createIcons();
-    }
-
-    function updateManualValue(index, val) {
-      inspectionData[index].measuredValue = val;
-      if (val.trim()) {
-        const lower = val.toLowerCase();
-        if (lower.includes('fail') || lower.includes('चूक') || lower.includes('फेल')) {
-          inspectionData[index].status = 'FAILED';
-        } else {
-          inspectionData[index].status = 'PASSED';
-        }
-      }
-      renderChecklistUI();
-      updateVerdictBadges();
-    }
-
-    function setTestStatus(index, status) {
-      inspectionData[index].status = status;
-      if (!inspectionData[index].measuredValue) inspectionData[index].measuredValue = status;
-      renderChecklistUI();
-      updateVerdictBadges();
-    }
-
-    function updateVerdictBadges() {
-      const passed = inspectionData.filter(i => i.status === 'PASSED').length;
-      const failed = inspectionData.filter(i => i.status === 'FAILED').length;
-      document.getElementById('passedCountBadge').innerText = `${passed} PASSED`;
-      document.getElementById('failedCountBadge').innerText = `${failed} FAILED`;
-    }
-
-    class VoiceInspectorEngine {
-      constructor() {
-        this.synth = window.speechSynthesis;
-        this.recognition = null;
-        this.currentIndex = 0;
-        this.isActive = false;
-        this.repeatTimer = null;
-        this.silenceTimeoutSec = 10;
-
-        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRec) {
-          this.recognition = new SpeechRec();
-          this.recognition.continuous = true;
-          this.recognition.interimResults = false;
-        }
-      }
-
-      start() {
-        if (!this.recognition) {
-          alert("Speech recognition is not supported on this browser. Please use Chrome on Android/Desktop.");
-          return;
-        }
-        this.isActive = true;
-        this.currentIndex = 0;
-        this.setupRecognition();
-        this.askCurrentStep();
-
-        document.getElementById('voiceControlBtnText').innerText = "STOP VOICE INSPECTION";
-        document.getElementById('voiceControlBtn').className = "w-full md:w-auto px-5 py-2.5 rounded-xl font-industrial font-bold text-sm flex items-center justify-center gap-2 bg-rose-600 text-white shadow-lg";
-        playAudioTone(600, 0.15);
-      }
-
-      stop() {
-        this.isActive = false;
-        clearTimeout(this.repeatTimer);
-        if (this.synth) this.synth.cancel();
-        if (this.recognition) {
-          try { this.recognition.stop(); } catch(e) {}
-        }
-
-        document.getElementById('voiceControlBtnText').innerText = "START VOICE INSPECTION";
-        document.getElementById('voiceControlBtn').className = "w-full md:w-auto px-5 py-2.5 rounded-xl font-industrial font-bold text-sm flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black hover:brightness-110 shadow-lg";
-      }
-
-      restartWithLanguage(lang) {
-        if (!this.isActive) return;
-        this.synth.cancel();
-        clearTimeout(this.repeatTimer);
-        this.askCurrentStep();
-      }
-
-      speak(text, onEnd) {
-        this.synth.cancel();
-        if (this.recognition) {
-          try { this.recognition.stop(); } catch(e) {}
-        }
-        const utter = new SpeechSynthesisUtterance(text);
-        utter.lang = I18N[currentLanguage].voiceCode;
-        utter.rate = 0.95;
-        if (onEnd) utter.onend = onEnd;
-        this.synth.speak(utter);
-      }
-
-      askCurrentStep() {
-        if (!this.isActive) return;
-        clearTimeout(this.repeatTimer);
-
-        if (this.currentIndex >= inspectionData.length) {
-          this.speak(I18N[currentLanguage].completed, () => this.stop());
-          return;
-        }
-
-        const step = inspectionData[this.currentIndex];
-        document.getElementById('voiceStepIndicator').innerText = `Step ${this.currentIndex + 1} of ${inspectionData.length}`;
-        document.getElementById('voiceCurrentStepTitle').innerText = step.title;
-        document.getElementById('voiceCurrentStepPrompt').innerText = step.prompt;
-
-        const langCfg = I18N[currentLanguage];
-        const speechPrompt = `${langCfg.stepPrefix} ${this.currentIndex + 1}: ${step.title}. ${step.prompt}`;
-
-        this.speak(speechPrompt, () => {
-          this.startListening();
-          this.armRepeatTimer();
-        });
-      }
-
-      armRepeatTimer() {
-        clearTimeout(this.repeatTimer);
-        if (!this.isActive) return;
-
-        this.repeatTimer = setTimeout(() => {
-          if (!this.isActive) return;
-          playAudioTone(440, 0.2);
-          const langCfg = I18N[currentLanguage];
-          const reminder = `${langCfg.repeatPrompt} ${langCfg.stepPrefix} ${this.currentIndex + 1}: ${inspectionData[this.currentIndex].title}`;
-          this.speak(reminder, () => this.armRepeatTimer());
-        }, this.silenceTimeoutSec * 1000);
-      }
-
-      startListening() {
-        try {
-          this.recognition.lang = I18N[currentLanguage].voiceCode;
-          this.recognition.start();
-        } catch(e) {}
-      }
-
-      setupRecognition() {
-        this.recognition.onresult = (e) => {
-          const transcript = e.results[e.results.length - 1][0].transcript.trim();
-          document.getElementById('voiceLiveTranscript').innerText = `"${transcript}"`;
-          this.handleSpokenInput(transcript);
-        };
-        this.recognition.onend = () => {
-          if (this.isActive) {
-            try { this.recognition.start(); } catch(e) {}
-          }
-        };
-      }
-
-      handleSpokenInput(rawText) {
-        const text = rawText.toLowerCase();
-        const langCfg = I18N[currentLanguage];
-
-        if (text.includes('repeat') || text.includes('फिर से') || text.includes('पुन्हा')) {
-          clearTimeout(this.repeatTimer);
-          playAudioTone(520, 0.1);
-          this.askCurrentStep();
-          return;
-        }
-
-        let recordedValue = rawText;
-        let isFail = false;
-
-        if (text.includes('pass') || text.includes('ok') || text.includes('पास') || text.includes('बरोबर')) {
-          recordedValue = langCfg.pass;
-        } else if (text.includes('fail') || text.includes('फेल') || text.includes('चूक')) {
-          isFail = true;
-          recordedValue = langCfg.fail;
-        }
-
-        clearTimeout(this.repeatTimer);
-        playAudioTone(880, 0.15);
-
-        inspectionData[this.currentIndex].measuredValue = recordedValue;
-        inspectionData[this.currentIndex].status = isFail ? 'FAILED' : 'PASSED';
-        renderChecklistUI();
-        updateVerdictBadges();
-
-        const confirmation = `${langCfg.logged} ${recordedValue}. ${langCfg.movingNext}`;
-        this.speak(confirmation, () => {
-          this.currentIndex++;
-          this.askCurrentStep();
-        });
-      }
-    }
-
-    let voiceInspector = null;
-    function toggleVoiceSession() {
-      if (!voiceInspector) voiceInspector = new VoiceInspectorEngine();
-      if (voiceInspector.isActive) voiceInspector.stop();
-      else voiceInspector.start();
-    }
-
-    function playAudioTone(freq, duration) {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {}
-    }
-
-    // 5. SIGNATURES & PHOTO WATERMARKING
-    function initSignatures() {
-      const c1 = document.getElementById('canvasEngineerSig');
-      const c2 = document.getElementById('canvasClientSig');
-
-      function resizeCanvas(canvas) {
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        if (canvas.offsetWidth === 0) return;
-        canvas.width = canvas.offsetWidth * ratio;
-        canvas.height = canvas.offsetHeight * ratio;
-        canvas.getContext("2d").scale(ratio, ratio);
-      }
-
-      resizeCanvas(c1);
-      resizeCanvas(c2);
-
-      engineerSigPad = new SignaturePad(c1, { penColor: '#f59e0b' });
-      clientSigPad = new SignaturePad(c2, { penColor: '#38bdf8' });
-    }
-
-    function clearSignature(type) {
-      if (type === 'engineer' && engineerSigPad) engineerSigPad.clear();
-      if (type === 'client' && clientSigPad) clientSigPad.clear();
-    }
-
-    function handlePhotoCapture(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          const maxDim = 1200;
-          let w = img.width, h = img.height;
-          if (w > maxDim || h > maxDim) {
-            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
-            else { w = Math.round((w * maxDim) / h); h = maxDim; }
-          }
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-
-          const barHeight = Math.max(50, Math.round(h * 0.09));
-          ctx.fillStyle = "rgba(7, 14, 26, 0.88)";
-          ctx.fillRect(0, h - barHeight, w, barHeight);
-
-          ctx.fillStyle = "#f59e0b";
-          ctx.font = `bold ${Math.round(barHeight * 0.32)}px 'Chakra Petch', sans-serif`;
-          ctx.fillText("ARYAVARTA AUTOMATION - QC VERIFIED", 15, h - barHeight + Math.round(barHeight * 0.42));
-
-          const serial = document.getElementById('metaSerialTag').value.trim() || 'PANEL-QC';
-          const eng = document.getElementById('metaEngineer').value.trim() || 'Engineer';
-          const stamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-
-          ctx.fillStyle = "#e2e8f0";
-          ctx.font = `${Math.round(barHeight * 0.26)}px 'JetBrains Mono', monospace`;
-          ctx.fillText(`SN: ${serial} | ENG: ${eng} | PUNE | ${stamp}`, 15, h - barHeight + Math.round(barHeight * 0.82));
-
-          photosList.push(canvas.toDataURL('image/jpeg', 0.85));
-          renderPhotosGrid();
-        };
-        img.src = event.target.result;
-      };
-      reader.readAsDataURL(file);
-      e.target.value = '';
-    }
-
-    function renderPhotosGrid() {
-      const grid = document.getElementById('photosGrid');
-      grid.innerHTML = '';
-      if (photosList.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center py-8 border-2 border-dashed border-slate-800 rounded-xl text-slate-500 text-xs">No inspection photos captured yet.</div>`;
-        return;
-      }
-      photosList.forEach((src, idx) => {
-        const item = document.createElement('div');
-        item.className = "relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950";
-        item.innerHTML = `
-          <img src="${src}" class="w-full h-44 object-cover">
-          <button onclick="photosList.splice(${idx},1); renderPhotosGrid();" class="absolute top-2 right-2 bg-rose-600 text-white p-1.5 rounded-lg text-xs hover:bg-rose-500 transition-all">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
-          </button>
-        `;
-        grid.appendChild(item);
-      });
-      lucide.createIcons();
-    }
-
-    // 6. SYNC TO GOOGLE SHEETS
-    async function syncInspectionToGoogleSheet() {
-      if (currentAppMode === 'EXPENSES') {
-        return syncExpensesToGoogleSheet();
-      }
-      if (currentAppMode === 'PORTAL') {
-        return loadEmployeeStatement();
-      }
-
-      const btn = document.getElementById('syncSheetBtn');
-      const orig = btn.innerHTML;
-      btn.innerHTML = `<span class="animate-spin inline-block mr-2">●</span> Syncing...`;
-      btn.disabled = true;
-
-      let payload = {};
-      const now = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
-
-      if (currentAppMode === 'DWR') {
-        saveCurrentDwrDay(false);
-        const activeDay = dwrDaysList[activeDwrDayIndex] || createBlankDay(1, new Date().toISOString().split('T')[0]);
-        const safeDays = dwrDaysList.filter(d => d.isSafe === 'YES').length;
-        const unsafeDays = dwrDaysList.filter(d => d.isSafe === 'NO').length;
-        
-        payload = {
-          timestamp: now,
-          serviceType: "DAILY_WORK_REPORT",
-          equipmentIdentifier: document.getElementById('dwrProjectNo').value.trim() || activeDay.pageNo,
-          clientName: document.getElementById('dwrCustomer').value.trim() || "N/A",
-          projectScope: document.getElementById('dwrScope').value.trim() || "N/A",
-          facilityLocation: document.getElementById('dwrLocation').value.trim() || "N/A",
-          leadEngineer: document.getElementById('dwrSiteIncharge').value.trim() || "N/A",
-          testVerdict: activeDay.isSafe === "YES" ? "SAFE ENVIRONMENT" : `UNSAFE: ${activeDay.unsafeReason}`,
-          clientRepresentative: activeDay.inchargeName || document.getElementById('dwrEngName').value || "N/A",
-          totalSteps: dwrDaysList.length,
-          passedSteps: safeDays,
-          failedSteps: unsafeDays,
-          openSnags: parseInt(activeDay.clientHrs || "0", 10) + parseInt(activeDay.customerHrs || "0", 10),
-          inspectionSummary: `Day ${activeDay.dayNumber} (${activeDay.date}): ${activeDay.mainActivities.substring(0, 150)} | Issues: ${activeDay.clientIssue || 'None'}`
-        };
-      } else {
-        const passed = inspectionData.filter(i => i.status === 'PASSED').length;
-        const failed = inspectionData.filter(i => i.status === 'FAILED').length;
-        const verdict = failed > 0 ? "FAILED / PENDING SNAGS" : "PASSED / ACCEPTED";
-
-        payload = {
-          timestamp: now,
-          serviceType: "SHOP_FAT",
-          equipmentIdentifier: document.getElementById('metaSerialTag').value.trim() || "N/A",
-          clientName: document.getElementById('metaClient').value.trim() || "N/A",
-          projectScope: document.getElementById('metaProjectPo').value.trim() || "N/A",
-          facilityLocation: "Aryavarta Plant, Chikhali Pune",
-          leadEngineer: document.getElementById('metaEngineer').value.trim() || "N/A",
-          testVerdict: verdict,
-          clientRepresentative: document.getElementById('sigClientName').value.trim() || "Pending Sign",
-          totalSteps: inspectionData.length,
-          passedSteps: passed,
-          failedSteps: failed,
-          openSnags: failed,
-          inspectionSummary: inspectionData.map(i => `${i.title}: ${i.measuredValue || 'N/A'} [${i.status}]`).join(" | ")
-        };
-      }
-
-      try {
-        await fetch(GOOGLE_APPS_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        playAudioTone(880, 0.2);
-        alert("✓ Report successfully synced to Google Sheet!");
-      } catch (e) {
-        alert("Sync request failed. Please check network connection.");
-      } finally {
-        btn.innerHTML = orig;
-        btn.disabled = false;
-        lucide.createIcons();
-      }
-    }
-
-    function loadLogoImage() {
-      const urls = [
-        'logo.png',
-        'https://raw.githubusercontent.com/mr2Ashish/fat-inspection-app/main/logo.png'
-      ];
-      return new Promise((resolve) => {
-        let idx = 0;
-        function tryNext() {
-          if (idx >= urls.length) return resolve(null);
-          const img = new Image();
-          img.crossOrigin = 'Anonymous';
-          img.onload = () => resolve(img);
-          img.onerror = () => { idx++; tryNext(); };
-          img.src = urls[idx];
-        }
-        tryNext();
-      });
-    }
-
-    // 7. FAT PDF REPORT
-    async function generateOfficialInspectionPDF() {
-      saveFatMeta();
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
-      const client = document.getElementById('metaClient').value.trim() || "Valued Client";
-      const serial = document.getElementById('metaSerialTag').value.trim() || "AA-PANEL-QC";
-      const po = document.getElementById('metaProjectPo').value.trim() || "PO-REF";
-      const engineer = document.getElementById('metaEngineer').value.trim() || "Aryavarta Engineer";
-      const docTitle = "FACTORY ACCEPTANCE TEST (FAT) CERTIFICATE";
-
-      const logoImg = await loadLogoImage();
-      if (logoImg) {
-        doc.addImage(logoImg, 'PNG', 14, 7, 50, 24);
-      } else {
-        doc.setTextColor(220, 38, 38);
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
-        doc.text("ARYAVARTA AUTOMATION", 14, 16);
-      }
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(9.5);
-      doc.setTextColor(15, 23, 42);
-      doc.text("ARYAVARTA AUTOMATION", 196, 12, { align: "right" });
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(7.5);
-      doc.setTextColor(71, 85, 105);
-      doc.text("Site & Plant Engineering Operations", 196, 16.5, { align: "right" });
-      doc.text("Chikhali, Pune - 411062, Maharashtra, India", 196, 21, { align: "right" });
-      doc.text("ISO 9001:2015 & ISO 14001:2015 Certified", 196, 25.5, { align: "right" });
-      doc.text("Web: www.aryavartaautomation.in", 196, 30, { align: "right" });
-
-      doc.setFillColor(11, 25, 44);
-      doc.rect(14, 33, 182, 10, 'F');
-      doc.setTextColor(245, 158, 11);
-      doc.setFontSize(10.5);
-      doc.setFont("helvetica", "bold");
-      doc.text(docTitle, 18, 39.5);
-
-      const metaRows = [
-        [
-          { content: "Client Name:", styles: { fontStyle: 'bold' } }, client,
-          { content: "Panel Serial No:", styles: { fontStyle: 'bold' } }, serial
-        ],
-        [
-          { content: "PO / Project:", styles: { fontStyle: 'bold' } }, po,
-          { content: "Testing Engineer:", styles: { fontStyle: 'bold' } }, engineer
-        ]
-      ];
-
-      doc.autoTable({
-        startY: 45,
-        theme: 'grid',
-        body: metaRows,
-        styles: { fontSize: 8, cellPadding: 2.2, lineColor: [15, 23, 42], lineWidth: 0.2 }
-      });
-
-      const tableData = inspectionData.map((item, idx) => [
-        idx + 1, item.title, item.standard, item.measuredValue || "N/A", item.status
-      ]);
-
-      doc.autoTable({
-        startY: doc.lastAutoTable.finalY + 4,
-        head: [['#', 'Test Parameter', 'Acceptance Standard', 'Measured Value', 'Status']],
-        body: tableData,
-        headStyles: { fillColor: [15, 23, 42], textColor: [245, 158, 11], fontSize: 8, fontStyle: 'bold' },
-        styles: { fontSize: 7.5, cellPadding: 2, lineColor: [203, 213, 225], lineWidth: 0.2 }
-      });
-
-      let photoY = doc.lastAutoTable.finalY + 6;
-      if (photosList.length > 0) {
-        if (photoY > 215) {
-          doc.addPage();
-          photoY = 20;
-        }
-        doc.setFontSize(8.5);
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(15, 23, 42);
-        doc.text(`Photographic Verification (${photosList.length} photos):`, 14, photoY);
-        photoY += 4;
-
-        const imgW = 88;
-        const imgH = 48;
-        const colGap = 6;
-        const rowGap = 5;
-
-        for (let i = 0; i < photosList.length; i++) {
-          const col = i % 2;
-          const posX = 14 + col * (imgW + colGap);
-
-          if (col === 0 && (photoY + imgH > 270)) {
-            doc.addPage();
-            photoY = 20;
-          }
-
-          doc.addImage(photosList[i], 'JPEG', posX, photoY, imgW, imgH);
-
-          if (col === 1 || i === photosList.length - 1) {
-            photoY += imgH + rowGap;
-          }
-        }
-      }
-
-      let sigY;
-      if (photoY > 235) {
-        doc.addPage();
-        sigY = 35;
-      } else {
-        sigY = Math.max(photoY + 8, 235);
-      }
-
-      doc.setDrawColor(203, 213, 225);
-      doc.line(14, sigY, 90, sigY);
-      doc.line(120, sigY, 196, sigY);
-
-      if (engineerSigPad && !engineerSigPad.isEmpty()) {
-        doc.addImage(engineerSigPad.toDataURL(), 'PNG', 14, sigY - 16, 50, 14);
-      }
-      if (clientSigPad && !clientSigPad.isEmpty()) {
-        doc.addImage(clientSigPad.toDataURL(), 'PNG', 120, sigY - 16, 50, 14);
-      }
-
-      doc.setFontSize(7.5);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(15, 23, 42);
-      doc.text("Aryavarta Testing Engineer", 14, sigY + 4);
-      doc.text("Client / Inspector Representative", 120, sigY + 4);
-
-      doc.save(`Aryavarta_FAT_${serial}_Certificate.pdf`);
-    }
-
-    // 8. SITE EXPENSE PDF GENERATOR
-    async function generateExpensesPDF() {
-      const stats = calculateExpTotals();
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
-      const siteName = document.getElementById('expSiteName').value.trim() || "Site Project";
-      const engineerName = document.getElementById('expEngineerName').value.trim() || "Site Engineer";
-      const engineerEmail = document.getElementById('expEngineerEmail').value.trim() || "N/A";
-      const projectNo = document.getElementById('expProjectNo').value.trim() || "PRJ";
-      const fixedDA = parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0;
-
-      const logoImg = await loadLogoImage();
-      if (logoImg) {
-        doc.addImage(logoImg, 'PNG', 14, 7, 50, 24);
-      } else {
-        doc.setTextColor(220, 38, 38);
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
-        doc.text("ARYAVARTA AUTOMATION", 14, 16);
-      }
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(9.5);
-      doc.setTextColor(15, 23, 42);
-      doc.text("ARYAVARTA AUTOMATION", 196, 12, { align: "right" });
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(7.5);
-      doc.setTextColor(71, 85, 105);
-      doc.text("Site & Plant Engineering Operations", 196, 16.5, { align: "right" });
-      doc.text("Chikhali, Pune - 411062, Maharashtra, India", 196, 21, { align: "right" });
-      doc.text("ISO 9001:2015 Certified | Central Accounts", 196, 25.5, { align: "right" });
-
-      doc.setFillColor(11, 25, 44);
-      doc.rect(14, 32, 182, 10, 'F');
-      doc.setTextColor(245, 158, 11);
-      doc.setFontSize(10);
-      doc.setFont("helvetica", "bold");
-      doc.text("SITE EXPENSE CLAIM & AUDIT DOSSIER", 18, 38.5);
-
-      const metaRows = [
-        [
-          { content: "Site / Client:", styles: { fontStyle: 'bold' } }, siteName,
-          { content: "Project No:", styles: { fontStyle: 'bold' } }, projectNo
-        ],
-        [
-          { content: "Site Engineer:", styles: { fontStyle: 'bold' } }, engineerName,
-          { content: "Engineer Email:", styles: { fontStyle: 'bold' } }, engineerEmail
-        ],
-        [
-          { content: "Per Day Allowance:", styles: { fontStyle: 'bold' } }, `INR ${fixedDA.toFixed(2)} / Day`,
-          { content: "Total Logged Days:", styles: { fontStyle: 'bold' } }, `${expDaysList.length} Day(s)`
-        ]
-      ];
-
-      doc.autoTable({
-        startY: 44,
-        theme: 'grid',
-        body: metaRows,
-        styles: { fontSize: 7.8, cellPadding: 2, lineColor: [15, 23, 42], lineWidth: 0.2 }
-      });
-
-      const expTableBody = [];
-      const receiptImagesForAnnexure = [];
-
-      expDaysList.forEach(day => {
-        if (day.expenses && day.expenses.length > 0) {
-          day.expenses.forEach(e => {
-            if (e.receiptPhoto) {
-              receiptImagesForAnnexure.push({
-                date: day.date,
-                category: e.category,
-                amount: e.amount,
-                src: e.receiptPhoto
-              });
-            }
-            expTableBody.push([
-              day.date,
-              e.category,
-              e.description,
-              `INR ${e.amount.toFixed(2)}`,
-              `INR ${fixedDA.toFixed(2)}`,
-              `INR ${(day.gotAdvance === 'YES' ? day.advanceAmount : 0).toFixed(2)}`,
-              `INR ${(day.demandAdvance === 'YES' ? day.demandAmount : 0).toFixed(2)}`
-            ]);
-          });
-        } else {
-          expTableBody.push([
-            day.date,
-            "Allowance Only",
-            "Day Allowance & Log",
-            "INR 0.00",
-            `INR ${fixedDA.toFixed(2)}`,
-            `INR ${(day.gotAdvance === 'YES' ? day.advanceAmount : 0).toFixed(2)}`,
-            `INR ${(day.demandAdvance === 'YES' ? day.demandAmount : 0).toFixed(2)}`
-          ]);
-        }
-      });
-
-      doc.autoTable({
-        startY: doc.lastAutoTable.finalY + 4,
-        head: [['Date', 'Category', 'Description', 'Receipt (₹)', 'DA (₹)', 'Advance (₹)', 'Demand (₹)']],
-        body: expTableBody,
-        headStyles: { fillColor: [15, 23, 42], textColor: [245, 158, 11], fontSize: 7.5, fontStyle: 'bold' },
-        styles: { fontSize: 7, cellPadding: 2, lineColor: [203, 213, 225], lineWidth: 0.2 },
-        columnStyles: { 0: { cellWidth: 20 }, 1: { cellWidth: 26 }, 2: { cellWidth: 54 }, 3: { cellWidth: 20 }, 4: { cellWidth: 20 }, 5: { cellWidth: 21 }, 6: { cellWidth: 21 } }
-      });
-
-      const sumRows = [
-        [{ content: "Total Receipts Amount (Categorized Bills):", styles: { fontStyle: 'bold' } }, `INR ${stats.grandCategorized.toFixed(2)}`],
-        [{ content: `Total Daily Allowance (${expDaysList.length} Days × INR ${fixedDA}):`, styles: { fontStyle: 'bold' } }, `INR ${stats.grandAllowance.toFixed(2)}`],
-        [{ content: "FINAL TOTAL SITE EXPENSES (Receipts + Allowance):", styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } }, { content: `INR ${stats.finalTotalExpenses.toFixed(2)}`, styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } }],
-        [{ content: "TOTAL ADVANCE RECEIVED FROM COMPANY:", styles: { fontStyle: 'bold' } }, `INR ${stats.grandAdvance.toFixed(2)}`],
-        [{ content: "NET SETTLEMENT AUDIT VERDICT:", styles: { fontStyle: 'bold', textColor: stats.netBalance > 0 ? [185, 28, 28] : [4, 120, 87] } }, {
-          content: stats.netBalance > 0 ? `DEBIT: Return INR ${stats.netBalance.toFixed(2)} to Company` : stats.netBalance < 0 ? `CREDIT: Reimburse INR ${Math.abs(stats.netBalance).toFixed(2)} to Engineer` : "BALANCED / SETTLED (INR 0.00)",
-          styles: { fontStyle: 'bold', textColor: stats.netBalance > 0 ? [185, 28, 28] : [4, 120, 87] }
-        }]
-      ];
-
-      doc.autoTable({
-        startY: doc.lastAutoTable.finalY + 4,
-        body: sumRows,
-        theme: 'grid',
-        styles: { fontSize: 7.5, cellPadding: 2.2, lineColor: [15, 23, 42], lineWidth: 0.2 }
-      });
-
-      let finalSigY = doc.lastAutoTable.finalY + 12;
-      if (finalSigY > 255) {
-        doc.addPage();
-        finalSigY = 30;
-      }
-
-      doc.setDrawColor(203, 213, 225);
-      doc.line(14, finalSigY, 90, finalSigY);
-      doc.line(120, finalSigY, 196, finalSigY);
-
-      doc.setFontSize(7.5);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(15, 23, 42);
-      doc.text(`Claimant Site Engineer: ${engineerName}`, 14, finalSigY + 4);
-      doc.text("Accounts & Project Operations Approval", 120, finalSigY + 4);
-
-      if (receiptImagesForAnnexure.length > 0) {
-        doc.addPage();
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(15, 23, 42);
-        doc.text(`Annexure: Attached Expense Receipts (${receiptImagesForAnnexure.length} Items)`, 14, 15);
-
-        let imgY = 22;
-        const imgW = 88;
-        const imgH = 50;
-        const colGap = 6;
-        const rowGap = 8;
-
-        for (let i = 0; i < receiptImagesForAnnexure.length; i++) {
-          const col = i % 2;
-          const posX = 14 + col * (imgW + colGap);
-
-          if (col === 0 && (imgY + imgH > 270)) {
-            doc.addPage();
-            imgY = 20;
-          }
-
-          const r = receiptImagesForAnnexure[i];
-          doc.addImage(r.src, 'JPEG', posX, imgY, imgW, imgH);
-          doc.setFontSize(7);
-          doc.setTextColor(71, 85, 105);
-          doc.text(`${r.date} | ${r.category} | INR ${r.amount.toFixed(2)}`, posX, imgY + imgH + 3.5);
-
-          if (col === 1 || i === receiptImagesForAnnexure.length - 1) {
-            imgY += imgH + rowGap;
-          }
-        }
-      }
-
-      const cleanSite = siteName.replace(/[^a-zA-Z0-9_-]/g, "_");
-      doc.save(`Site_Expenses_${cleanSite}_${projectNo}.pdf`);
-    }
-
-    function handlePrimaryPdfDownload() {
-      if (currentAppMode === 'DWR') {
-        generateConsolidatedDwrPDF();
-      } else if (currentAppMode === 'EXPENSES') {
-        generateExpensesPDF();
-      } else if (currentAppMode === 'PORTAL') {
-        window.print();
-      } else {
-        generateOfficialInspectionPDF();
-      }
-    }
-
-    // 9. TEMPLATE MANAGER
-    let editingCategoryKey = '';
-    function openTemplateManagerModal() {
-      const modal = document.getElementById('templateManagerModal');
-      let templates = getStoredTemplates();
-      if (!templates || !templates.FAT) {
-        templates = JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
-        saveTemplates(templates);
-      }
-      const currentModeTemplates = templates.FAT || {};
-      const select = document.getElementById('modalCategorySelect');
-      select.innerHTML = '';
-
-      const keys = Object.keys(currentModeTemplates);
-      keys.forEach(k => {
-        const opt = document.createElement('option');
-        opt.value = k;
-        opt.innerText = currentModeTemplates[k].name;
-        select.appendChild(opt);
-      });
-
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-
-      if (keys.length > 0) {
-        const targetKey = (currentCategoryKey && currentModeTemplates[currentCategoryKey]) ? currentCategoryKey : keys[0];
-        select.value = targetKey;
-        loadCategoryForEditing(targetKey);
-      }
-    }
-
-    function closeTemplateManagerModal() {
-      const modal = document.getElementById('templateManagerModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
-    function loadCategoryForEditing(catKey) {
-      editingCategoryKey = catKey;
-      const templates = getStoredTemplates();
-      const cat = templates.FAT ? templates.FAT[catKey] : null;
-      if (!cat) return;
-
-      const list = document.getElementById('modalStepsList');
-      list.innerHTML = '';
-
-      (cat.steps || []).forEach((st, idx) => {
-        const item = document.createElement('div');
-        item.className = "p-3 bg-slate-900 border border-slate-800 rounded-xl space-y-2";
-        item.innerHTML = `
-          <div class="flex items-center justify-between gap-2">
-            <span class="text-xs font-mono-code font-bold text-amber-400">Step #${idx + 1}</span>
-            <button type="button" onclick="removeStepFromEditingCategory(${idx})" class="text-xs text-rose-400 hover:underline">Delete</button>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${st.title || ''}" placeholder="Step Title" id="stepTitle_${idx}" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
-            <input type="text" value="${st.standard || ''}" placeholder="Standard" id="stepStd_${idx}" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
-          </div>
-          <textarea id="stepPrompt_${idx}" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white h-12">${st.prompt || ''}</textarea>
-        `;
-        list.appendChild(item);
-      });
-      lucide.createIcons();
-    }
-
-    function promptAddNewCategory() {
-      const name = prompt("Enter new Category name:");
-      if (!name || !name.trim()) return;
-      const key = "CUSTOM_" + Date.now();
-      const templates = getStoredTemplates();
-      if (!templates.FAT) templates.FAT = {};
-      templates.FAT[key] = {
-        name: name.trim(),
-        steps: [{ id: "c1", title: "Visual Inspection", prompt: "Inspect panel wiring and earth continuity.", standard: "OK", unit: "Status" }]
-      };
-      saveTemplates(templates);
-      openTemplateManagerModal();
-    }
-
-    function addNewStepToCurrentCategory() {
-      const templates = getStoredTemplates();
-      const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
-      if (!cat) return;
-      if (!cat.steps) cat.steps = [];
-      cat.steps.push({ id: "step_" + Date.now(), title: "New Step", prompt: "Verify component status.", standard: "Normal", unit: "Status" });
-      saveTemplates(templates);
-      loadCategoryForEditing(editingCategoryKey);
-    }
-
-    function removeStepFromEditingCategory(idx) {
-      const templates = getStoredTemplates();
-      const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
-      if (!cat) return;
-      if (cat.steps.length <= 1) return alert("Must retain at least 1 step.");
-      cat.steps.splice(idx, 1);
-      saveTemplates(templates);
-      loadCategoryForEditing(editingCategoryKey);
-    }
-
-    function saveCategoryEditsAndClose() {
-      const templates = getStoredTemplates();
-      const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
-      if (!cat) return;
-      (cat.steps || []).forEach((st, idx) => {
-        const titleEl = document.getElementById(`stepTitle_${idx}`);
-        const stdEl = document.getElementById(`stepStd_${idx}`);
-        const promptEl = document.getElementById(`stepPrompt_${idx}`);
-        if (titleEl) st.title = titleEl.value.trim();
-        if (stdEl) st.standard = stdEl.value.trim();
-        if (promptEl) st.prompt = promptEl.value.trim();
-      });
-      saveTemplates(templates);
-      closeTemplateManagerModal();
-      refreshCategoryDropdown();
-    }
-
-    function resetCurrentCategoryToDefaults() {
-      if (!confirm("Reset to default factory template?")) return;
-      saveTemplates(DEFAULT_TEMPLATES);
-      closeTemplateManagerModal();
-      refreshCategoryDropdown();
-    }
-
-    // 10. SITE EXPENSE ENGINE & RECONCILIATION
+    // =========================================================================
+    // 8. SITE EXPENSE ENGINE & RECONCILIATION
+    // =========================================================================
     function initExpensesModule() {
       try {
         const savedProfile = localStorage.getItem('aryavarta_exp_profile');
@@ -3149,8 +3286,200 @@
       document.body.removeChild(a);
     }
 
+    async function generateExpensesPDF() {
+      const stats = calculateExpTotals();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      const siteName = document.getElementById('expSiteName').value.trim() || "Site Project";
+      const engineerName = document.getElementById('expEngineerName').value.trim() || "Site Engineer";
+      const engineerEmail = document.getElementById('expEngineerEmail').value.trim() || "N/A";
+      const projectNo = document.getElementById('expProjectNo').value.trim() || "PRJ";
+      const fixedDA = parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0;
+
+      const logoImg = await loadLogoImage();
+      if (logoImg) {
+        doc.addImage(logoImg, 'PNG', 14, 7, 50, 24);
+      } else {
+        doc.setTextColor(220, 38, 38);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text("ARYAVARTA AUTOMATION", 14, 16);
+      }
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text("ARYAVARTA AUTOMATION", 196, 12, { align: "right" });
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(71, 85, 105);
+      doc.text("Site & Plant Engineering Operations", 196, 16.5, { align: "right" });
+      doc.text("Chikhali, Pune - 411062, Maharashtra, India", 196, 21, { align: "right" });
+      doc.text("ISO 9001:2015 Certified | Central Accounts", 196, 25.5, { align: "right" });
+
+      doc.setFillColor(11, 25, 44);
+      doc.rect(14, 32, 182, 10, 'F');
+      doc.setTextColor(245, 158, 11);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      doc.text("SITE EXPENSE CLAIM & AUDIT DOSSIER", 18, 38.5);
+
+      const metaRows = [
+        [
+          { content: "Site / Client:", styles: { fontStyle: 'bold' } }, siteName,
+          { content: "Project No:", styles: { fontStyle: 'bold' } }, projectNo
+        ],
+        [
+          { content: "Site Engineer:", styles: { fontStyle: 'bold' } }, engineerName,
+          { content: "Engineer Email:", styles: { fontStyle: 'bold' } }, engineerEmail
+        ],
+        [
+          { content: "Per Day Allowance:", styles: { fontStyle: 'bold' } }, `INR ${fixedDA.toFixed(2)} / Day`,
+          { content: "Total Logged Days:", styles: { fontStyle: 'bold' } }, `${expDaysList.length} Day(s)`
+        ]
+      ];
+
+      doc.autoTable({
+        startY: 44,
+        theme: 'grid',
+        body: metaRows,
+        styles: { fontSize: 7.8, cellPadding: 2, lineColor: [15, 23, 42], lineWidth: 0.2 }
+      });
+
+      const expTableBody = [];
+      const receiptImagesForAnnexure = [];
+
+      expDaysList.forEach(day => {
+        if (day.expenses && day.expenses.length > 0) {
+          day.expenses.forEach(e => {
+            if (e.receiptPhoto) {
+              receiptImagesForAnnexure.push({
+                date: day.date,
+                category: e.category,
+                amount: e.amount,
+                src: e.receiptPhoto
+              });
+            }
+            expTableBody.push([
+              day.date,
+              e.category,
+              e.description,
+              `INR ${e.amount.toFixed(2)}`,
+              `INR ${fixedDA.toFixed(2)}`,
+              `INR ${(day.gotAdvance === 'YES' ? day.advanceAmount : 0).toFixed(2)}`,
+              `INR ${(day.demandAdvance === 'YES' ? day.demandAmount : 0).toFixed(2)}`
+            ]);
+          });
+        } else {
+          expTableBody.push([
+            day.date,
+            "Allowance Only",
+            "Day Allowance & Log",
+            "INR 0.00",
+            `INR ${fixedDA.toFixed(2)}`,
+            `INR ${(day.gotAdvance === 'YES' ? day.advanceAmount : 0).toFixed(2)}`,
+            `INR ${(day.demandAdvance === 'YES' ? day.demandAmount : 0).toFixed(2)}`
+          ]);
+        }
+      });
+
+      doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 4,
+        head: [['Date', 'Category', 'Description', 'Receipt (₹)', 'DA (₹)', 'Advance (₹)', 'Demand (₹)']],
+        body: expTableBody,
+        headStyles: { fillColor: [15, 23, 42], textColor: [245, 158, 11], fontSize: 7.5, fontStyle: 'bold' },
+        styles: { fontSize: 7, cellPadding: 2, lineColor: [203, 213, 225], lineWidth: 0.2 },
+        columnStyles: { 0: { cellWidth: 20 }, 1: { cellWidth: 26 }, 2: { cellWidth: 54 }, 3: { cellWidth: 20 }, 4: { cellWidth: 20 }, 5: { cellWidth: 21 }, 6: { cellWidth: 21 } }
+      });
+
+      const sumRows = [
+        [{ content: "Total Receipts Amount (Categorized Bills):", styles: { fontStyle: 'bold' } }, `INR ${stats.grandCategorized.toFixed(2)}`],
+        [{ content: `Total Daily Allowance (${expDaysList.length} Days × INR ${fixedDA}):`, styles: { fontStyle: 'bold' } }, `INR ${stats.grandAllowance.toFixed(2)}`],
+        [{ content: "FINAL TOTAL SITE EXPENSES (Receipts + Allowance):", styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } }, { content: `INR ${stats.finalTotalExpenses.toFixed(2)}`, styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } }],
+        [{ content: "TOTAL ADVANCE RECEIVED FROM COMPANY:", styles: { fontStyle: 'bold' } }, `INR ${stats.grandAdvance.toFixed(2)}`],
+        [{ content: "NET SETTLEMENT AUDIT VERDICT:", styles: { fontStyle: 'bold', textColor: stats.netBalance > 0 ? [185, 28, 28] : [4, 120, 87] } }, {
+          content: stats.netBalance > 0 ? `DEBIT: Return INR ${stats.netBalance.toFixed(2)} to Company` : stats.netBalance < 0 ? `CREDIT: Reimburse INR ${Math.abs(stats.netBalance).toFixed(2)} to Engineer` : "BALANCED / SETTLED (INR 0.00)",
+          styles: { fontStyle: 'bold', textColor: stats.netBalance > 0 ? [185, 28, 28] : [4, 120, 87] }
+        }]
+      ];
+
+      doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 4,
+        body: sumRows,
+        theme: 'grid',
+        styles: { fontSize: 7.5, cellPadding: 2.2, lineColor: [15, 23, 42], lineWidth: 0.2 }
+      });
+
+      let finalSigY = doc.lastAutoTable.finalY + 12;
+      if (finalSigY > 255) {
+        doc.addPage();
+        finalSigY = 30;
+      }
+
+      doc.setDrawColor(203, 213, 225);
+      doc.line(14, finalSigY, 90, finalSigY);
+      doc.line(120, finalSigY, 196, finalSigY);
+
+      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text(`Claimant Site Engineer: ${engineerName}`, 14, finalSigY + 4);
+      doc.text("Accounts & Project Operations Approval", 120, finalSigY + 4);
+
+      if (receiptImagesForAnnexure.length > 0) {
+        doc.addPage();
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(15, 23, 42);
+        doc.text(`Annexure: Attached Expense Receipts (${receiptImagesForAnnexure.length} Items)`, 14, 15);
+
+        let imgY = 22;
+        const imgW = 88;
+        const imgH = 50;
+        const colGap = 6;
+        const rowGap = 8;
+
+        for (let i = 0; i < receiptImagesForAnnexure.length; i++) {
+          const col = i % 2;
+          const posX = 14 + col * (imgW + colGap);
+
+          if (col === 0 && (imgY + imgH > 270)) {
+            doc.addPage();
+            imgY = 20;
+          }
+
+          const r = receiptImagesForAnnexure[i];
+          doc.addImage(r.src, 'JPEG', posX, imgY, imgW, imgH);
+          doc.setFontSize(7);
+          doc.setTextColor(71, 85, 105);
+          doc.text(`${r.date} | ${r.category} | INR ${r.amount.toFixed(2)}`, posX, imgY + imgH + 3.5);
+
+          if (col === 1 || i === receiptImagesForAnnexure.length - 1) {
+            imgY += imgH + rowGap;
+          }
+        }
+      }
+
+      const cleanSite = siteName.replace(/[^a-zA-Z0-9_-]/g, "_");
+      doc.save(`Site_Expenses_${cleanSite}_${projectNo}.pdf`);
+    }
+
+    function handlePrimaryPdfDownload() {
+      if (currentAppMode === 'DWR') {
+        generateConsolidatedDwrPDF();
+      } else if (currentAppMode === 'EXPENSES') {
+        generateExpensesPDF();
+      } else if (currentAppMode === 'PORTAL') {
+        window.print();
+      } else {
+        generateOfficialInspectionPDF();
+      }
+    }
+
     // =========================================================================
-    // 11. AUTHENTICATED "MY STATEMENT" EMPLOYEE PORTAL ENGINE
+    // 9. AUTHENTICATED STATEMENT PORTAL ENGINE
     // =========================================================================
     function initPortalState() {
       try {
