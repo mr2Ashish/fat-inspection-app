@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Aryavarta Automation - FAT, Daily Report & Operations Suite</title>
   
-  <!-- Manifest & Fonts -->
+  <!-- Fonts & Manifest -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
@@ -67,11 +67,11 @@
 </head>
 <body class="min-h-screen flex flex-col pb-28">
 
-  <!-- ================= TOP HEADER WITH OFFICIAL COMPANY LOGO ================= -->
+  <!-- ================= TOP HEADER ================= -->
   <header class="sticky top-0 z-40 bg-[#070e1a]/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 shadow-xl">
     <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
       
-      <!-- Company Official Logo & Tagline -->
+      <!-- Company Official Logo & Subheading -->
       <div class="flex items-center gap-3">
         <div class="bg-white px-2.5 py-1.5 rounded-lg flex items-center shadow-md border border-slate-200">
           <img 
@@ -160,15 +160,21 @@
           </div>
         </div>
 
-        <div class="mt-4 pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div class="w-full sm:w-2/3">
-            <label class="block text-xs font-medium text-slate-400 mb-1">Panel Product Line / Category</label>
+        <div class="mt-4 pt-4 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-center">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Panel Category / Product Line</label>
             <select id="categorySelector" onchange="onCategoryChanged(this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none cursor-pointer"></select>
           </div>
-          <button type="button" onclick="openTemplateManagerModal()" class="w-full sm:w-auto mt-2 sm:mt-5 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-semibold text-amber-400 flex items-center justify-center gap-2 transition-all">
-            <i data-lucide="sliders" class="w-4 h-4"></i>
-            <span>Customize / Add Steps</span>
-          </button>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Panel Subcategory (Type / Rating)</label>
+            <select id="subcategorySelector" onchange="onSubcategoryChanged(this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 focus:outline-none cursor-pointer"></select>
+          </div>
+          <div class="sm:pt-5">
+            <button type="button" onclick="openTemplateManagerModal()" class="w-full px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-semibold text-amber-400 flex items-center justify-center gap-2 transition-all">
+              <i data-lucide="sliders" class="w-4 h-4"></i>
+              <span>Customize Categories & Steps</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -204,9 +210,9 @@
           <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3.5 text-xs">
             <span class="font-bold uppercase font-industrial text-[11px] block mb-2 text-amber-400">Voice Commands Guide</span>
             <ul class="space-y-1 text-slate-400 font-mono-code text-[11px]">
-              <li>• English: <span class="text-white">"415 volts", "Pass", "Repeat"</span></li>
-              <li>• Hindi: <span class="text-white">"415 वोल्ट", "पास", "फिर से"</span></li>
-              <li>• Marathi: <span class="text-white">"बरोबर", "झाले", "पुन्हा सांगा"</span></li>
+              <li>• English: <span class="text-white">"415 volts", "Pass", "N/A", "Repeat"</span></li>
+              <li>• Hindi: <span class="text-white">"415 वोल्ट", "पास", "लागू नहीं", "फिर से"</span></li>
+              <li>• Marathi: <span class="text-white">"बरोबर", "लागू नाही", "पुन्हा सांगा"</span></li>
             </ul>
           </div>
         </div>
@@ -221,6 +227,8 @@
           </h2>
           <div class="flex items-center gap-2 text-xs font-mono-code">
             <span class="text-emerald-400 font-bold" id="passedCountBadge">0 PASSED</span>
+            <span class="text-slate-600">|</span>
+            <span class="text-slate-400 font-bold" id="naCountBadge">0 N/A</span>
             <span class="text-slate-600">|</span>
             <span class="text-rose-400 font-bold" id="failedCountBadge">0 FAILED</span>
           </div>
@@ -827,12 +835,12 @@
               <span class="text-[10px] text-slate-500 block mt-0.5" id="lblPortalSiteStatus">(From Site Claims)</span>
             </div>
             <div class="bg-slate-900/90 p-3 rounded-xl border border-amber-500/40">
-              <span class="text-[10px] text-amber-400 uppercase font-bold block">2. Past Pending Balance (Admin)</span>
+              <span class="text-[10px] text-slate-400 uppercase font-bold block">2. Past Pending Balance (Admin)</span>
               <span class="text-sm font-mono-code font-bold text-amber-300" id="statPortalPastPending">₹0.00</span>
               <span class="text-[10px] text-slate-500 block mt-0.5">(Carried over balance)</span>
             </div>
             <div class="bg-slate-900/90 p-3 rounded-xl border border-emerald-500/40">
-              <span class="text-[10px] text-emerald-400 uppercase font-bold block">Final Real Settlement Balance</span>
+              <span class="text-[10px] text-slate-400 uppercase font-bold block">Final Real Settlement Balance</span>
               <span class="text-base font-mono-code font-bold text-emerald-400" id="statPortalFinalRealAmount">₹0.00</span>
               <span class="text-[10px] text-slate-500 block mt-0.5">Net Real Payable / Receivable</span>
             </div>
@@ -945,7 +953,7 @@
           <p class="text-xs text-slate-400">This PIN allows instant 1-second login on your device without checking your email.</p>
           <div>
             <label class="block text-xs font-medium text-slate-300 mb-1">Enter 4-Digit PIN:</label>
-            <input type="password" id="inputNewPin" maxlength="4" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-center tracking-[8px] text-sm text-white font-mono-code focus:outline-none focus:border-amber-400">
+            <input type="password" id="inputNewPin" maxlength="4" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-center tracking-[8px] text-sm text-white font-mono-code focus:outline-none focus:border-amber-400">
           </div>
           <div class="flex justify-end gap-2 pt-2">
             <button onclick="closeSetPinModal()" class="px-3 py-1.5 text-xs text-slate-400 hover:text-white">Cancel</button>
@@ -987,27 +995,41 @@
             <i data-lucide="sliders" class="w-4 h-4 text-amber-400"></i>
             <span>Protocol & Category Customizer</span>
           </h3>
-          <p class="text-xs text-slate-400">Create new panel categories or customize inspection steps.</p>
+          <p class="text-xs text-slate-400">Create new panel categories, subcategories, or customize inspection steps.</p>
         </div>
         <button type="button" onclick="closeTemplateManagerModal()" class="text-slate-400 hover:text-white p-1">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
       <div class="p-4 overflow-y-auto space-y-4 flex-1">
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-          <label class="block text-xs font-medium text-slate-400 mb-1">Active Category to Edit</label>
-          <div class="flex gap-2">
-            <select id="modalCategorySelect" onchange="loadCategoryForEditing(this.value)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></select>
+        <!-- Category & Subcategory Config -->
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-3">
+          <div class="flex gap-2 items-end">
+            <div class="flex-1">
+              <label class="block text-xs font-medium text-slate-400 mb-1">Main Category</label>
+              <select id="modalCategorySelect" onchange="onModalCategoryChanged(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></select>
+            </div>
             <button type="button" onclick="promptAddNewCategory()" class="px-3 py-2 bg-amber-500 text-black text-xs font-bold rounded-lg hover:bg-amber-400 flex items-center gap-1">
               <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
               <span>New Category</span>
             </button>
           </div>
+          <div class="flex gap-2 items-end pt-2 border-t border-slate-800/80">
+            <div class="flex-1">
+              <label class="block text-xs font-medium text-slate-400 mb-1">Subcategory (Type / Rating)</label>
+              <select id="modalSubcategorySelect" onchange="onModalSubcategoryChanged(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></select>
+            </div>
+            <button type="button" onclick="promptAddNewSubcategory()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg flex items-center gap-1">
+              <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+              <span>New Subcategory</span>
+            </button>
+          </div>
         </div>
+
         <div>
           <div class="flex items-center justify-between mb-2">
-            <label class="text-xs font-bold uppercase text-slate-300 font-industrial">Protocol Steps for this Category</label>
-            <button type="button" onclick="addNewStepToCurrentCategory()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
+            <label class="text-xs font-bold uppercase text-slate-300 font-industrial">Protocol Steps for this Subcategory</label>
+            <button type="button" onclick="addNewStepToCurrentSubcategory()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Step
             </button>
           </div>
@@ -1015,8 +1037,8 @@
         </div>
       </div>
       <div class="p-4 border-t border-slate-800 flex items-center justify-between bg-slate-950">
-        <button type="button" onclick="resetCurrentCategoryToDefaults()" class="text-xs text-rose-400 hover:underline">Reset to Factory Default</button>
-        <button type="button" onclick="saveCategoryEditsAndClose()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs rounded-xl shadow">Save & Apply</button>
+        <button type="button" onclick="resetTemplatesToDefaults()" class="text-xs text-rose-400 hover:underline">Reset All to Factory Defaults</button>
+        <button type="button" onclick="saveTemplatesAndClose()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs rounded-xl shadow">Save & Apply</button>
       </div>
     </div>
   </div>
@@ -1035,7 +1057,7 @@
             <span>Open Link</span>
           </a>
           <button onclick="closeReceiptLightbox()" class="text-slate-400 hover:text-white p-1">
-            <i data-lucide="x" class="w-5 h-5"></i>
+            <i data-lucide="x" class="w-4 h-4"></i>
           </button>
         </div>
       </div>
@@ -1053,6 +1075,7 @@
     let currentAppMode = 'FAT'; // 'FAT' | 'DWR' | 'EXPENSES' | 'PORTAL'
     let currentLanguage = 'en';
     let currentCategoryKey = '';
+    let currentSubcategoryKey = '';
     let inspectionData = [];
     let photosList = [];
     
@@ -1071,74 +1094,99 @@
     let currentReceiptBase64 = null;
 
     let rawEmployeePortalData = null;
-    let portalSessionToken = null;
-    let portalSessionEmail = null;
-    let otpCooldownInterval = null;
 
     const I18N = {
       en: {
         voiceCode: 'en-IN',
         stepPrefix: "Step",
-        repeatPrompt: "Waiting for response. Please state multimeter reading, say pass, or say repeat.",
+        repeatPrompt: "Waiting for response. Please state multimeter reading, say pass, say N A, or say repeat.",
         logged: "Logged",
         movingNext: "Next test.",
         completed: "All inspection steps are finished.",
         pass: "PASS",
+        na: "N/A",
         fail: "FAIL"
       },
       hi: {
         voiceCode: 'hi-IN',
         stepPrefix: "कदम",
-        repeatPrompt: "प्रतीक्षा कर रहे हैं। कृपया मल्टीमीटर रीडिंग बताएं, पास कहें, या दोहराने को कहें।",
+        repeatPrompt: "प्रतीक्षा कर रहे हैं। कृपया मल्टीमीटर रीडिंग बताएं, पास कहें, लागू नहीं कहें, या दोहराने को कहें।",
         logged: "दर्ज किया गया",
         movingNext: "अगला टेस्ट।",
         completed: "सभी निरीक्षण चरण पूरे हो गए हैं।",
         pass: "पास",
+        na: "लागू नहीं",
         fail: "फेल"
       },
       mr: {
         voiceCode: 'mr-IN',
         stepPrefix: "पायरी",
-        repeatPrompt: "प्रतीक्षा करत आहे. कृपया मल्टीमीटर वाचन सांगा, बरोबर म्हणा, किंवा पुन्हा सांगा.",
+        repeatPrompt: "प्रतीक्षा करत आहे. कृपया मल्टीमीटर वाचन सांगा, बरोबर म्हणा, लागू नाही म्हणा, किंवा पुन्हा सांगा.",
         logged: "नोंदवले",
         movingNext: "पुढील चाचणी.",
         completed: "सर्व तपासणी पायऱ्या पूर्ण झाल्या आहेत.",
         pass: "बरोबर",
+        na: "लागू नाही",
         fail: "चूक"
       }
     };
 
+    // FACTORY DEFAULT TEMPLATES WITH SUBCATEGORIES
     const DEFAULT_TEMPLATES = {
       FAT: {
         "VFD_PANEL": {
           name: "VFD Control Panel",
-          steps: [
-            { id: "v1", title: "Incoming Voltage R-Y", prompt: "Measure incoming voltage between R and Y phase. Nominal is 415V AC ±5%.", unit: "V AC", standard: "415 V ±5%" },
-            { id: "v2", title: "Incoming Voltage Y-B", prompt: "Measure incoming voltage between Y and B phase. Nominal is 415V AC.", unit: "V AC", standard: "415 V ±5%" },
-            { id: "v3", title: "Earth Bus Continuity", prompt: "Verify earth bus continuity to main ground electrode.", unit: "Ohms", standard: "< 1.0 Ohm" },
-            { id: "v4", title: "24V DC Auxiliary Power", prompt: "Measure 24V DC switch mode power supply terminal output voltage.", unit: "V DC", standard: "24.0 V ±2%" },
-            { id: "v5", title: "VFD Forward Command", prompt: "Trigger digital forward run command to drive and verify display frequency.", unit: "Status", standard: "50.0 Hz Achieved" }
-          ]
+          subcategories: {
+            "STANDARD_3PH": {
+              name: "Standard 3-Phase IP54",
+              steps: [
+                { id: "v1", title: "Incoming Voltage R-Y", prompt: "Measure incoming voltage between R and Y phase. Nominal is 415V AC ±5%.", unit: "V AC", standard: "415 V ±5%" },
+                { id: "v2", title: "Incoming Voltage Y-B", prompt: "Measure incoming voltage between Y and B phase. Nominal is 415V AC.", unit: "V AC", standard: "415 V ±5%" },
+                { id: "v3", title: "Earth Bus Continuity", prompt: "Verify earth bus continuity to main ground electrode.", unit: "Ohms", standard: "< 1.0 Ohm" },
+                { id: "v4", title: "24V DC Auxiliary Power", prompt: "Measure 24V DC switch mode power supply terminal output voltage.", unit: "V DC", standard: "24.0 V ±2%" },
+                { id: "v5", title: "VFD Forward Command", prompt: "Trigger digital forward run command to drive and verify display frequency.", unit: "Status", standard: "50.0 Hz Achieved" }
+              ]
+            },
+            "HEAVY_DUTY": {
+              name: "Heavy Duty IP65 / Outdoor",
+              steps: [
+                { id: "hd1", title: "Enclosure Ingress Protection", prompt: "Verify rubber gasket sealing and cable gland IP rating.", unit: "Status", standard: "IP65 Verified" },
+                { id: "hd2", title: "Harmonic Filter Reactor Check", prompt: "Measure AC line reactor temperature and voltage drop under load.", unit: "V / °C", standard: "< 3% Drop" },
+                { id: "hd3", title: "Emergency Stop Circuit", prompt: "Trigger E-Stop pushbutton and confirm drive safety relay trips instantly.", unit: "Status", standard: "Trip Verified" }
+              ]
+            }
+          }
         },
         "MCC_PANEL": {
           name: "Motor Control Center (MCC)",
-          steps: [
-            { id: "m1", title: "Phase-to-Phase Insulation (Megger)", prompt: "500V DC insulation resistance between phases R-Y, Y-B, B-R.", unit: "M-Ohms", standard: "> 100 MΩ" },
-            { id: "m2", title: "Phase-to-Earth Insulation", prompt: "500V DC insulation resistance between phases and panel earth busbar.", unit: "M-Ohms", standard: "> 50 MΩ" },
-            { id: "m3", title: "Contactor Interlocking Check", prompt: "Verify mechanical and electrical interlocking on Star-Delta starters.", unit: "Status", standard: "Interlock Verified" }
-          ]
+          subcategories: {
+            "STAR_DELTA": {
+              name: "Star-Delta Starter MCC",
+              steps: [
+                { id: "m1", title: "Phase-to-Phase Insulation (Megger)", prompt: "500V DC insulation resistance between phases R-Y, Y-B, B-R.", unit: "M-Ohms", standard: "> 100 MΩ" },
+                { id: "m2", title: "Phase-to-Earth Insulation", prompt: "500V DC insulation resistance between phases and panel earth busbar.", unit: "M-Ohms", standard: "> 50 MΩ" },
+                { id: "m3", title: "Contactor Interlocking Check", prompt: "Verify mechanical and electrical interlocking on Star-Delta starters.", unit: "Status", standard: "Interlock Verified" }
+              ]
+            }
+          }
         },
         "PLC_PANEL": {
           name: "PLC & SCADA Automation Panel",
-          steps: [
-            { id: "p1", title: "SMPS 24V DC Ripple & Noise", prompt: "Measure DC bus voltage stability for PLC CPU and I/O cards.", unit: "V DC", standard: "24.0 V ±1%" },
-            { id: "p2", title: "Digital Input Loop Check", prompt: "Inject 24V DC to DI channel 1 and confirm LED & SCADA bit state.", unit: "Status", standard: "Channel Active" },
-            { id: "p3", title: "Ethernet Comm Status", prompt: "Verify communication ping between PLC and HMI/SCADA.", unit: "Status", standard: "Zero Packet Loss" }
-          ]
+          subcategories: {
+            "CPU_REDUNDANT": {
+              name: "Redundant PLC / DCS Racks",
+              steps: [
+                { id: "p1", title: "SMPS 24V DC Ripple & Noise", prompt: "Measure DC bus voltage stability for PLC CPU and I/O cards.", unit: "V DC", standard: "24.0 V ±1%" },
+                { id: "p2", title: "Digital Input Loop Check", prompt: "Inject 24V DC to DI channel 1 and confirm LED & SCADA bit state.", unit: "Status", standard: "Channel Active" },
+                { id: "p3", title: "Ethernet Comm Status", prompt: "Verify communication ping between PLC and HMI/SCADA.", unit: "Status", standard: "Zero Packet Loss" }
+              ]
+            }
+          }
         }
       }
     };
 
+    // CLOUD SYNC & LOCAL STORAGE TEMPLATES
     function getStoredTemplates() {
       try {
         const saved = localStorage.getItem('aryavarta_custom_templates');
@@ -1152,10 +1200,40 @@
       }
     }
 
-    function saveTemplates(tpl) {
+    function saveTemplatesLocally(tpl) {
       try {
         localStorage.setItem('aryavarta_custom_templates', JSON.stringify(tpl));
       } catch (e) {}
+    }
+
+    // Push templates to Google Sheets so all devices share the same categories & subcategories
+    async function syncTemplatesToCloud(tpl) {
+      try {
+        await fetch(GOOGLE_APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ serviceType: "SAVE_TEMPLATES", templates: tpl })
+        });
+      } catch (e) {}
+    }
+
+    // Pull templates from Google Sheets on startup
+    async function fetchCloudTemplates() {
+      try {
+        const script = document.createElement('script');
+        const cbName = 'cloudTplCb_' + Math.floor(Math.random() * 1000000);
+        window[cbName] = function(res) {
+          if (res && res.status === "success" && res.templates) {
+            saveTemplatesLocally(res.templates);
+            refreshCategoryDropdown();
+          }
+          if (window[cbName]) delete window[cbName];
+          if (script && script.parentNode) script.parentNode.removeChild(script);
+        };
+        script.src = `${GOOGLE_APPS_SCRIPT_URL}?action=getCloudTemplates&callback=${cbName}`;
+        document.body.appendChild(script);
+      } catch(e) {}
     }
 
     // App Initialization
@@ -1167,6 +1245,7 @@
 
       loadFatMeta();
       initSignatures();
+      fetchCloudTemplates(); // Sync categories from cloud
       refreshCategoryDropdown();
       initDwrModule();
       initExpensesModule();
@@ -1713,7 +1792,19 @@
       doc.save(`Daily_Work_Report_${cleanCustomer}_${cleanProject}.pdf`);
     }
 
-    // 4. CHECKLIST UI & VOICE ENGINE
+    function handlePrimaryPdfDownload() {
+      if (currentAppMode === 'DWR') {
+        generateConsolidatedDwrPDF();
+      } else if (currentAppMode === 'EXPENSES') {
+        generateExpensesPDF();
+      } else if (currentAppMode === 'PORTAL') {
+        window.print();
+      } else {
+        generateOfficialInspectionPDF();
+      }
+    }
+
+    // 4. CHECKLIST UI & VOICE ENGINE (WITH N/A SUPPORT)
     function refreshCategoryDropdown() {
       const templates = getStoredTemplates();
       const currentModeTemplates = templates.FAT || {};
@@ -1729,19 +1820,49 @@
         select.appendChild(opt);
       });
 
-      if (keys.length > 0) onCategoryChanged(keys[0]);
+      if (keys.length > 0) {
+        currentCategoryKey = keys[0];
+        select.value = currentCategoryKey;
+        refreshSubcategoryDropdown(currentCategoryKey);
+      }
     }
 
-    function onCategoryChanged(catKey) {
+    function refreshSubcategoryDropdown(catKey) {
       currentCategoryKey = catKey;
       const templates = getStoredTemplates();
       const cat = templates.FAT ? templates.FAT[catKey] : null;
-      if (!cat) return;
+      const subSelect = document.getElementById('subcategorySelector');
+      if (!subSelect || !cat || !cat.subcategories) return;
+      subSelect.innerHTML = '';
 
-      inspectionData = cat.steps.map(s => ({
+      const subKeys = Object.keys(cat.subcategories);
+      subKeys.forEach(sk => {
+        const opt = document.createElement('option');
+        opt.value = sk;
+        opt.innerText = cat.subcategories[sk].name;
+        subSelect.appendChild(opt);
+      });
+
+      if (subKeys.length > 0) {
+        onSubcategoryChanged(subKeys[0]);
+      }
+    }
+
+    function onCategoryChanged(catKey) {
+      refreshSubcategoryDropdown(catKey);
+    }
+
+    function onSubcategoryChanged(subKey) {
+      currentSubcategoryKey = subKey;
+      const templates = getStoredTemplates();
+      const cat = templates.FAT ? templates.FAT[currentCategoryKey] : null;
+      if (!cat || !cat.subcategories || !cat.subcategories[subKey]) return;
+
+      const steps = cat.subcategories[subKey].steps || [];
+      inspectionData = steps.map(s => ({
         ...s,
         measuredValue: null,
-        status: 'PENDING'
+        status: 'PENDING' // PENDING | PASSED | FAILED | NA
       }));
 
       renderChecklistUI();
@@ -1755,11 +1876,13 @@
 
       inspectionData.forEach((item, index) => {
         const isPassed = item.status === 'PASSED';
+        const isNa = item.status === 'NA';
         const isFailed = item.status === 'FAILED';
         
         const row = document.createElement('div');
         row.className = `p-3.5 rounded-xl border transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-3 ${
           isPassed ? 'bg-emerald-950/20 border-emerald-500/40' : 
+          isNa ? 'bg-slate-900/80 border-slate-700' :
           isFailed ? 'bg-rose-950/20 border-rose-500/40' : 
           'bg-slate-950/60 border-slate-800'
         }`;
@@ -1777,13 +1900,17 @@
           <div class="flex items-center gap-2 w-full md:w-auto justify-end">
             <input type="text" value="${item.measuredValue || ''}" placeholder="Spoken / Input"
               onchange="updateManualValue(${index}, this.value)"
-              class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono-code w-36 text-center focus:border-amber-500 focus:outline-none">
+              class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono-code w-32 text-center focus:border-amber-500 focus:outline-none">
             
-            <button onclick="setTestStatus(${index}, 'PASSED')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold font-mono-code transition-all ${
+            <button type="button" onclick="setTestStatus(${index}, 'PASSED')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold font-mono-code transition-all ${
               isPassed ? 'bg-emerald-500 text-black shadow' : 'bg-slate-800 text-slate-400 hover:text-emerald-400'
             }">PASS</button>
 
-            <button onclick="setTestStatus(${index}, 'FAILED')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold font-mono-code transition-all ${
+            <button type="button" onclick="setTestStatus(${index}, 'NA')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold font-mono-code transition-all ${
+              isNa ? 'bg-slate-600 text-white shadow' : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+            }">N/A</button>
+
+            <button type="button" onclick="setTestStatus(${index}, 'FAILED')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold font-mono-code transition-all ${
               isFailed ? 'bg-rose-500 text-white shadow' : 'bg-slate-800 text-slate-400 hover:text-rose-400'
             }">FAIL</button>
           </div>
@@ -1800,6 +1927,9 @@
         const lower = val.toLowerCase();
         if (lower.includes('fail') || lower.includes('चूक') || lower.includes('फेल')) {
           inspectionData[index].status = 'FAILED';
+        } else if (lower.includes('na') || lower.includes('n/a') || lower.includes('लागू नहीं')) {
+          inspectionData[index].status = 'NA';
+          inspectionData[index].measuredValue = 'N/A';
         } else {
           inspectionData[index].status = 'PASSED';
         }
@@ -1810,15 +1940,19 @@
 
     function setTestStatus(index, status) {
       inspectionData[index].status = status;
-      if (!inspectionData[index].measuredValue) inspectionData[index].measuredValue = status;
+      if (!inspectionData[index].measuredValue || inspectionData[index].measuredValue === 'PASS' || inspectionData[index].measuredValue === 'FAIL' || inspectionData[index].measuredValue === 'N/A') {
+        inspectionData[index].measuredValue = (status === 'PASSED' ? 'PASS' : status === 'NA' ? 'N/A' : 'FAIL');
+      }
       renderChecklistUI();
       updateVerdictBadges();
     }
 
     function updateVerdictBadges() {
       const passed = inspectionData.filter(i => i.status === 'PASSED').length;
+      const naCount = inspectionData.filter(i => i.status === 'NA').length;
       const failed = inspectionData.filter(i => i.status === 'FAILED').length;
       document.getElementById('passedCountBadge').innerText = `${passed} PASSED`;
+      document.getElementById('naCountBadge').innerText = `${naCount} N/A`;
       document.getElementById('failedCountBadge').innerText = `${failed} FAILED`;
     }
 
@@ -1953,20 +2087,24 @@
         }
 
         let recordedValue = rawText;
-        let isFail = false;
+        let status = 'PASSED';
 
         if (text.includes('pass') || text.includes('ok') || text.includes('पास') || text.includes('बरोबर')) {
           recordedValue = langCfg.pass;
+          status = 'PASSED';
+        } else if (text.includes('na') || text.includes('n/a') || text.includes('लागू नहीं')) {
+          recordedValue = langCfg.na;
+          status = 'NA';
         } else if (text.includes('fail') || text.includes('फेल') || text.includes('चूक')) {
-          isFail = true;
           recordedValue = langCfg.fail;
+          status = 'FAILED';
         }
 
         clearTimeout(this.repeatTimer);
         playAudioTone(880, 0.15);
 
         inspectionData[this.currentIndex].measuredValue = recordedValue;
-        inspectionData[this.currentIndex].status = isFail ? 'FAILED' : 'PASSED';
+        inspectionData[this.currentIndex].status = status;
         renderChecklistUI();
         updateVerdictBadges();
 
@@ -2133,6 +2271,7 @@
       } else {
         const passed = inspectionData.filter(i => i.status === 'PASSED').length;
         const failed = inspectionData.filter(i => i.status === 'FAILED').length;
+        const naCount = inspectionData.filter(i => i.status === 'NA').length;
         const verdict = failed > 0 ? "FAILED / PENDING SNAGS" : "PASSED / ACCEPTED";
 
         payload = {
@@ -2517,14 +2656,16 @@
       }
     }
 
-    // 9. TEMPLATE MANAGER
+    // 9. TEMPLATE MANAGER (WITH SUBCATEGORY & CLOUD SYNC)
     let editingCategoryKey = '';
+    let editingSubcategoryKey = '';
+
     function openTemplateManagerModal() {
       const modal = document.getElementById('templateManagerModal');
       let templates = getStoredTemplates();
       if (!templates || !templates.FAT) {
         templates = JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
-        saveTemplates(templates);
+        saveTemplatesLocally(templates);
       }
       const currentModeTemplates = templates.FAT || {};
       const select = document.getElementById('modalCategorySelect');
@@ -2544,7 +2685,7 @@
       if (keys.length > 0) {
         const targetKey = (currentCategoryKey && currentModeTemplates[currentCategoryKey]) ? currentCategoryKey : keys[0];
         select.value = targetKey;
-        loadCategoryForEditing(targetKey);
+        loadModalSubcategories(targetKey);
       }
     }
 
@@ -2554,22 +2695,53 @@
       modal.classList.remove('flex');
     }
 
-    function loadCategoryForEditing(catKey) {
+    function onModalCategoryChanged(catKey) {
+      loadModalSubcategories(catKey);
+    }
+
+    function loadModalSubcategories(catKey) {
       editingCategoryKey = catKey;
       const templates = getStoredTemplates();
       const cat = templates.FAT ? templates.FAT[catKey] : null;
-      if (!cat) return;
+      const subSelect = document.getElementById('modalSubcategorySelect');
+      if (!subSelect || !cat || !cat.subcategories) return;
+      subSelect.innerHTML = '';
 
+      const subKeys = Object.keys(cat.subcategories);
+      subKeys.forEach(sk => {
+        const opt = document.createElement('option');
+        opt.value = sk;
+        opt.innerText = cat.subcategories[sk].name;
+        subSelect.appendChild(opt);
+      });
+
+      if (subKeys.length > 0) {
+        loadStepsForEditing(catKey, subKeys[0]);
+      }
+    }
+
+    function onModalSubcategoryChanged(subKey) {
+      loadStepsForEditing(editingCategoryKey, subKey);
+    }
+
+    function loadStepsForEditing(catKey, subKey) {
+      editingCategoryKey = catKey;
+      editingSubcategoryKey = subKey;
+      const templates = getStoredTemplates();
+      const cat = templates.FAT ? templates.FAT[catKey] : null;
+      if (!cat || !cat.subcategories || !cat.subcategories[subKey]) return;
+
+      const steps = cat.subcategories[subKey].steps || [];
       const list = document.getElementById('modalStepsList');
       list.innerHTML = '';
 
-      (cat.steps || []).forEach((st, idx) => {
+      steps.forEach((st, idx) => {
         const item = document.createElement('div');
         item.className = "p-3 bg-slate-900 border border-slate-800 rounded-xl space-y-2";
         item.innerHTML = `
           <div class="flex items-center justify-between gap-2">
             <span class="text-xs font-mono-code font-bold text-amber-400">Step #${idx + 1}</span>
-            <button type="button" onclick="removeStepFromEditingCategory(${idx})" class="text-xs text-rose-400 hover:underline">Delete</button>
+            <button type="button" onclick="removeStepFromEditingSubcategory(${idx})" class="text-xs text-rose-400 hover:underline">Delete</button>
           </div>
           <div class="grid grid-cols-2 gap-2">
             <input type="text" value="${st.title || ''}" placeholder="Step Title" id="stepTitle_${idx}" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
@@ -2583,59 +2755,89 @@
     }
 
     function promptAddNewCategory() {
-      const name = prompt("Enter new Category name:");
+      const name = prompt("Enter new Main Category name:");
       if (!name || !name.trim()) return;
-      const key = "CUSTOM_" + Date.now();
+      const key = "CAT_" + Date.now();
       const templates = getStoredTemplates();
       if (!templates.FAT) templates.FAT = {};
       templates.FAT[key] = {
         name: name.trim(),
-        steps: [{ id: "c1", title: "Visual Inspection", prompt: "Inspect panel wiring and earth continuity.", standard: "OK", unit: "Status" }]
+        subcategories: {
+          "DEFAULT_SUB": {
+            name: "Standard Specification",
+            steps: [{ id: "s1", title: "Visual Inspection", prompt: "Inspect panel wiring and earth continuity.", standard: "OK", unit: "Status" }]
+          }
+        }
       };
-      saveTemplates(templates);
+      saveTemplatesLocally(templates);
+      syncTemplatesToCloud(templates);
       openTemplateManagerModal();
     }
 
-    function addNewStepToCurrentCategory() {
+    function promptAddNewSubcategory() {
+      const name = prompt("Enter new Subcategory name (e.g. 50kW IP65):");
+      if (!name || !name.trim()) return;
+      const subKey = "SUB_" + Date.now();
       const templates = getStoredTemplates();
       const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
       if (!cat) return;
-      if (!cat.steps) cat.steps = [];
-      cat.steps.push({ id: "step_" + Date.now(), title: "New Step", prompt: "Verify component status.", standard: "Normal", unit: "Status" });
-      saveTemplates(templates);
-      loadCategoryForEditing(editingCategoryKey);
+      if (!cat.subcategories) cat.subcategories = {};
+      cat.subcategories[subKey] = {
+        name: name.trim(),
+        steps: [{ id: "s1", title: "Visual & Mechanical Check", prompt: "Verify component mounting and terminal tightness.", standard: "Secure", unit: "Status" }]
+      };
+      saveTemplatesLocally(templates);
+      syncTemplatesToCloud(templates);
+      openTemplateManagerModal();
     }
 
-    function removeStepFromEditingCategory(idx) {
+    function addNewStepToCurrentSubcategory() {
       const templates = getStoredTemplates();
       const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
-      if (!cat) return;
-      if (cat.steps.length <= 1) return alert("Must retain at least 1 step.");
-      cat.steps.splice(idx, 1);
-      saveTemplates(templates);
-      loadCategoryForEditing(editingCategoryKey);
+      if (!cat || !cat.subcategories || !cat.subcategories[editingSubcategoryKey]) return;
+      const sub = cat.subcategories[editingSubcategoryKey];
+      if (!sub.steps) sub.steps = [];
+      sub.steps.push({ id: "step_" + Date.now(), title: "New Protocol Step", prompt: "Verify specific parameter.", standard: "Normal", unit: "Status" });
+      saveTemplatesLocally(templates);
+      loadStepsForEditing(editingCategoryKey, editingSubcategoryKey);
     }
 
-    function saveCategoryEditsAndClose() {
+    function removeStepFromEditingSubcategory(idx) {
       const templates = getStoredTemplates();
       const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
-      if (!cat) return;
-      (cat.steps || []).forEach((st, idx) => {
-        const titleEl = document.getElementById(`stepTitle_${idx}`);
-        const stdEl = document.getElementById(`stepStd_${idx}`);
-        const promptEl = document.getElementById(`stepPrompt_${idx}`);
-        if (titleEl) st.title = titleEl.value.trim();
-        if (stdEl) st.standard = stdEl.value.trim();
-        if (promptEl) st.prompt = promptEl.value.trim();
-      });
-      saveTemplates(templates);
+      if (!cat || !cat.subcategories || !cat.subcategories[editingSubcategoryKey]) return;
+      const sub = cat.subcategories[editingSubcategoryKey];
+      if (sub.steps.length <= 1) return alert("Must retain at least 1 step.");
+      sub.steps.splice(idx, 1);
+      saveTemplatesLocally(templates);
+      loadStepsForEditing(editingCategoryKey, editingSubcategoryKey);
+    }
+
+    function saveTemplatesAndClose() {
+      const templates = getStoredTemplates();
+      const cat = templates.FAT ? templates.FAT[editingCategoryKey] : null;
+      if (cat && cat.subcategories && cat.subcategories[editingSubcategoryKey]) {
+        const sub = cat.subcategories[editingSubcategoryKey];
+        (sub.steps || []).forEach((st, idx) => {
+          const titleEl = document.getElementById(`stepTitle_${idx}`);
+          const stdEl = document.getElementById(`stepStd_${idx}`);
+          const promptEl = document.getElementById(`stepPrompt_${idx}`);
+          if (titleEl) st.title = titleEl.value.trim();
+          if (stdEl) st.standard = stdEl.value.trim();
+          if (promptEl) st.prompt = promptEl.value.trim();
+        });
+      }
+      saveTemplatesLocally(templates);
+      syncTemplatesToCloud(templates); // Push changes to cloud so all devices sync instantly
       closeTemplateManagerModal();
       refreshCategoryDropdown();
+      alert("✓ Categories, subcategories, and steps updated successfully across all devices!");
     }
 
-    function resetCurrentCategoryToDefaults() {
-      if (!confirm("Reset to default factory template?")) return;
-      saveTemplates(DEFAULT_TEMPLATES);
+    function resetTemplatesToDefaults() {
+      if (!confirm("Reset all templates to factory defaults?")) return;
+      saveTemplatesLocally(DEFAULT_TEMPLATES);
+      syncTemplatesToCloud(DEFAULT_TEMPLATES);
       closeTemplateManagerModal();
       refreshCategoryDropdown();
     }
