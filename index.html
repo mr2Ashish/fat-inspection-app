@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Aryavarta Automation - FAT, Daily Report & Operations Suite</title>
   
-  <!-- Fonts & Manifest -->
+  <!-- Manifest & Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
@@ -67,11 +67,11 @@
 </head>
 <body class="min-h-screen flex flex-col pb-28">
 
-  <!-- ================= TOP HEADER ================= -->
+  <!-- ================= TOP HEADER WITH OFFICIAL COMPANY LOGO ================= -->
   <header class="sticky top-0 z-40 bg-[#070e1a]/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 shadow-xl">
     <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
       
-      <!-- Company Official Logo & Subheading -->
+      <!-- Company Official Logo & Tagline -->
       <div class="flex items-center gap-3">
         <div class="bg-white px-2.5 py-1.5 rounded-lg flex items-center shadow-md border border-slate-200">
           <img 
@@ -701,56 +701,125 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- VIEW D: IN-APP "MY STATEMENT" EMPLOYEE DASHBOARD PORTAL -->
+    <!-- VIEW D: AUTHENTICATED "MY STATEMENT" EMPLOYEE PORTAL -->
     <!-- ========================================================================= -->
     <div id="viewPortal" class="space-y-6 hidden">
       
-      <!-- Employee Authentication & Email Bar -->
-      <div class="bg-gradient-to-r from-blue-950/60 via-slate-900 to-indigo-950/50 border border-blue-500/40 rounded-2xl p-4 sm:p-5 shadow-2xl">
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <!-- AUTHENTICATION CARD (WHEN LOGGED OUT) -->
+      <div id="portalAuthCard" class="max-w-md mx-auto bg-gradient-to-b from-[#0d1829] to-[#070e1a] border-2 border-amber-500/40 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+        <div class="text-center space-y-2">
+          <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 shadow-md">
+            <i data-lucide="lock" class="w-6 h-6"></i>
+          </div>
+          <h2 class="text-lg font-bold uppercase tracking-wider text-white font-industrial">Confidential Statement Portal</h2>
+          <p class="text-xs text-slate-400">Authenticate your identity to view your site expenses & settlement ledger.</p>
+        </div>
+
+        <!-- Registered Email Input -->
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1.5">Official Registered Email Address:</label>
+          <div class="relative">
+            <i data-lucide="mail" class="w-4 h-4 text-slate-500 absolute left-3 top-3"></i>
+            <input type="email" id="portalAuthEmail" placeholder="e.g. ashish@aryavarta.in" class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white font-mono-code focus:outline-none focus:border-amber-400">
+          </div>
+        </div>
+
+        <!-- TAB A: 4-DIGIT PIN LOGIN -->
+        <div id="authModePin" class="space-y-4">
           <div>
-            <h2 class="text-base font-bold uppercase tracking-wider text-blue-400 font-industrial flex items-center gap-2">
-              <i data-lucide="shield-check" class="w-5 h-5 text-blue-400"></i>
-              <span>Employee Expense Statement & Settlement Portal</span>
-            </h2>
-            <p class="text-xs text-slate-300 mt-0.5">Real-time ledger directly retrieved from Aryavarta central records.</p>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">4-Digit Security PIN:</label>
+            <div class="relative">
+              <i data-lucide="key-round" class="w-4 h-4 text-slate-500 absolute left-3 top-3"></i>
+              <input type="password" id="portalAuthPin" maxlength="4" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-center tracking-[8px] text-sm text-white font-mono-code focus:outline-none focus:border-amber-400">
+            </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
-            <input type="email" id="portalEmailInput" placeholder="Enter your official email..." class="bg-slate-950 border border-blue-500/50 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 w-full sm:w-64 font-mono-code">
-            <button onclick="loadEmployeeStatement()" id="btnLoadPortalStatement" class="px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:brightness-110 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow">
-              <i data-lucide="search" class="w-4 h-4"></i>
-              <span>Load My Statement</span>
+          <button onclick="loginWithPin()" id="btnLoginPin" class="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:brightness-110 text-black font-industrial font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2">
+            <i data-lucide="unlock" class="w-4 h-4"></i>
+            <span>Unlock My Statement</span>
+          </button>
+
+          <div class="text-center pt-2">
+            <button onclick="toggleAuthMode('OTP')" class="text-xs text-amber-400 hover:underline">
+              Don't have a PIN or forgot it? Login with Email Code ↗
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB B: EMAIL OTP LOGIN -->
+        <div id="authModeOtp" class="space-y-4 hidden">
+          <div>
+            <button onclick="sendPortalOtp()" id="btnSendOtp" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-industrial font-bold text-xs rounded-xl shadow flex items-center justify-center gap-2">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span id="lblBtnSendOtp">Send 6-Digit Code to Email</span>
+            </button>
+            <p id="lblOtpTimer" class="text-[11px] text-slate-400 text-center font-mono-code mt-1.5 hidden">Code sent. You can resend in <span id="otpCountdown" class="text-amber-400 font-bold">60</span>s</p>
+          </div>
+
+          <div id="otpInputGroup" class="hidden space-y-3 pt-2 border-t border-slate-800">
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">Enter 6-Digit Verification Code:</label>
+              <input type="text" id="portalAuthOtpCode" maxlength="6" placeholder="123456" class="w-full bg-slate-950 border border-amber-500/50 rounded-xl px-3 py-2.5 text-center tracking-[10px] text-base text-white font-mono-code font-bold focus:outline-none focus:border-amber-400">
+            </div>
+
+            <button onclick="verifyPortalOtp()" id="btnVerifyOtp" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:brightness-110 text-black font-industrial font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2">
+              <i data-lucide="check-circle" class="w-4 h-4"></i>
+              <span>Verify & Access Statement</span>
+            </button>
+          </div>
+
+          <div class="text-center pt-2">
+            <button onclick="toggleAuthMode('PIN')" class="text-xs text-slate-400 hover:text-white underline">
+              ← Back to 4-Digit PIN Login
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Loading State -->
+      <!-- LOADING STATE -->
       <div id="portalLoadingBox" class="hidden text-center py-12 bg-slate-900/60 border border-slate-800 rounded-2xl">
         <div class="animate-spin inline-block w-8 h-8 border-4 border-amber-400 border-t-transparent rounded-full mb-3"></div>
-        <p class="text-xs text-slate-300 font-mono-code">Fetching verified expense statement & ledger records...</p>
+        <p class="text-xs text-slate-300 font-mono-code">Validating security credentials & decrypting records...</p>
       </div>
 
-      <!-- Statement Main Workspace (Visible once loaded) -->
+      <!-- STATEMENT WORKSPACE (UNLOCKED ONLY AFTER AUTHENTICATION) -->
       <div id="portalContentBox" class="space-y-6 hidden">
         
+        <!-- Authenticated Header Bar -->
+        <div class="bg-gradient-to-r from-slate-900 via-[#0a1424] to-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <h2 class="text-sm font-bold uppercase tracking-wider text-white font-industrial" id="lblPortalEngineerName">Engineer Name</h2>
+              <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono-code">AUTHENTICATED</span>
+            </div>
+            <p class="text-xs text-slate-400 font-mono-code mt-0.5" id="lblPortalEngineerEmail">email@domain.com</p>
+          </div>
+
+          <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+            <button onclick="openSetPinModal()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-all">
+              <i data-lucide="key" class="w-3.5 h-3.5"></i>
+              <span id="lblSetPinBtn">Set 4-Digit PIN</span>
+            </button>
+            <button onclick="logoutPortal()" class="px-3.5 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/40 text-rose-400 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-all">
+              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+              <span>Log Out</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Master Settlement Ledger Status Card -->
         <div class="bg-gradient-to-br from-slate-950 via-[#071324] to-slate-950 border-2 border-indigo-500/40 rounded-2xl p-5 shadow-2xl space-y-4">
           <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
             <div>
-              <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
-                <h3 class="text-sm font-bold text-white uppercase font-industrial" id="lblPortalEngineerName">Engineer Name</h3>
-              </div>
-              <p class="text-xs text-slate-400 font-mono-code" id="lblPortalEngineerEmail">email@domain.com</p>
+              <span class="text-xs font-bold uppercase tracking-wider text-indigo-400 font-industrial block">Real Settlement Reconciliation</span>
+              <p class="text-[11px] text-slate-400 font-mono-code">Direct formula calculation: (Site Settlement + Past Pending Balance)</p>
             </div>
             <div id="portalRealVerdictBadge" class="px-4 py-1.5 rounded-xl font-bold font-mono-code text-xs uppercase bg-slate-800 text-slate-300 border border-slate-700">
               Verdict Loading...
             </div>
           </div>
 
-          <!-- Formula Ledger Breakdown -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
               <span class="text-[10px] text-slate-400 uppercase font-bold block">1. Site Expenses Balance</span>
@@ -802,7 +871,7 @@
           <span class="bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 font-mono-code text-white">Other: <strong id="catValOther" class="text-amber-400">₹0</strong></span>
         </div>
 
-        <!-- Interactive Filters Bar -->
+        <!-- Filters Bar -->
         <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
           <div class="flex items-center justify-between pb-2 border-b border-slate-800">
             <span class="text-xs font-bold uppercase font-industrial text-amber-400 flex items-center gap-1.5">
@@ -860,6 +929,31 @@
         </div>
 
       </div>
+
+      <!-- MODAL: SET 4-DIGIT PIN -->
+      <div id="modalSetPin" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <h3 class="text-sm font-bold text-white font-industrial uppercase flex items-center gap-2">
+              <i data-lucide="key" class="w-4 h-4 text-amber-400"></i>
+              <span>Set 4-Digit Security PIN</span>
+            </h3>
+            <button onclick="closeSetPinModal()" class="text-slate-400 hover:text-white p-1">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p class="text-xs text-slate-400">This PIN allows instant 1-second login on your device without checking your email.</p>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Enter 4-Digit PIN:</label>
+            <input type="password" id="inputNewPin" maxlength="4" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-center tracking-[8px] text-sm text-white font-mono-code focus:outline-none focus:border-amber-400">
+          </div>
+          <div class="flex justify-end gap-2 pt-2">
+            <button onclick="closeSetPinModal()" class="px-3 py-1.5 text-xs text-slate-400 hover:text-white">Cancel</button>
+            <button onclick="submitNewPin()" class="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-xl shadow">Save PIN</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -977,6 +1071,9 @@
     let currentReceiptBase64 = null;
 
     let rawEmployeePortalData = null;
+    let portalSessionToken = null;
+    let portalSessionEmail = null;
+    let otpCooldownInterval = null;
 
     const I18N = {
       en: {
@@ -1078,6 +1175,7 @@
         if (e.key === 'Escape') {
           closeTemplateManagerModal();
           closeReceiptLightbox();
+          closeSetPinModal();
         }
       });
     });
@@ -1164,11 +1262,7 @@
         syncBtnLabel.innerText = "Refresh Statement";
         statusIndicator.innerText = "Central Statement Portal Active";
 
-        const savedEmail = document.getElementById('expEngineerEmail')?.value.trim();
-        if (savedEmail && !document.getElementById('portalEmailInput').value.trim()) {
-          document.getElementById('portalEmailInput').value = savedEmail;
-          loadEmployeeStatement();
-        }
+        initPortalState();
       }
       lucide.createIcons();
     }
@@ -3055,14 +3149,46 @@
       document.body.removeChild(a);
     }
 
-    // 11. IN-APP "MY STATEMENT" EMPLOYEE PORTAL ENGINE
-    function fetchEmployeeStatementData(email) {
+    // =========================================================================
+    // 11. AUTHENTICATED "MY STATEMENT" EMPLOYEE PORTAL ENGINE
+    // =========================================================================
+    function initPortalState() {
+      try {
+        const savedToken = localStorage.getItem('aryavarta_portal_token');
+        const savedEmail = localStorage.getItem('aryavarta_portal_email');
+        if (savedToken && savedEmail) {
+          portalSessionToken = savedToken;
+          portalSessionEmail = savedEmail;
+          document.getElementById('portalAuthEmail').value = savedEmail;
+          fetchStatementWithToken(savedEmail, savedToken);
+          return;
+        }
+      } catch(e) {}
+
+      const profileEmail = document.getElementById('expEngineerEmail')?.value.trim();
+      if (profileEmail) {
+        document.getElementById('portalAuthEmail').value = profileEmail;
+      }
+    }
+
+    function toggleAuthMode(mode) {
+      if (mode === 'OTP') {
+        document.getElementById('authModePin').classList.add('hidden');
+        document.getElementById('authModeOtp').classList.remove('hidden');
+      } else {
+        document.getElementById('authModeOtp').classList.add('hidden');
+        document.getElementById('authModePin').classList.remove('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    function callGasAuth(params) {
       return new Promise((resolve, reject) => {
-        const cbName = 'gasStatementCb_' + Math.floor(Math.random() * 1000000);
+        const cbName = 'gasAuthCb_' + Math.floor(Math.random() * 1000000);
         const timeout = setTimeout(() => {
           cleanup();
-          reject(new Error("Request timed out. Please check network connection or Apps Script access."));
-        }, 20000);
+          reject(new Error("Request timed out. Please check your internet connection."));
+        }, 25000);
 
         function cleanup() {
           clearTimeout(timeout);
@@ -3076,9 +3202,12 @@
           resolve(data);
         };
 
+        const queryParts = Object.keys(params).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`);
+        queryParts.push(`callback=${cbName}`);
+
         const script = document.createElement('script');
         script.id = cbName;
-        script.src = `${GOOGLE_APPS_SCRIPT_URL}?action=getEmployeeStatement&email=${encodeURIComponent(email)}&callback=${cbName}`;
+        script.src = `${GOOGLE_APPS_SCRIPT_URL}?${queryParts.join('&')}`;
         script.onerror = function() {
           cleanup();
           reject(new Error("Failed to connect to Google Apps Script. Ensure the script is deployed with access set to Anyone."));
@@ -3087,48 +3216,233 @@
       });
     }
 
-    async function loadEmployeeStatement() {
-      const email = document.getElementById('portalEmailInput').value.trim().toLowerCase();
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    async function loginWithPin() {
+      const email = document.getElementById('portalAuthEmail').value.trim().toLowerCase();
+      const pin = document.getElementById('portalAuthPin').value.trim();
 
-      if (!email || !emailRegex.test(email)) {
-        alert("Please enter a valid email address to view your statement.");
-        document.getElementById('portalEmailInput').focus();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert("Please enter a valid official registered email address.");
+        document.getElementById('portalAuthEmail').focus();
+        return;
+      }
+      if (!/^\d{4}$/.test(pin)) {
+        alert("Please enter your 4-digit PIN.");
+        document.getElementById('portalAuthPin').focus();
         return;
       }
 
-      const btn = document.getElementById('btnLoadPortalStatement');
-      const origText = btn.innerHTML;
-      btn.innerHTML = `<span class="animate-spin inline-block mr-1">●</span> Loading...`;
+      const btn = document.getElementById('btnLoginPin');
+      const orig = btn.innerHTML;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-1">●</span> Verifying PIN...`;
       btn.disabled = true;
 
-      document.getElementById('portalLoadingBox').classList.remove('hidden');
-      document.getElementById('portalContentBox').classList.add('hidden');
-
       try {
-        const res = await fetchEmployeeStatementData(email);
+        const res = await callGasAuth({ action: "verifyPin", email: email, pin: pin });
         if (res.status === "error") {
-          alert("Error: " + res.message);
+          alert(res.message);
           return;
         }
 
-        rawEmployeePortalData = res;
-        renderEmployeeStatement(res);
-        populatePortalProjectFilter(res.reports || []);
-        playAudioTone(880, 0.2);
-      } catch (err) {
-        alert(err.message || "Could not retrieve statement. Please check your network.");
+        portalSessionToken = res.sessionToken;
+        portalSessionEmail = email;
+        try {
+          localStorage.setItem('aryavarta_portal_token', res.sessionToken);
+          localStorage.setItem('aryavarta_portal_email', email);
+        } catch(e) {}
+
+        handleAuthSuccess(res);
+      } catch(err) {
+        alert(err.message || "Login failed. Check your network.");
       } finally {
-        btn.innerHTML = origText;
+        btn.innerHTML = orig;
         btn.disabled = false;
-        document.getElementById('portalLoadingBox').classList.add('hidden');
         lucide.createIcons();
       }
     }
 
-    function renderEmployeeStatement(data) {
+    async function sendPortalOtp() {
+      const email = document.getElementById('portalAuthEmail').value.trim().toLowerCase();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert("Please enter a valid official email address first.");
+        document.getElementById('portalAuthEmail').focus();
+        return;
+      }
+
+      const btn = document.getElementById('btnSendOtp');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-1">●</span> Sending Code...`;
+
+      try {
+        const res = await callGasAuth({ action: "sendOtp", email: email });
+        if (res.status === "error") {
+          alert(res.message);
+          btn.disabled = false;
+          btn.innerHTML = `Send 6-Digit Code to Email`;
+          return;
+        }
+
+        alert("✓ A 6-digit verification code has been sent to your email inbox! Please check your email.");
+        document.getElementById('otpInputGroup').classList.remove('hidden');
+        document.getElementById('portalAuthOtpCode').focus();
+        startOtpCooldown();
+      } catch(err) {
+        alert(err.message || "Failed to send verification code.");
+        btn.disabled = false;
+        btn.innerHTML = `Send 6-Digit Code to Email`;
+      }
+      lucide.createIcons();
+    }
+
+    function startOtpCooldown() {
+      let seconds = 60;
+      const timerEl = document.getElementById('lblOtpTimer');
+      const countEl = document.getElementById('otpCountdown');
+      const btn = document.getElementById('btnSendOtp');
+
+      timerEl.classList.remove('hidden');
+      btn.disabled = true;
+
+      clearInterval(otpCooldownInterval);
+      otpCooldownInterval = setInterval(() => {
+        seconds--;
+        countEl.innerText = seconds;
+        if (seconds <= 0) {
+          clearInterval(otpCooldownInterval);
+          timerEl.classList.add('hidden');
+          btn.disabled = false;
+          btn.innerHTML = `Resend Verification Code`;
+        }
+      }, 1000);
+    }
+
+    async function verifyPortalOtp() {
+      const email = document.getElementById('portalAuthEmail').value.trim().toLowerCase();
+      const otp = document.getElementById('portalAuthOtpCode').value.trim();
+
+      if (!/^\d{6}$/.test(otp)) {
+        alert("Please enter the complete 6-digit code received on your email.");
+        document.getElementById('portalAuthOtpCode').focus();
+        return;
+      }
+
+      const btn = document.getElementById('btnVerifyOtp');
+      const orig = btn.innerHTML;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-1">●</span> Verifying...`;
+      btn.disabled = true;
+
+      try {
+        const res = await callGasAuth({ action: "verifyOtp", email: email, otp: otp });
+        if (res.status === "error") {
+          alert(res.message);
+          return;
+        }
+
+        portalSessionToken = res.sessionToken;
+        portalSessionEmail = email;
+        try {
+          localStorage.setItem('aryavarta_portal_token', res.sessionToken);
+          localStorage.setItem('aryavarta_portal_email', email);
+        } catch(e) {}
+
+        handleAuthSuccess(res);
+      } catch(err) {
+        alert(err.message || "Verification failed.");
+      } finally {
+        btn.innerHTML = orig;
+        btn.disabled = false;
+        lucide.createIcons();
+      }
+    }
+
+    async function fetchStatementWithToken(email, token) {
+      document.getElementById('portalAuthCard').classList.add('hidden');
+      document.getElementById('portalLoadingBox').classList.remove('hidden');
+
+      try {
+        const res = await callGasAuth({ action: "getEmployeeStatement", email: email, token: token });
+        if (res.status === "error") {
+          logoutPortal();
+          return;
+        }
+        handleAuthSuccess(res);
+      } catch(e) {
+        document.getElementById('portalLoadingBox').classList.add('hidden');
+        document.getElementById('portalAuthCard').classList.remove('hidden');
+      }
+    }
+
+    function handleAuthSuccess(res) {
+      document.getElementById('portalAuthCard').classList.add('hidden');
+      document.getElementById('portalLoadingBox').classList.add('hidden');
       document.getElementById('portalContentBox').classList.remove('hidden');
 
+      document.getElementById('lblSetPinBtn').innerText = res.hasPin ? "Change 4-Digit PIN" : "Set 4-Digit PIN";
+
+      rawEmployeePortalData = res;
+      renderEmployeeStatement(res);
+      populatePortalProjectFilter(res.reports || []);
+      playAudioTone(880, 0.2);
+    }
+
+    function logoutPortal() {
+      portalSessionToken = null;
+      portalSessionEmail = null;
+      try {
+        localStorage.removeItem('aryavarta_portal_token');
+        localStorage.removeItem('aryavarta_portal_email');
+      } catch(e) {}
+
+      document.getElementById('portalContentBox').classList.add('hidden');
+      document.getElementById('portalLoadingBox').classList.add('hidden');
+      document.getElementById('portalAuthCard').classList.remove('hidden');
+      document.getElementById('portalAuthPin').value = '';
+      document.getElementById('portalAuthOtpCode').value = '';
+      toggleAuthMode('PIN');
+    }
+
+    function openSetPinModal() {
+      document.getElementById('inputNewPin').value = '';
+      const modal = document.getElementById('modalSetPin');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.getElementById('inputNewPin').focus();
+    }
+
+    function closeSetPinModal() {
+      const modal = document.getElementById('modalSetPin');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    async function submitNewPin() {
+      const pin = document.getElementById('inputNewPin').value.trim();
+      if (!/^\d{4}$/.test(pin)) {
+        alert("Please enter exactly 4 numbers (e.g. 1234).");
+        return;
+      }
+
+      try {
+        const res = await callGasAuth({
+          action: "setPin",
+          email: portalSessionEmail,
+          token: portalSessionToken,
+          pin: pin
+        });
+
+        if (res.status === "error") {
+          alert(res.message);
+          return;
+        }
+
+        alert("✓ 4-Digit Security PIN successfully updated! You can now use this PIN for fast login anytime.");
+        document.getElementById('lblSetPinBtn').innerText = "Change 4-Digit PIN";
+        closeSetPinModal();
+      } catch(err) {
+        alert("Failed to save PIN.");
+      }
+    }
+
+    function renderEmployeeStatement(data) {
       const sum = data.summary || {};
       const st = data.stats || {};
       const engName = sum.engineerName || (data.reports && data.reports.length > 0 ? data.reports[0].engineerName : "Valued Engineer");
