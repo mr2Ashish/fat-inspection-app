@@ -1357,7 +1357,7 @@
         const saved = localStorage.getItem('aryavarta_custom_templates');
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (parsed && parsed.FAT) return parsed;
+          if (parsed && parsed.FAT) return normalizeTemplates(parsed);
         }
         return JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
       } catch (e) {
@@ -2391,6 +2391,1937 @@
       }
     }
 
+
+    // ===== RESTORED MODULES: DAILY WORK REPORT =====
+    // 2. DAILY WORK REPORT (DWR) LOGIC
+    function initDwrModule() {
+      try {
+        const savedProfile = localStorage.getItem('aryavarta_dwr_profile');
+        if (savedProfile) {
+          const p = JSON.parse(savedProfile);
+          document.getElementById('dwrCustomer').value = p.customer || '';
+          document.getElementById('dwrProjectNo').value = p.projectNo || '';
+          document.getElementById('dwrSiteIncharge').value = p.siteIncharge || '';
+          document.getElementById('dwrLocation').value = p.location || '';
+          document.getElementById('dwrScope').value = p.scope || '';
+        }
+      } catch (e) {}
+
+      lockDwrProfile(true);
+
+      try {
+        const storedDays = localStorage.getItem('aryavarta_dwr_days');
+        if (storedDays) {
+          dwrDaysList = JSON.parse(storedDays);
+        } else {
+          dwrDaysList = [createBlankDay(1, new Date().toISOString().split('T')[0])];
+        }
+      } catch (e) {
+        dwrDaysList = [createBlankDay(1, new Date().toISOString().split('T')[0])];
+      }
+
+      renderDwrDaysNav();
+      loadDwrDayIntoForm(0);
+    }
+
+    function createBlankDay(dayNum, dateStr) {
+      return {
+        dayNumber: dayNum,
+        pageNo: `Page ${dayNum}`,
+        date: dateStr,
+        isSafe: "YES",
+        unsafeReason: "",
+        mainActivities: "",
+        clientIssue: "",
+        clientIssueFix: "",
+        clientHrs: "0",
+        customerIssue: "",
+        customerIssueFix: "",
+        customerHrs: "0",
+        docChanges: "None",
+        engName: "",
+        engSigData: null,
+        inchargeName: "",
+        inchargeSigData: null
+      };
+    }
+
+    function lockDwrProfile(shouldLock) {
+      isDwrProfileLocked = shouldLock;
+      ['dwrCustomer', 'dwrProjectNo', 'dwrSiteIncharge', 'dwrLocation', 'dwrScope'].forEach(f => {
+        document.getElementById(f).disabled = shouldLock;
+      });
+      document.getElementById('lblDwrLock').innerText = shouldLock ? "Unlock to Edit" : "Lock Profile";
+    }
+
+    function toggleDwrProjectLock() {
+      if (isDwrProfileLocked) {
+        lockDwrProfile(false);
+      } else {
+        const profile = {
+          customer: document.getElementById('dwrCustomer').value.trim(),
+          projectNo: document.getElementById('dwrProjectNo').value.trim(),
+          siteIncharge: document.getElementById('dwrSiteIncharge').value.trim(),
+          location: document.getElementById('dwrLocation').value.trim(),
+          scope: document.getElementById('dwrScope').value.trim()
+        };
+        try {
+          localStorage.setItem('aryavarta_dwr_profile', JSON.stringify(profile));
+        } catch(e) {}
+        lockDwrProfile(true);
+        playAudioTone(880, 0.1);
+      }
+    }
+
+    function renderDwrDaysNav() {
+      const nav = document.getElementById('dwrDaysNav');
+      nav.innerHTML = '';
+      dwrDaysList.forEach((day, idx) => {
+        const btn = document.createElement('button');
+        const isActive = idx === activeDwrDayIndex;
+        btn.className = `px-3 py-1.5 rounded-lg text-xs font-mono-code font-bold transition-all ${
+          isActive ? 'bg-emerald-500 text-black shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+        }`;
+        btn.innerText = `Day ${day.dayNumber}: ${day.date}`;
+        btn.onclick = () => {
+          saveCurrentDwrDay(false);
+          loadDwrDayIntoForm(idx);
+        };
+        nav.appendChild(btn);
+      });
+      lucide.createIcons();
+    }
+
+    function loadDwrDayIntoForm(idx) {
+      activeDwrDayIndex = idx;
+      renderDwrDaysNav();
+      const day = dwrDaysList[idx];
+
+      document.getElementById('lblActiveDayTitle').innerText = `DAY LOG: ${day.date} (${day.pageNo})`;
+      document.getElementById('dwrDailyDate').value = day.date;
+      document.getElementById('dwrPageNo').value = day.pageNo;
+
+      const isYes = day.isSafe === "YES";
+      const radios = document.getElementsByName('dwrSafeEnv');
+      radios[0].checked = isYes;
+      radios[1].checked = !isYes;
+      toggleDwrUnsafeBox(!isYes);
+      document.getElementById('dwrUnsafeReason').value = day.unsafeReason || '';
+
+      document.getElementById('dwrMainActivities').value = day.mainActivities || '';
+      document.getElementById('dwrClientIssue').value = day.clientIssue || '';
+      document.getElementById('dwrClientFix').value = day.clientIssueFix || '';
+      document.getElementById('dwrClientHrs').value = day.clientHrs || '0';
+
+      document.getElementById('dwrCustomerIssue').value = day.customerIssue || '';
+      document.getElementById('dwrCustomerFix').value = day.customerIssueFix || '';
+      document.getElementById('dwrCustomerHrs').value = day.customerHrs || '0';
+
+      document.getElementById('dwrDocChanges').value = day.docChanges || 'None';
+      document.getElementById('dwrEngName').value = day.engName || '';
+      document.getElementById('dwrInchargeName').value = day.inchargeName || '';
+
+      setTimeout(() => {
+        if (!dwrEngSigPad || !dwrInchargeSigPad) initDwrCanvas();
+        if (dwrEngSigPad) {
+          dwrEngSigPad.clear();
+          if (day.engSigData) dwrEngSigPad.fromDataURL(day.engSigData);
+        }
+        if (dwrInchargeSigPad) {
+          dwrInchargeSigPad.clear();
+          if (day.inchargeSigData) dwrInchargeSigPad.fromDataURL(day.inchargeSigData);
+        }
+      }, 120);
+    }
+
+    function toggleDwrUnsafeBox(show) {
+      const box = document.getElementById('dwrUnsafeReasonBox');
+      if (show) box.classList.remove('hidden');
+      else box.classList.add('hidden');
+    }
+
+    function onDwrDateChanged(newDate) {
+      dwrDaysList[activeDwrDayIndex].date = newDate;
+      document.getElementById('lblActiveDayTitle').innerText = `DAY LOG: ${newDate} (${dwrDaysList[activeDwrDayIndex].pageNo})`;
+      renderDwrDaysNav();
+    }
+
+    function addNewDwrDay() {
+      saveCurrentDwrDay(false);
+      const nextNum = dwrDaysList.length + 1;
+      const today = new Date().toISOString().split('T')[0];
+      const newDay = createBlankDay(nextNum, today);
+      dwrDaysList.push(newDay);
+      try {
+        localStorage.setItem('aryavarta_dwr_days', JSON.stringify(dwrDaysList));
+      } catch (e) {}
+      loadDwrDayIntoForm(dwrDaysList.length - 1);
+      playAudioTone(880, 0.15);
+    }
+
+    function deleteCurrentDwrDay() {
+      if (dwrDaysList.length <= 1) {
+        alert("At least one day report must remain in the dossier.");
+        return;
+      }
+      if (!confirm(`Are you sure you want to delete Day ${dwrDaysList[activeDwrDayIndex].dayNumber} (${dwrDaysList[activeDwrDayIndex].date})?`)) return;
+
+      dwrDaysList.splice(activeDwrDayIndex, 1);
+      dwrDaysList.forEach((d, i) => {
+        d.dayNumber = i + 1;
+        if (d.pageNo.startsWith('Page ')) d.pageNo = `Page ${i + 1}`;
+      });
+      activeDwrDayIndex = Math.max(0, activeDwrDayIndex - 1);
+      try {
+        localStorage.setItem('aryavarta_dwr_days', JSON.stringify(dwrDaysList));
+      } catch (e) {}
+      loadDwrDayIntoForm(activeDwrDayIndex);
+      playAudioTone(660, 0.15);
+    }
+
+    function saveCurrentDwrDay(showAlert = true) {
+      const day = dwrDaysList[activeDwrDayIndex];
+      if (!day) return;
+
+      day.date = document.getElementById('dwrDailyDate').value || new Date().toISOString().split('T')[0];
+      day.pageNo = document.getElementById('dwrPageNo').value.trim() || `Page ${day.dayNumber}`;
+      
+      const safeVal = document.querySelector('input[name="dwrSafeEnv"]:checked')?.value || "YES";
+      day.isSafe = safeVal;
+      day.unsafeReason = document.getElementById('dwrUnsafeReason').value.trim();
+
+      day.mainActivities = document.getElementById('dwrMainActivities').value.trim();
+      day.clientIssue = document.getElementById('dwrClientIssue').value.trim();
+      day.clientIssueFix = document.getElementById('dwrClientFix').value.trim();
+      day.clientHrs = document.getElementById('dwrClientHrs').value.trim() || '0';
+
+      day.customerIssue = document.getElementById('dwrCustomerIssue').value.trim();
+      day.customerIssueFix = document.getElementById('dwrCustomerFix').value.trim();
+      day.customerHrs = document.getElementById('dwrCustomerHrs').value.trim() || '0';
+
+      day.docChanges = document.getElementById('dwrDocChanges').value.trim() || 'None';
+      day.engName = document.getElementById('dwrEngName').value.trim();
+      day.inchargeName = document.getElementById('dwrInchargeName').value.trim();
+
+      day.engSigData = (dwrEngSigPad && !dwrEngSigPad.isEmpty()) ? dwrEngSigPad.toDataURL() : day.engSigData;
+      day.inchargeSigData = (dwrInchargeSigPad && !dwrInchargeSigPad.isEmpty()) ? dwrInchargeSigPad.toDataURL() : day.inchargeSigData;
+
+      const profile = {
+        customer: document.getElementById('dwrCustomer').value.trim(),
+        projectNo: document.getElementById('dwrProjectNo').value.trim(),
+        siteIncharge: document.getElementById('dwrSiteIncharge').value.trim(),
+        location: document.getElementById('dwrLocation').value.trim(),
+        scope: document.getElementById('dwrScope').value.trim()
+      };
+      
+      try {
+        localStorage.setItem('aryavarta_dwr_profile', JSON.stringify(profile));
+        localStorage.setItem('aryavarta_dwr_days', JSON.stringify(dwrDaysList));
+      } catch (e) {}
+
+      if (showAlert) {
+        playAudioTone(880, 0.2);
+        alert(`✓ Daily Report for Day ${day.dayNumber} (${day.date}) saved successfully!`);
+      }
+    }
+
+    function initDwrCanvas() {
+      const c1 = document.getElementById('canvasDwrEngSig');
+      const c2 = document.getElementById('canvasDwrInchargeSig');
+      if (!c1 || !c2) return;
+
+      function resizeCanvas(canvas) {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        if (canvas.offsetWidth === 0) return;
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+      }
+
+      resizeCanvas(c1);
+      resizeCanvas(c2);
+
+      if (!dwrEngSigPad) dwrEngSigPad = new SignaturePad(c1, { penColor: '#38bdf8' });
+      if (!dwrInchargeSigPad) dwrInchargeSigPad = new SignaturePad(c2, { penColor: '#34d399' });
+    }
+
+    function clearDwrSig(type) {
+      if (type === 'eng' && dwrEngSigPad) {
+        dwrEngSigPad.clear();
+        dwrDaysList[activeDwrDayIndex].engSigData = null;
+      }
+      if (type === 'incharge' && dwrInchargeSigPad) {
+        dwrInchargeSigPad.clear();
+        dwrDaysList[activeDwrDayIndex].inchargeSigData = null;
+      }
+    }
+
+    function dictateActivitiesIntoBox() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        alert("Speech dictation is not supported on this browser.");
+        return;
+      }
+      const rec = new SpeechRec();
+      rec.lang = I18N[currentLanguage].voiceCode;
+      rec.start();
+      playAudioTone(660, 0.1);
+
+      rec.onresult = (e) => {
+        const text = e.results[0][0].transcript;
+        const box = document.getElementById('dwrMainActivities');
+        box.value = (box.value ? box.value + "\n• " : "• ") + text;
+        playAudioTone(880, 0.1);
+      };
+    }
+
+    // 3. CONSOLIDATED DWR PDF GENERATOR
+    async function generateConsolidatedDwrPDF() {
+      saveCurrentDwrDay(false);
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      const customer = document.getElementById('dwrCustomer').value.trim() || "";
+      const projectNo = document.getElementById('dwrProjectNo').value.trim() || "";
+      const siteIncharge = document.getElementById('dwrSiteIncharge').value.trim() || "";
+      const location = document.getElementById('dwrLocation').value.trim() || "";
+      const scope = document.getElementById('dwrScope').value.trim() || "";
+
+      const excelYellow = [255, 255, 0];
+      const lightGreyHeader = [241, 245, 249];
+      const borderDark = [15, 23, 42];
+
+      for (let i = 0; i < dwrDaysList.length; i++) {
+        if (i > 0) doc.addPage();
+        const day = dwrDaysList[i];
+
+        doc.autoTable({
+          startY: 12,
+          margin: { left: 12, right: 12 },
+          theme: 'grid',
+          body: [
+            [
+              { content: '', styles: { cellWidth: 35 } },
+              { content: 'DAILY REPORT', styles: { fontStyle: 'bold', fontSize: 13, halign: 'center', valign: 'middle', textColor: [0, 0, 0] } },
+              { content: '(1 sheet per day)', styles: { fontStyle: 'normal', fontSize: 8.5, halign: 'right', valign: 'middle', textColor: [70, 70, 70], cellWidth: 40 } }
+            ]
+          ],
+          styles: { lineColor: borderDark, lineWidth: 0.3, minCellHeight: 8, cellPadding: 1.5 }
+        });
+
+        const metaGrid = [
+          [
+            { content: 'Customer :(Site Name)', styles: { fontStyle: 'bold', fillColor: excelYellow } },
+            { content: customer, styles: { fontStyle: 'bold' } },
+            { content: 'Project No:', styles: { fontStyle: 'bold', fillColor: excelYellow } },
+            { content: projectNo, styles: { fontStyle: 'bold' } },
+            { content: 'Page No:', styles: { fontStyle: 'bold' } },
+            { content: day.pageNo || `Page ${i + 1}`, styles: { fontStyle: 'bold', halign: 'center' } }
+          ],
+          [
+            { content: 'site In-charge:', styles: { fontStyle: 'bold' } },
+            { content: siteIncharge },
+            { content: 'Location:', styles: { fontStyle: 'bold', fillColor: excelYellow } },
+            { content: location },
+            { content: 'Date:', styles: { fontStyle: 'bold', fillColor: excelYellow } },
+            { content: day.date, styles: { fontStyle: 'bold', halign: 'center' } }
+          ],
+          [
+            { content: 'Scope:', styles: { fontStyle: 'bold' } },
+            { content: scope, colSpan: 5 }
+          ]
+        ];
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY + 1,
+          margin: { left: 12, right: 12 },
+          theme: 'grid',
+          body: metaGrid,
+          styles: { fontSize: 7.8, cellPadding: 1.8, valign: 'middle', textColor: [0, 0, 0], lineColor: borderDark, lineWidth: 0.25, minCellHeight: 8 },
+          columnStyles: { 0: { cellWidth: 35 }, 1: { cellWidth: 43 }, 2: { cellWidth: 23 }, 3: { cellWidth: 33 }, 4: { cellWidth: 22 }, 5: { cellWidth: 30 } }
+        });
+
+        const isSafeYes = day.isSafe === "YES";
+        const safetyContent = isSafeYes
+          ? "Yes   [ X ]       No   [   ]                If not safe, specify why?  N/A"
+          : `Yes   [   ]       No   [ X ]                If not safe, specify why?  ${day.unsafeReason || 'Hazard noted'}`;
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY + 1,
+          margin: { left: 12, right: 12 },
+          theme: 'grid',
+          head: [[{ content: 'Is the Working Environment safe?', styles: { fontStyle: 'bold', fillColor: lightGreyHeader, textColor: [0, 0, 0] } }]],
+          body: [[{ content: safetyContent, styles: { minCellHeight: 7, valign: 'middle', textColor: isSafeYes ? [0, 0, 0] : [220, 38, 38] } }]],
+          styles: { fontSize: 7.8, cellPadding: 2, lineColor: borderDark, lineWidth: 0.25 }
+        });
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY + 1,
+          margin: { left: 12, right: 12 },
+          theme: 'grid',
+          head: [[{ content: 'Main Activities performed during the day', styles: { fontStyle: 'bold', fillColor: lightGreyHeader, textColor: [0, 0, 0] } }]],
+          body: [[{ content: day.mainActivities || 'No activities logged for this day.', styles: { minCellHeight: 52, cellPadding: 3, textColor: [15, 23, 42] } }]],
+          styles: { fontSize: 7.8, lineColor: borderDark, lineWidth: 0.25 }
+        });
+
+        const issuesRows = [
+          [
+            { content: "Issue within Client Company's scope of Work", styles: { fontStyle: 'bold', fillColor: lightGreyHeader } },
+            { content: "How is the issue being fixed?", styles: { fontStyle: 'bold', fillColor: lightGreyHeader } },
+            { content: "Approx hrs lost", styles: { fontStyle: 'bold', halign: 'center', fillColor: lightGreyHeader } }
+          ],
+          [
+            { content: day.clientIssue || "None", styles: { minCellHeight: 11, valign: 'middle' } },
+            { content: day.clientIssueFix || "N/A", styles: { valign: 'middle' } },
+            { content: `${day.clientHrs || 0} hrs`, styles: { halign: 'center', valign: 'middle', fontStyle: 'bold' } }
+          ],
+          [
+            { content: "Issue within Customer's scope of Work", styles: { fontStyle: 'bold', fillColor: lightGreyHeader } },
+            { content: "How is the issue being fixed?", styles: { fontStyle: 'bold', fillColor: lightGreyHeader } },
+            { content: "Approx hrs lost", styles: { fontStyle: 'bold', halign: 'center', fillColor: lightGreyHeader } }
+          ],
+          [
+            { content: day.customerIssue || "None", styles: { minCellHeight: 11, valign: 'middle' } },
+            { content: day.customerIssueFix || "N/A", styles: { valign: 'middle' } },
+            { content: `${day.customerHrs || 0} hrs`, styles: { halign: 'center', valign: 'middle', fontStyle: 'bold' } }
+          ]
+        ];
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY + 1,
+          margin: { left: 12, right: 12 },
+          theme: 'grid',
+          body: issuesRows,
+          styles: { fontSize: 7.5, cellPadding: 2, textColor: [0, 0, 0], lineColor: borderDark, lineWidth: 0.25 },
+          columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 80 }, 2: { cellWidth: 26 } }
+        });
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY + 1,
+          margin: { left: 12, right: 12 },
+          theme: 'grid',
+          head: [[{ content: 'Any change that requires documentation update (P&ID, FDS, mass balance, equipment list, wiring diagrams etc.)', styles: { fontStyle: 'bold', fillColor: lightGreyHeader, textColor: [0, 0, 0] } }]],
+          body: [[{ content: `- ${day.docChanges || 'None'}`, styles: { minCellHeight: 12, valign: 'middle', textColor: [0, 0, 0], cellPadding: 2.5 } }]],
+          styles: { fontSize: 7.5, lineColor: borderDark, lineWidth: 0.25 }
+        });
+
+        const sigStartY = doc.lastAutoTable.finalY + 3;
+        const sigBoxHeight = 21;
+        const totalTableWidth = 186;
+
+        doc.setDrawColor(borderDark[0], borderDark[1], borderDark[2]);
+        doc.setLineWidth(0.3);
+        doc.rect(12, sigStartY, totalTableWidth, sigBoxHeight);
+
+        doc.line(12, sigStartY + 6, 12 + totalTableWidth, sigStartY + 6);
+        doc.line(55, sigStartY, 55, sigStartY + sigBoxHeight);
+        doc.line(105, sigStartY, 105, sigStartY + sigBoxHeight);
+        doc.line(148, sigStartY, 148, sigStartY + sigBoxHeight);
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7.5);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Client Engineer", 18, sigStartY + 4.2);
+        doc.text("Signature", 73, sigStartY + 4.2);
+        doc.text("Client Site Incharge", 112, sigStartY + 4.2);
+        doc.text("Signature", 166, sigStartY + 4.2);
+
+        doc.setFont("helvetica", "normal");
+        doc.text(day.engName || "Authorized Signatory", 15, sigStartY + 13.5);
+        doc.text(day.inchargeName || siteIncharge, 108, sigStartY + 13.5);
+
+        if (day.engSigData) doc.addImage(day.engSigData, 'PNG', 58, sigStartY + 7, 44, 13);
+        if (day.inchargeSigData) doc.addImage(day.inchargeSigData, 'PNG', 150, sigStartY + 7, 44, 13);
+      }
+
+      const cleanCustomer = (customer || "Daily_Report").replace(/[^a-zA-Z0-9_-]/g, "_");
+      const cleanProject = (projectNo || "Project").replace(/[^a-zA-Z0-9_-]/g, "_");
+      doc.save(`Daily_Work_Report_${cleanCustomer}_${cleanProject}.pdf`);
+    }
+
+    // ===== LOGO LOADER =====
+    function loadLogoImage() {
+      const urls = [
+        'logo.png',
+        'https://raw.githubusercontent.com/mr2Ashish/fat-inspection-app/main/logo.png'
+      ];
+      return new Promise((resolve) => {
+        let idx = 0;
+        function tryNext() {
+          if (idx >= urls.length) return resolve(null);
+          const img = new Image();
+          img.crossOrigin = 'Anonymous';
+          img.onload = () => resolve(img);
+          img.onerror = () => { idx++; tryNext(); };
+          img.src = urls[idx];
+        }
+        tryNext();
+      });
+    }
+
+
+    // ===== RESTORED: EXPENSES PDF =====
+    // 8. SITE EXPENSE PDF GENERATOR
+    async function generateExpensesPDF() {
+      const stats = calculateExpTotals();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      const siteName = document.getElementById('expSiteName').value.trim() || "Site Project";
+      const engineerName = document.getElementById('expEngineerName').value.trim() || "Site Engineer";
+      const engineerEmail = document.getElementById('expEngineerEmail').value.trim() || "N/A";
+      const projectNo = document.getElementById('expProjectNo').value.trim() || "PRJ";
+      const fixedDA = parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0;
+
+      const logoImg = await loadLogoImage();
+      if (logoImg) {
+        doc.addImage(logoImg, 'PNG', 14, 7, 50, 24);
+      } else {
+        doc.setTextColor(220, 38, 38);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text("ARYAVARTA AUTOMATION", 14, 16);
+      }
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text("ARYAVARTA AUTOMATION", 196, 12, { align: "right" });
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(71, 85, 105);
+      doc.text("Site & Plant Engineering Operations", 196, 16.5, { align: "right" });
+      doc.text("Chikhali, Pune - 411062, Maharashtra, India", 196, 21, { align: "right" });
+      doc.text("ISO 9001:2015 Certified | Central Accounts", 196, 25.5, { align: "right" });
+
+      doc.setFillColor(11, 25, 44);
+      doc.rect(14, 32, 182, 10, 'F');
+      doc.setTextColor(245, 158, 11);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      doc.text("SITE EXPENSE CLAIM & AUDIT DOSSIER", 18, 38.5);
+
+      const metaRows = [
+        [
+          { content: "Site / Client:", styles: { fontStyle: 'bold' } }, siteName,
+          { content: "Project No:", styles: { fontStyle: 'bold' } }, projectNo
+        ],
+        [
+          { content: "Site Engineer:", styles: { fontStyle: 'bold' } }, engineerName,
+          { content: "Engineer Email:", styles: { fontStyle: 'bold' } }, engineerEmail
+        ],
+        [
+          { content: "Per Day Allowance:", styles: { fontStyle: 'bold' } }, `INR ${fixedDA.toFixed(2)} / Day`,
+          { content: "Total Logged Days:", styles: { fontStyle: 'bold' } }, `${expDaysList.length} Day(s)`
+        ]
+      ];
+
+      doc.autoTable({
+        startY: 44,
+        theme: 'grid',
+        body: metaRows,
+        styles: { fontSize: 7.8, cellPadding: 2, lineColor: [15, 23, 42], lineWidth: 0.2 }
+      });
+
+      const expTableBody = [];
+      const receiptImagesForAnnexure = [];
+
+      expDaysList.forEach(day => {
+        if (day.expenses && day.expenses.length > 0) {
+          day.expenses.forEach(e => {
+            if (e.receiptPhoto) {
+              receiptImagesForAnnexure.push({
+                date: day.date,
+                category: e.category,
+                amount: e.amount,
+                src: e.receiptPhoto
+              });
+            }
+            expTableBody.push([
+              day.date,
+              e.category,
+              e.description,
+              `INR ${e.amount.toFixed(2)}`,
+              `INR ${fixedDA.toFixed(2)}`,
+              `INR ${(day.gotAdvance === 'YES' ? day.advanceAmount : 0).toFixed(2)}`,
+              `INR ${(day.demandAdvance === 'YES' ? day.demandAmount : 0).toFixed(2)}`
+            ]);
+          });
+        } else {
+          expTableBody.push([
+            day.date,
+            "Allowance Only",
+            "Day Allowance & Log",
+            "INR 0.00",
+            `INR ${fixedDA.toFixed(2)}`,
+            `INR ${(day.gotAdvance === 'YES' ? day.advanceAmount : 0).toFixed(2)}`,
+            `INR ${(day.demandAdvance === 'YES' ? day.demandAmount : 0).toFixed(2)}`
+          ]);
+        }
+      });
+
+      doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 4,
+        head: [['Date', 'Category', 'Description', 'Receipt (₹)', 'DA (₹)', 'Advance (₹)', 'Demand (₹)']],
+        body: expTableBody,
+        headStyles: { fillColor: [15, 23, 42], textColor: [245, 158, 11], fontSize: 7.5, fontStyle: 'bold' },
+        styles: { fontSize: 7, cellPadding: 2, lineColor: [203, 213, 225], lineWidth: 0.2 },
+        columnStyles: { 0: { cellWidth: 20 }, 1: { cellWidth: 26 }, 2: { cellWidth: 54 }, 3: { cellWidth: 20 }, 4: { cellWidth: 20 }, 5: { cellWidth: 21 }, 6: { cellWidth: 21 } }
+      });
+
+      const sumRows = [
+        [{ content: "Total Receipts Amount (Categorized Bills):", styles: { fontStyle: 'bold' } }, `INR ${stats.grandCategorized.toFixed(2)}`],
+        [{ content: `Total Daily Allowance (${expDaysList.length} Days × INR ${fixedDA}):`, styles: { fontStyle: 'bold' } }, `INR ${stats.grandAllowance.toFixed(2)}`],
+        [{ content: "FINAL TOTAL SITE EXPENSES (Receipts + Allowance):", styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } }, { content: `INR ${stats.finalTotalExpenses.toFixed(2)}`, styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } }],
+        [{ content: "TOTAL ADVANCE RECEIVED FROM COMPANY:", styles: { fontStyle: 'bold' } }, `INR ${stats.grandAdvance.toFixed(2)}`],
+        [{ content: "NET SETTLEMENT AUDIT VERDICT:", styles: { fontStyle: 'bold', textColor: stats.netBalance > 0 ? [185, 28, 28] : [4, 120, 87] } }, {
+          content: stats.netBalance > 0 ? `DEBIT: Return INR ${stats.netBalance.toFixed(2)} to Company` : stats.netBalance < 0 ? `CREDIT: Reimburse INR ${Math.abs(stats.netBalance).toFixed(2)} to Engineer` : "BALANCED / SETTLED (INR 0.00)",
+          styles: { fontStyle: 'bold', textColor: stats.netBalance > 0 ? [185, 28, 28] : [4, 120, 87] }
+        }]
+      ];
+
+      doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 4,
+        body: sumRows,
+        theme: 'grid',
+        styles: { fontSize: 7.5, cellPadding: 2.2, lineColor: [15, 23, 42], lineWidth: 0.2 }
+      });
+
+      let finalSigY = doc.lastAutoTable.finalY + 12;
+      if (finalSigY > 255) {
+        doc.addPage();
+        finalSigY = 30;
+      }
+
+      doc.setDrawColor(203, 213, 225);
+      doc.line(14, finalSigY, 90, finalSigY);
+      doc.line(120, finalSigY, 196, finalSigY);
+
+      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text(`Claimant Site Engineer: ${engineerName}`, 14, finalSigY + 4);
+      doc.text("Accounts & Project Operations Approval", 120, finalSigY + 4);
+
+      if (receiptImagesForAnnexure.length > 0) {
+        doc.addPage();
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(15, 23, 42);
+        doc.text(`Annexure: Attached Expense Receipts (${receiptImagesForAnnexure.length} Items)`, 14, 15);
+
+        let imgY = 22;
+        const imgW = 88;
+        const imgH = 50;
+        const colGap = 6;
+        const rowGap = 8;
+
+        for (let i = 0; i < receiptImagesForAnnexure.length; i++) {
+          const col = i % 2;
+          const posX = 14 + col * (imgW + colGap);
+
+          if (col === 0 && (imgY + imgH > 270)) {
+            doc.addPage();
+            imgY = 20;
+          }
+
+          const r = receiptImagesForAnnexure[i];
+          doc.addImage(r.src, 'JPEG', posX, imgY, imgW, imgH);
+          doc.setFontSize(7);
+          doc.setTextColor(71, 85, 105);
+          doc.text(`${r.date} | ${r.category} | INR ${r.amount.toFixed(2)}`, posX, imgY + imgH + 3.5);
+
+          if (col === 1 || i === receiptImagesForAnnexure.length - 1) {
+            imgY += imgH + rowGap;
+          }
+        }
+      }
+
+      const cleanSite = siteName.replace(/[^a-zA-Z0-9_-]/g, "_");
+      doc.save(`Site_Expenses_${cleanSite}_${projectNo}.pdf`);
+    }
+
+    // =========================================================================
+    // PROTOCOL & CATEGORY CUSTOMIZER (Category -> Subcategory -> Steps)
+    // =========================================================================
+    let modalTemplates = null;
+    let modalCatKey = '';
+    let modalSubKey = '';
+
+    function escAttr(s) {
+      return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Convert any old-format category (flat "steps") to the subcategory format
+    function normalizeTemplates(tpl) {
+      if (!tpl || !tpl.FAT) return tpl;
+      Object.keys(tpl.FAT).forEach(ck => {
+        const cat = tpl.FAT[ck];
+        if (!cat.subcategories) {
+          cat.subcategories = {
+            "STANDARD": { name: "Standard", steps: Array.isArray(cat.steps) ? cat.steps : [] }
+          };
+          delete cat.steps;
+        }
+      });
+      return tpl;
+    }
+
+    function openTemplateManagerModal() {
+      modalTemplates = normalizeTemplates(getStoredTemplates());
+      if (!modalTemplates.FAT) modalTemplates.FAT = {};
+      const keys = Object.keys(modalTemplates.FAT);
+      modalCatKey = (currentCategoryKey && modalTemplates.FAT[currentCategoryKey]) ? currentCategoryKey : (keys[0] || '');
+      modalSubKey = '';
+
+      const modal = document.getElementById('templateManagerModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      renderModalCategories();
+      lucide.createIcons();
+    }
+
+    function closeTemplateManagerModal() {
+      const modal = document.getElementById('templateManagerModal');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function collectModalStepEdits() {
+      if (!modalTemplates || !modalCatKey || !modalSubKey) return;
+      const cat = modalTemplates.FAT[modalCatKey];
+      const sub = cat && cat.subcategories ? cat.subcategories[modalSubKey] : null;
+      if (!sub || !sub.steps) return;
+      sub.steps.forEach((st, idx) => {
+        const t = document.getElementById('stepTitle_' + idx);
+        const s = document.getElementById('stepStd_' + idx);
+        const p = document.getElementById('stepPrompt_' + idx);
+        if (t) st.title = t.value.trim();
+        if (s) st.standard = s.value.trim();
+        if (p) st.prompt = p.value.trim();
+      });
+    }
+
+    function renderModalCategories() {
+      const sel = document.getElementById('modalCategorySelect');
+      sel.innerHTML = '';
+      const cats = modalTemplates.FAT || {};
+      Object.keys(cats).forEach(k => {
+        const o = document.createElement('option');
+        o.value = k;
+        o.innerText = cats[k].name;
+        sel.appendChild(o);
+      });
+      if (modalCatKey && cats[modalCatKey]) sel.value = modalCatKey;
+      else modalCatKey = sel.value || '';
+      renderModalSubcategories();
+    }
+
+    function renderModalSubcategories() {
+      const sel = document.getElementById('modalSubcategorySelect');
+      sel.innerHTML = '';
+      const cat = modalTemplates.FAT[modalCatKey];
+      const subs = cat && cat.subcategories ? cat.subcategories : {};
+      Object.keys(subs).forEach(k => {
+        const o = document.createElement('option');
+        o.value = k;
+        o.innerText = subs[k].name;
+        sel.appendChild(o);
+      });
+      if (modalSubKey && subs[modalSubKey]) sel.value = modalSubKey;
+      else modalSubKey = sel.value || '';
+      renderModalSteps();
+    }
+
+    function renderModalSteps() {
+      const list = document.getElementById('modalStepsList');
+      list.innerHTML = '';
+      const cat = modalTemplates.FAT[modalCatKey];
+      const sub = cat && cat.subcategories ? cat.subcategories[modalSubKey] : null;
+      if (!sub) {
+        list.innerHTML = '<p class="text-xs text-slate-500">No subcategory selected. Add one with "+ New Subcategory".</p>';
+        return;
+      }
+      (sub.steps || []).forEach((st, idx) => {
+        const item = document.createElement('div');
+        item.className = "p-3 bg-slate-900 border border-slate-800 rounded-xl space-y-2";
+        item.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-mono-code font-bold text-amber-400">Step #${idx + 1}</span>
+            <button type="button" onclick="removeModalStep(${idx})" class="text-xs text-rose-400 hover:underline">Delete</button>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" value="${escAttr(st.title)}" placeholder="Step Title" id="stepTitle_${idx}" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+            <input type="text" value="${escAttr(st.standard)}" placeholder="Standard" id="stepStd_${idx}" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+          </div>
+          <textarea id="stepPrompt_${idx}" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white h-12">${escAttr(st.prompt)}</textarea>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function onModalCategoryChanged(key) {
+      collectModalStepEdits();
+      modalCatKey = key;
+      modalSubKey = '';
+      renderModalSubcategories();
+    }
+
+    function onModalSubcategoryChanged(key) {
+      collectModalStepEdits();
+      modalSubKey = key;
+      renderModalSteps();
+    }
+
+    function promptAddNewCategory() {
+      collectModalStepEdits();
+      const name = prompt("Enter new Main Category name (e.g. Relay Panel):");
+      if (!name || !name.trim()) return;
+      const key = "CUSTOM_" + Date.now();
+      const subKey = "SUB_" + Date.now();
+      modalTemplates.FAT[key] = {
+        name: name.trim(),
+        subcategories: {
+          [subKey]: {
+            name: "Standard",
+            steps: [{ id: "s_" + Date.now(), title: "Visual Inspection", prompt: "Inspect panel wiring and earth continuity.", standard: "OK" }]
+          }
+        }
+      };
+      modalCatKey = key;
+      modalSubKey = subKey;
+      renderModalCategories();
+    }
+
+    function promptAddNewSubcategory() {
+      if (!modalCatKey) return alert("Create a main category first.");
+      collectModalStepEdits();
+      const name = prompt("Enter new Subcategory name (e.g. 11kV Breaker Panel):");
+      if (!name || !name.trim()) return;
+      const key = "SUB_" + Date.now();
+      const cat = modalTemplates.FAT[modalCatKey];
+      if (!cat.subcategories) cat.subcategories = {};
+      cat.subcategories[key] = {
+        name: name.trim(),
+        steps: [{ id: "s_" + Date.now(), title: "New Step", prompt: "Verify component status.", standard: "Normal" }]
+      };
+      modalSubKey = key;
+      renderModalSubcategories();
+    }
+
+    function addNewStepToCurrentSubcategory() {
+      const cat = modalTemplates.FAT[modalCatKey];
+      const sub = cat && cat.subcategories ? cat.subcategories[modalSubKey] : null;
+      if (!sub) return alert("Select or create a subcategory first.");
+      collectModalStepEdits();
+      if (!sub.steps) sub.steps = [];
+      sub.steps.push({ id: "s_" + Date.now(), title: "New Step", prompt: "Verify component status.", standard: "Normal" });
+      renderModalSteps();
+    }
+
+    function removeModalStep(idx) {
+      const cat = modalTemplates.FAT[modalCatKey];
+      const sub = cat && cat.subcategories ? cat.subcategories[modalSubKey] : null;
+      if (!sub) return;
+      collectModalStepEdits();
+      if (sub.steps.length <= 1) return alert("A subcategory must keep at least 1 step.");
+      sub.steps.splice(idx, 1);
+      renderModalSteps();
+    }
+
+    function deleteCurrentSubcategory() {
+      const cat = modalTemplates.FAT[modalCatKey];
+      if (!cat || !cat.subcategories || !modalSubKey) return;
+      if (Object.keys(cat.subcategories).length <= 1) return alert("A category must keep at least 1 subcategory.");
+      if (!confirm("Delete this subcategory and all its steps?")) return;
+      delete cat.subcategories[modalSubKey];
+      modalSubKey = '';
+      renderModalSubcategories();
+    }
+
+    function deleteCurrentCategory() {
+      if (!modalCatKey) return;
+      if (Object.keys(modalTemplates.FAT).length <= 1) return alert("You must keep at least 1 main category.");
+      if (!confirm("Delete this entire category with all its subcategories?")) return;
+      delete modalTemplates.FAT[modalCatKey];
+      modalCatKey = '';
+      modalSubKey = '';
+      renderModalCategories();
+    }
+
+    function resetTemplatesToDefaults() {
+      if (!confirm("Reset ALL categories, subcategories and steps to factory defaults? Your custom ones will be removed.")) return;
+      modalTemplates = JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
+      modalCatKey = Object.keys(modalTemplates.FAT)[0] || '';
+      modalSubKey = '';
+      renderModalCategories();
+    }
+
+    function saveTemplatesAndClose() {
+      collectModalStepEdits();
+      saveTemplatesLocally(modalTemplates);
+      syncTemplatesToCloud(modalTemplates);
+      closeTemplateManagerModal();
+      refreshCategoryDropdown();
+    }
+
+    // Refresh button in Statement Portal
+    function loadEmployeeStatement() {
+      if (portalSessionToken && portalSessionEmail) {
+        return fetchStatementWithToken(portalSessionEmail, portalSessionToken);
+      }
+      alert("Please log in to the portal first.");
+    }
+
+
+    // ===== RESTORED: SITE EXPENSES ENGINE + STATEMENT PORTAL =====
+    // 10. SITE EXPENSE ENGINE & RECONCILIATION
+    function initExpensesModule() {
+      try {
+        const savedProfile = localStorage.getItem('aryavarta_exp_profile');
+        if (savedProfile) {
+          const p = JSON.parse(savedProfile);
+          document.getElementById('expSiteName').value = p.siteName || '';
+          document.getElementById('expEngineerName').value = p.engineerName || '';
+          document.getElementById('expEngineerEmail').value = p.engineerEmail || '';
+          document.getElementById('expProjectNo').value = p.projectNo || '';
+          document.getElementById('expFixedDailyAllowance').value = p.fixedDailyAllowance || '';
+        }
+      } catch (e) {}
+
+      lockExpProfile(true);
+
+      try {
+        const storedDays = localStorage.getItem('aryavarta_exp_days');
+        if (storedDays) {
+          expDaysList = JSON.parse(storedDays);
+        } else {
+          expDaysList = [createBlankExpDay(1, new Date().toISOString().split('T')[0])];
+        }
+      } catch (e) {
+        expDaysList = [createBlankExpDay(1, new Date().toISOString().split('T')[0])];
+      }
+
+      renderExpDaysNav();
+      loadExpDayIntoForm(0);
+    }
+
+    function createBlankExpDay(dayNum, dateStr) {
+      return {
+        dayNumber: dayNum,
+        date: dateStr,
+        gotAdvance: "NO",
+        advanceAmount: 0,
+        demandAdvance: "NO",
+        demandAmount: 0,
+        expenses: []
+      };
+    }
+
+    function lockExpProfile(shouldLock) {
+      isExpProfileLocked = shouldLock;
+      ['expSiteName', 'expEngineerName', 'expEngineerEmail', 'expProjectNo', 'expFixedDailyAllowance'].forEach(f => {
+        document.getElementById(f).disabled = shouldLock;
+      });
+      document.getElementById('lblExpProfileLock').innerText = shouldLock ? "Unlock to Edit" : "Lock Profile";
+    }
+
+    function toggleExpProfileLock() {
+      if (isExpProfileLocked) {
+        lockExpProfile(false);
+      } else {
+        const email = document.getElementById('expEngineerEmail').value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+          alert("Please enter a valid compulsory Email Address before locking the profile.");
+          document.getElementById('expEngineerEmail').focus();
+          return;
+        }
+
+        const profile = {
+          siteName: document.getElementById('expSiteName').value.trim(),
+          engineerName: document.getElementById('expEngineerName').value.trim(),
+          engineerEmail: email,
+          projectNo: document.getElementById('expProjectNo').value.trim(),
+          fixedDailyAllowance: parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0
+        };
+        try {
+          localStorage.setItem('aryavarta_exp_profile', JSON.stringify(profile));
+        } catch(e) {}
+        lockExpProfile(true);
+        calculateExpTotals();
+        playAudioTone(880, 0.1);
+      }
+    }
+
+    function renderExpDaysNav() {
+      const nav = document.getElementById('expDaysNav');
+      nav.innerHTML = '';
+      expDaysList.forEach((day, idx) => {
+        const btn = document.createElement('button');
+        const isActive = idx === activeExpDayIndex;
+        btn.className = `px-3 py-1.5 rounded-lg text-xs font-mono-code font-bold transition-all ${
+          isActive ? 'bg-amber-500 text-black shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+        }`;
+        btn.innerText = `Day ${day.dayNumber}: ${day.date}`;
+        btn.onclick = () => {
+          saveCurrentExpDay(false);
+          loadExpDayIntoForm(idx);
+        };
+        nav.appendChild(btn);
+      });
+      lucide.createIcons();
+    }
+
+    function loadExpDayIntoForm(idx) {
+      activeExpDayIndex = idx;
+      renderExpDaysNav();
+      const day = expDaysList[idx];
+
+      document.getElementById('lblExpDayTitle').innerText = `EXPENSES FOR: DAY ${day.dayNumber} (${day.date})`;
+      document.getElementById('expDailyDate').value = day.date;
+
+      const isAdv = day.gotAdvance === "YES";
+      document.getElementsByName('expGotAdvance')[0].checked = isAdv;
+      document.getElementsByName('expGotAdvance')[1].checked = !isAdv;
+      toggleAdvanceBox(isAdv);
+      document.getElementById('expAdvanceAmount').value = day.advanceAmount || '';
+
+      const isDem = day.demandAdvance === "YES";
+      document.getElementsByName('expDemandAdvance')[0].checked = isDem;
+      document.getElementsByName('expDemandAdvance')[1].checked = !isDem;
+      toggleDemandBox(isDem);
+      document.getElementById('expDemandAmount').value = day.demandAmount || '';
+
+      currentReceiptBase64 = null;
+      const statusEl = document.getElementById('lblReceiptStatus');
+      if (statusEl) {
+        statusEl.innerText = "No bill attached yet";
+        statusEl.className = "text-[10px] text-slate-500 font-mono-code mt-1 text-center truncate";
+      }
+
+      renderDayExpensesTable();
+      calculateExpTotals();
+    }
+
+    function toggleAdvanceBox(show) {
+      document.getElementById('boxAdvanceAmount').classList.toggle('hidden', !show);
+    }
+    function toggleDemandBox(show) {
+      document.getElementById('boxDemandAmount').classList.toggle('hidden', !show);
+    }
+
+    function onExpDateChanged(newDate) {
+      expDaysList[activeExpDayIndex].date = newDate;
+      document.getElementById('lblExpDayTitle').innerText = `EXPENSES FOR: DAY ${expDaysList[activeExpDayIndex].dayNumber} (${newDate})`;
+      renderExpDaysNav();
+    }
+
+    function addNewExpDay() {
+      saveCurrentExpDay(false);
+      const nextNum = expDaysList.length + 1;
+      const today = new Date().toISOString().split('T')[0];
+      expDaysList.push(createBlankExpDay(nextNum, today));
+      try {
+        localStorage.setItem('aryavarta_exp_days', JSON.stringify(expDaysList));
+      } catch (e) {}
+      loadExpDayIntoForm(expDaysList.length - 1);
+      calculateExpTotals();
+      playAudioTone(880, 0.15);
+    }
+
+    function deleteCurrentExpDay() {
+      if (expDaysList.length <= 1) {
+        alert("At least one expense day must remain in the dossier.");
+        return;
+      }
+      if (!confirm(`Are you sure you want to delete Day ${expDaysList[activeExpDayIndex].dayNumber} (${expDaysList[activeExpDayIndex].date})?`)) return;
+
+      expDaysList.splice(activeExpDayIndex, 1);
+      expDaysList.forEach((d, i) => { d.dayNumber = i + 1; });
+      activeExpDayIndex = Math.max(0, activeExpDayIndex - 1);
+      try {
+        localStorage.setItem('aryavarta_exp_days', JSON.stringify(expDaysList));
+      } catch (e) {}
+      loadExpDayIntoForm(activeExpDayIndex);
+      calculateExpTotals();
+      playAudioTone(660, 0.15);
+    }
+
+    function handleReceiptUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 1200;
+          let w = img.width, h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          currentReceiptBase64 = canvas.toDataURL('image/jpeg', 0.85);
+
+          const statusEl = document.getElementById('lblReceiptStatus');
+          if (statusEl) {
+            statusEl.innerText = `✓ Attached: ${file.name || 'Receipt Image'}`;
+            statusEl.className = "text-[10px] text-emerald-400 font-mono-code mt-1 text-center truncate font-bold";
+          }
+          playAudioTone(880, 0.1);
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
+    }
+
+    function addExpenseItemToActiveDay() {
+      const cat = document.getElementById('expCategorySelect').value;
+      const amount = parseFloat(document.getElementById('expItemAmount').value);
+      const desc = document.getElementById('expItemDescription').value.trim();
+
+      if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid expense amount.");
+        return;
+      }
+
+      const day = expDaysList[activeExpDayIndex];
+      day.expenses.push({
+        id: "exp_" + Date.now(),
+        category: cat,
+        description: desc || `${cat} Expense`,
+        amount: amount,
+        receiptPhoto: currentReceiptBase64
+      });
+
+      document.getElementById('expItemAmount').value = '';
+      document.getElementById('expItemDescription').value = '';
+      currentReceiptBase64 = null;
+      
+      const statusEl = document.getElementById('lblReceiptStatus');
+      if (statusEl) {
+        statusEl.innerText = "No bill attached yet";
+        statusEl.className = "text-[10px] text-slate-500 font-mono-code mt-1 text-center truncate";
+      }
+
+      renderDayExpensesTable();
+      calculateExpTotals();
+      playAudioTone(750, 0.15);
+    }
+
+    function deleteExpenseItem(itemIdx) {
+      const day = expDaysList[activeExpDayIndex];
+      day.expenses.splice(itemIdx, 1);
+      renderDayExpensesTable();
+      calculateExpTotals();
+    }
+
+    function renderDayExpensesTable() {
+      const container = document.getElementById('dayExpensesTableContainer');
+      const day = expDaysList[activeExpDayIndex];
+
+      if (!day.expenses || day.expenses.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 bg-slate-950">No categorized expenses added for this day yet.</div>`;
+        document.getElementById('lblDayCategorizedTotal').innerText = `Day Receipts: ₹0.00`;
+        return;
+      }
+
+      let dayTotal = 0;
+      let html = `
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-slate-950 text-slate-400 font-industrial uppercase border-b border-slate-800">
+            <tr>
+              <th class="p-2.5">Category</th>
+              <th class="p-2.5">Description</th>
+              <th class="p-2.5">Amount (₹)</th>
+              <th class="p-2.5 text-center">Receipt Evidence</th>
+              <th class="p-2.5 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 bg-slate-900/60 font-mono-code">
+      `;
+
+      day.expenses.forEach((item, idx) => {
+        dayTotal += item.amount;
+        const photoCell = item.receiptPhoto
+          ? `<img src="${item.receiptPhoto}" onclick="openReceiptLightbox('${item.receiptPhoto}', '${item.category} - ₹${item.amount}')" class="w-10 h-10 object-cover rounded-md border border-slate-700 mx-auto cursor-pointer hover:scale-110 transition-transform">`
+          : `<span class="text-[10px] text-slate-500 italic">No Photo</span>`;
+
+        html += `
+          <tr>
+            <td class="p-2.5 font-bold text-amber-400">${item.category}</td>
+            <td class="p-2.5 text-slate-300 font-sans">${item.description}</td>
+            <td class="p-2.5 font-bold text-white">₹${item.amount.toFixed(2)}</td>
+            <td class="p-2.5 text-center">${photoCell}</td>
+            <td class="p-2.5 text-right">
+              <button onclick="deleteExpenseItem(${idx})" class="text-rose-400 hover:text-rose-300 text-xs font-sans">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+      document.getElementById('lblDayCategorizedTotal').innerText = `Day Receipts: ₹${dayTotal.toFixed(2)}`;
+    }
+
+    function openReceiptLightbox(imgSrc, title) {
+      document.getElementById('lightboxFullImage').src = imgSrc;
+      document.getElementById('lblLightboxTitle').innerText = title || "Receipt Preview";
+      document.getElementById('btnDownloadReceipt').href = imgSrc;
+      const modal = document.getElementById('receiptLightboxModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeReceiptLightbox() {
+      const modal = document.getElementById('receiptLightboxModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function calculateExpTotals() {
+      saveCurrentExpDay(false);
+
+      let grandCategorized = 0;
+      let grandAdvance = 0;
+
+      expDaysList.forEach(day => {
+        if (day.expenses) {
+          day.expenses.forEach(e => { grandCategorized += (Number(e.amount) || 0); });
+        }
+        grandAdvance += (day.gotAdvance === "YES" ? (Number(day.advanceAmount) || 0) : 0);
+      });
+
+      const fixedDA = parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0;
+      const grandAllowance = expDaysList.length * fixedDA;
+
+      const finalTotalExpenses = grandCategorized + grandAllowance;
+      const netBalance = grandAdvance - finalTotalExpenses;
+
+      document.getElementById('statCategorizedExpenses').innerText = `₹${grandCategorized.toFixed(2)}`;
+      document.getElementById('statTotalAllowance').innerText = `₹${grandAllowance.toFixed(2)}`;
+      document.getElementById('lblDaysCountSummary').innerText = `${expDaysList.length} Day${expDaysList.length > 1 ? 's' : ''} × ₹${fixedDA}`;
+      document.getElementById('statTotalAdvance').innerText = `₹${grandAdvance.toFixed(2)}`;
+      document.getElementById('statFinalTotalExpenses').innerText = `₹${finalTotalExpenses.toFixed(2)}`;
+
+      const badge = document.getElementById('statSettlementBadge');
+      if (netBalance > 0) {
+        badge.className = "inline-block mt-1 px-4 py-1.5 rounded-lg text-xs font-bold font-mono-code uppercase bg-rose-500/20 text-rose-400 border border-rose-500/50";
+        badge.innerText = `DEBIT FROM ENGINEER: Return ₹${netBalance.toFixed(2)} to Company`;
+      } else if (netBalance < 0) {
+        badge.className = "inline-block mt-1 px-4 py-1.5 rounded-lg text-xs font-bold font-mono-code uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/50";
+        badge.innerText = `CREDIT TO ENGINEER: Reimburse ₹${Math.abs(netBalance).toFixed(2)} to Engineer`;
+      } else {
+        badge.className = "inline-block mt-1 px-4 py-1.5 rounded-lg text-xs font-bold font-mono-code uppercase bg-blue-500/20 text-blue-400 border border-blue-500/50";
+        badge.innerText = `BALANCED / SETTLED: ₹0.00`;
+      }
+
+      return {
+        grandCategorized, grandAllowance, grandAdvance, finalTotalExpenses, netBalance
+      };
+    }
+
+    function saveCurrentExpDay(showAlert = true) {
+      const day = expDaysList[activeExpDayIndex];
+      if (!day) return;
+
+      day.date = document.getElementById('expDailyDate').value || new Date().toISOString().split('T')[0];
+      day.gotAdvance = document.querySelector('input[name="expGotAdvance"]:checked')?.value || "NO";
+      day.advanceAmount = parseFloat(document.getElementById('expAdvanceAmount').value) || 0;
+      day.demandAdvance = document.querySelector('input[name="expDemandAdvance"]:checked')?.value || "NO";
+      day.demandAmount = parseFloat(document.getElementById('expDemandAmount').value) || 0;
+
+      const profile = {
+        siteName: document.getElementById('expSiteName').value.trim(),
+        engineerName: document.getElementById('expEngineerName').value.trim(),
+        engineerEmail: document.getElementById('expEngineerEmail').value.trim(),
+        projectNo: document.getElementById('expProjectNo').value.trim(),
+        fixedDailyAllowance: parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0
+      };
+
+      try {
+        localStorage.setItem('aryavarta_exp_profile', JSON.stringify(profile));
+        localStorage.setItem('aryavarta_exp_days', JSON.stringify(expDaysList));
+      } catch (e) {}
+
+      if (showAlert) {
+        playAudioTone(880, 0.2);
+        alert(`✓ Day ${day.dayNumber} expense sheet saved successfully!`);
+      }
+    }
+
+    // SYNC EXPENSES TO GOOGLE SHEETS
+    async function syncExpensesToGoogleSheet() {
+      const engineerEmail = document.getElementById('expEngineerEmail').value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      if (!engineerEmail || !emailRegex.test(engineerEmail)) {
+        alert("⚠️ Compulsory Email Address is required!\n\nPlease enter a valid email address in the Fixed Site Profile before syncing.");
+        if (isExpProfileLocked) lockExpProfile(false);
+        document.getElementById('expEngineerEmail').focus();
+        return;
+      }
+
+      const stats = calculateExpTotals();
+      const btn = document.getElementById('btnSyncExpenseSheet');
+      const origText = btn.innerHTML;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-1">●</span> Syncing to Sheet...`;
+      btn.disabled = true;
+
+      const siteName = document.getElementById('expSiteName').value.trim() || "Site";
+      const engineerName = document.getElementById('expEngineerName').value.trim() || "Engineer";
+      const projectNo = document.getElementById('expProjectNo').value.trim() || "PRJ-01";
+      const fixedDA = parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0;
+
+      const verdictText = stats.netBalance > 0
+        ? `DEBIT ENGINEER (Return ₹${stats.netBalance.toFixed(2)})`
+        : stats.netBalance < 0
+          ? `CREDIT ENGINEER (Reimburse ₹${Math.abs(stats.netBalance).toFixed(2)})`
+          : "SETTLED (₹0.00)";
+
+      let flatItems = [];
+      expDaysList.forEach(day => {
+        if (day.expenses && day.expenses.length > 0) {
+          day.expenses.forEach(e => {
+            flatItems.push({
+              date: day.date,
+              category: e.category,
+              description: e.description,
+              amount: e.amount,
+              dailyAllowance: fixedDA,
+              advanceReceived: day.gotAdvance === "YES" ? day.advanceAmount : 0,
+              demandedAdvance: day.demandAdvance === "YES" ? day.demandAmount : 0,
+              receiptPhotoBase64: e.receiptPhoto
+            });
+          });
+        } else {
+          flatItems.push({
+            date: day.date,
+            category: "Allowance & Advances",
+            description: "Daily Allowance & Cash Flow Log",
+            amount: 0,
+            dailyAllowance: fixedDA,
+            advanceReceived: day.gotAdvance === "YES" ? day.advanceAmount : 0,
+            demandedAdvance: day.demandAdvance === "YES" ? day.demandAmount : 0,
+            receiptPhotoBase64: null
+          });
+        }
+      });
+
+      const payload = {
+        timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+        serviceType: "EXPENSES",
+        siteName: siteName,
+        engineerName: engineerName,
+        engineerEmail: engineerEmail,
+        projectNo: projectNo,
+        settlementVerdict: verdictText,
+        items: flatItems
+      };
+
+      try {
+        await fetch(GOOGLE_APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        playAudioTone(880, 0.2);
+        alert("✓ Site Expenses successfully synced to Google Sheets!");
+      } catch (err) {
+        alert("Sync request failed. Please check network connection.");
+      } finally {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+        lucide.createIcons();
+      }
+    }
+
+    function exportExpensesToCsv() {
+      const stats = calculateExpTotals();
+      const siteName = document.getElementById('expSiteName').value.trim() || "Site";
+      const engineerName = document.getElementById('expEngineerName').value.trim() || "Engineer";
+      const engineerEmail = document.getElementById('expEngineerEmail').value.trim() || "N/A";
+      const projectNo = document.getElementById('expProjectNo').value.trim() || "Project";
+      const fixedDA = parseFloat(document.getElementById('expFixedDailyAllowance').value) || 0;
+
+      let csv = "ARYAVARTA AUTOMATION - SITE EXPENSES & SETTLEMENT REPORT\n";
+      csv += `Site Name:,${siteName},Project No:,${projectNo},Engineer Name:,${engineerName},Email:,${engineerEmail}\n\n`;
+      csv += "Date,Category,Description,Receipt Amount (INR),Daily Allowance (INR),Advance Received (INR),Demanded Advance (INR)\n";
+
+      expDaysList.forEach(day => {
+        if (day.expenses && day.expenses.length > 0) {
+          day.expenses.forEach(e => {
+            csv += `"${day.date}","${e.category}","${e.description.replace(/"/g, '""')}",${e.amount},${fixedDA},${day.advanceAmount || 0},${day.demandAmount || 0}\n`;
+          });
+        } else {
+          csv += `"${day.date}","No Receipts","Daily Allowance Log",0,${fixedDA},${day.advanceAmount || 0},${day.demandAmount || 0}\n`;
+        }
+      });
+
+      csv += `\nSUMMARY TOTALS:\n`;
+      csv += `Total Receipts Amount:,${stats.grandCategorized.toFixed(2)}\n`;
+      csv += `Total Daily Allowance (${expDaysList.length} Days × ₹${fixedDA}):,${stats.grandAllowance.toFixed(2)}\n`;
+      csv += `FINAL TOTAL EXPENSES (Receipts + Allowance):,${stats.finalTotalExpenses.toFixed(2)}\n`;
+      csv += `TOTAL ADVANCE RECEIVED:,${stats.grandAdvance.toFixed(2)}\n`;
+      csv += `NET SETTLEMENT BALANCE (Advance - Expenses):,${stats.netBalance.toFixed(2)}\n`;
+      csv += `FINAL VERDICT:,${stats.netBalance > 0 ? "DEBIT ENGINEER (Return balance to company)" : stats.netBalance < 0 ? "CREDIT ENGINEER (Company reimbursement)" : "SETTLED"}\n`;
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Site_Expenses_${siteName}_${projectNo}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // =========================================================================
+    // 11. AUTHENTICATED "MY STATEMENT" EMPLOYEE PORTAL ENGINE
+    // =========================================================================
+    function initPortalState() {
+      try {
+        const savedToken = localStorage.getItem('aryavarta_portal_token');
+        const savedEmail = localStorage.getItem('aryavarta_portal_email');
+        if (savedToken && savedEmail) {
+          portalSessionToken = savedToken;
+          portalSessionEmail = savedEmail;
+          document.getElementById('portalAuthEmail').value = savedEmail;
+          fetchStatementWithToken(savedEmail, savedToken);
+          return;
+        }
+      } catch(e) {}
+
+      const profileEmail = document.getElementById('expEngineerEmail')?.value.trim();
+      if (profileEmail) {
+        document.getElementById('portalAuthEmail').value = profileEmail;
+      }
+    }
+
+    function toggleAuthMode(mode) {
+      if (mode === 'OTP') {
+        document.getElementById('authModePin').classList.add('hidden');
+        document.getElementById('authModeOtp').classList.remove('hidden');
+      } else {
+        document.getElementById('authModeOtp').classList.add('hidden');
+        document.getElementById('authModePin').classList.remove('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    function callGasAuth(params) {
+      return new Promise((resolve, reject) => {
+        const cbName = 'gasAuthCb_' + Math.floor(Math.random() * 1000000);
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error("Request timed out. Please check your internet connection."));
+        }, 25000);
+
+        function cleanup() {
+          clearTimeout(timeout);
+          if (window[cbName]) delete window[cbName];
+          const el = document.getElementById(cbName);
+          if (el && el.parentNode) el.parentNode.removeChild(el);
+        }
+
+        window[cbName] = function(data) {
+          cleanup();
+          resolve(data);
+        };
+
+        const queryParts = Object.keys(params).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`);
+        queryParts.push(`callback=${cbName}`);
+
+        const script = document.createElement('script');
+        script.id = cbName;
+        script.src = `${GOOGLE_APPS_SCRIPT_URL}?${queryParts.join('&')}`;
+        script.onerror = function() {
+          cleanup();
+          reject(new Error("Failed to connect to Google Apps Script. Ensure the script is deployed with access set to Anyone."));
+        };
+        document.body.appendChild(script);
+      });
+    }
+
+    async function loginWithPin() {
+      const email = document.getElementById('portalAuthEmail').value.trim().toLowerCase();
+      const pin = document.getElementById('portalAuthPin').value.trim();
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert("Please enter a valid official registered email address.");
+        document.getElementById('portalAuthEmail').focus();
+        return;
+      }
+      if (!/^\d{4}$/.test(pin)) {
+        alert("Please enter your 4-digit PIN.");
+        document.getElementById('portalAuthPin').focus();
+        return;
+      }
+
+      const btn = document.getElementById('btnLoginPin');
+      const orig = btn.innerHTML;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-1">●</span> Verifying PIN...`;
+      btn.disabled = true;
+
+      try {
+        const res = await callGasAuth({ action: "verifyPin", email: email, pin: pin });
+        if (res.status === "error") {
+          alert(res.message);
+          return;
+        }
+
+        portalSessionToken = res.sessionToken;
+        portalSessionEmail = email;
+        try {
+          localStorage.setItem('aryavarta_portal_token', res.sessionToken);
+          localStorage.setItem('aryavarta_portal_email', email);
+        } catch(e) {}
+
+        handleAuthSuccess(res);
+      } catch(err) {
+        alert(err.message || "Login failed. Check your network.");
+      } finally {
+        btn.innerHTML = orig;
+        btn.disabled = false;
+        lucide.createIcons();
+      }
+    }
+
+    async function sendPortalOtp() {
+      const email = document.getElementById('portalAuthEmail').value.trim().toLowerCase();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert("Please enter a valid official email address first.");
+        document.getElementById('portalAuthEmail').focus();
+        return;
+      }
+
+      const btn = document.getElementById('btnSendOtp');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-1">●</span> Sending Code...`;
+
+      try {
+        const res = await callGasAuth({ action: "sendOtp", email: email });
+        if (res.status === "error") {
+          alert(res.message);
+          btn.disabled = false;
+          btn.innerHTML = `Send 6-Digit Code to Email`;
+          return;
+        }
+
+        alert("✓ A 6-digit verification code has been sent to your email inbox! Please check your email.");
+        document.getElementById('otpInputGroup').classList.remove('hidden');
+        document.getElementById('portalAuthOtpCode').focus();
+        startOtpCooldown();
+      } catch(err) {
+        alert(err.message || "Failed to send verification code.");
+        btn.disabled = false;
+        btn.innerHTML = `Send 6-Digit Code to Email`;
+      }
+      lucide.createIcons();
+    }
+
+    function startOtpCooldown() {
+      let seconds = 60;
+      const timerEl = document.getElementById('lblOtpTimer');
+      const countEl = document.getElementById('otpCountdown');
+      const btn = document.getElementById('btnSendOtp');
+
+      timerEl.classList.remove('hidden');
+      btn.disabled = true;
+
+      clearInterval(otpCooldownInterval);
+      otpCooldownInterval = setInterval(() => {
+        seconds--;
+        countEl.innerText = seconds;
+        if (seconds <= 0) {
+          clearInterval(otpCooldownInterval);
+          timerEl.classList.add('hidden');
+          btn.disabled = false;
+          btn.innerHTML = `Resend Verification Code`;
+        }
+      }, 1000);
+    }
+
+    async function verifyPortalOtp() {
+      const email = document.getElementById('portalAuthEmail').value.trim().toLowerCase();
+      const otp = document.getElementById('portalAuthOtpCode').value.trim();
+
+      if (!/^\d{6}$/.test(otp)) {
+        alert("Please enter the complete 6-digit code received on your email.");
+        document.getElementById('portalAuthOtpCode').focus();
+        return;
+      }
+
+      const btn = document.getElementById('btnVerifyOtp');
+      const orig = btn.innerHTML;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-1">●</span> Verifying...`;
+      btn.disabled = true;
+
+      try {
+        const res = await callGasAuth({ action: "verifyOtp", email: email, otp: otp });
+        if (res.status === "error") {
+          alert(res.message);
+          return;
+        }
+
+        portalSessionToken = res.sessionToken;
+        portalSessionEmail = email;
+        try {
+          localStorage.setItem('aryavarta_portal_token', res.sessionToken);
+          localStorage.setItem('aryavarta_portal_email', email);
+        } catch(e) {}
+
+        handleAuthSuccess(res);
+      } catch(err) {
+        alert(err.message || "Verification failed.");
+      } finally {
+        btn.innerHTML = orig;
+        btn.disabled = false;
+        lucide.createIcons();
+      }
+    }
+
+    async function fetchStatementWithToken(email, token) {
+      document.getElementById('portalAuthCard').classList.add('hidden');
+      document.getElementById('portalLoadingBox').classList.remove('hidden');
+
+      try {
+        const res = await callGasAuth({ action: "getEmployeeStatement", email: email, token: token });
+        if (res.status === "error") {
+          logoutPortal();
+          return;
+        }
+        handleAuthSuccess(res);
+      } catch(e) {
+        document.getElementById('portalLoadingBox').classList.add('hidden');
+        document.getElementById('portalAuthCard').classList.remove('hidden');
+      }
+    }
+
+    function handleAuthSuccess(res) {
+      document.getElementById('portalAuthCard').classList.add('hidden');
+      document.getElementById('portalLoadingBox').classList.add('hidden');
+      document.getElementById('portalContentBox').classList.remove('hidden');
+
+      document.getElementById('lblSetPinBtn').innerText = res.hasPin ? "Change 4-Digit PIN" : "Set 4-Digit PIN";
+
+      rawEmployeePortalData = res;
+      renderEmployeeStatement(res);
+      populatePortalProjectFilter(res.reports || []);
+      playAudioTone(880, 0.2);
+    }
+
+    function logoutPortal() {
+      portalSessionToken = null;
+      portalSessionEmail = null;
+      try {
+        localStorage.removeItem('aryavarta_portal_token');
+        localStorage.removeItem('aryavarta_portal_email');
+      } catch(e) {}
+
+      document.getElementById('portalContentBox').classList.add('hidden');
+      document.getElementById('portalLoadingBox').classList.add('hidden');
+      document.getElementById('portalAuthCard').classList.remove('hidden');
+      document.getElementById('portalAuthPin').value = '';
+      document.getElementById('portalAuthOtpCode').value = '';
+      toggleAuthMode('PIN');
+    }
+
+    function openSetPinModal() {
+      document.getElementById('inputNewPin').value = '';
+      const modal = document.getElementById('modalSetPin');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.getElementById('inputNewPin').focus();
+    }
+
+    function closeSetPinModal() {
+      const modal = document.getElementById('modalSetPin');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    async function submitNewPin() {
+      const pin = document.getElementById('inputNewPin').value.trim();
+      if (!/^\d{4}$/.test(pin)) {
+        alert("Please enter exactly 4 numbers (e.g. 1234).");
+        return;
+      }
+
+      try {
+        const res = await callGasAuth({
+          action: "setPin",
+          email: portalSessionEmail,
+          token: portalSessionToken,
+          pin: pin
+        });
+
+        if (res.status === "error") {
+          alert(res.message);
+          return;
+        }
+
+        alert("✓ 4-Digit Security PIN successfully updated! You can now use this PIN for fast login anytime.");
+        document.getElementById('lblSetPinBtn').innerText = "Change 4-Digit PIN";
+        closeSetPinModal();
+      } catch(err) {
+        alert("Failed to save PIN.");
+      }
+    }
+
+    function renderEmployeeStatement(data) {
+      const sum = data.summary || {};
+      const st = data.stats || {};
+      const engName = sum.engineerName || (data.reports && data.reports.length > 0 ? data.reports[0].engineerName : "Valued Engineer");
+
+      document.getElementById('lblPortalEngineerName').innerText = engName;
+      document.getElementById('lblPortalEngineerEmail').innerText = data.email || "";
+
+      const siteSettlement = sum.siteExpensesSettlement !== undefined ? sum.siteExpensesSettlement : (st.calculatedSiteBalance || 0);
+      const pastPending = sum.pastPendingBalance !== undefined ? sum.pastPendingBalance : 0;
+      const realAmount = sum.finalRealSettlementAmount !== undefined ? sum.finalRealSettlementAmount : (siteSettlement + pastPending);
+      const realVerdict = sum.finalRealVerdict || (realAmount > 0 ? `CREDIT TO ENGINEER (Reimburse ₹${realAmount.toFixed(2)})` : realAmount < 0 ? `DEBIT FROM ENGINEER (Return ₹${Math.abs(realAmount).toFixed(2)})` : "BALANCED / SETTLED (₹0.00)");
+
+      document.getElementById('statPortalSiteSettlement').innerText = (siteSettlement < 0 ? "-₹" : "₹") + Math.abs(siteSettlement).toFixed(2);
+      document.getElementById('lblPortalSiteStatus').innerText = sum.siteExpensesStatus || (siteSettlement >= 0 ? "Credit Status" : "Debit Status");
+      document.getElementById('statPortalPastPending').innerText = (pastPending < 0 ? "-₹" : "₹") + Math.abs(pastPending).toFixed(2);
+      document.getElementById('statPortalFinalRealAmount').innerText = (realAmount < 0 ? "-₹" : "₹") + Math.abs(realAmount).toFixed(2);
+
+      const verdictBadge = document.getElementById('portalRealVerdictBadge');
+      verdictBadge.innerText = realVerdict;
+      if (realAmount < 0 || realVerdict.includes("DEBIT")) {
+        verdictBadge.className = "px-4 py-1.5 rounded-xl font-bold font-mono-code text-xs uppercase bg-rose-500/20 text-rose-400 border border-rose-500/50 shadow";
+      } else if (realAmount > 0 || realVerdict.includes("CREDIT")) {
+        verdictBadge.className = "px-4 py-1.5 rounded-xl font-bold font-mono-code text-xs uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 shadow";
+      } else {
+        verdictBadge.className = "px-4 py-1.5 rounded-xl font-bold font-mono-code text-xs uppercase bg-blue-500/20 text-blue-400 border border-blue-500/50 shadow";
+      }
+
+      document.getElementById('statPortalTotalBills').innerText = `₹${(st.totalBillsAmount || 0).toFixed(2)}`;
+      document.getElementById('statPortalDaysCount').innerText = st.totalDays || 0;
+      document.getElementById('statPortalTotalAllowance').innerText = `₹${(st.totalDailyAllowance || 0).toFixed(2)}`;
+      document.getElementById('statPortalTotalExpenses').innerText = `₹${(st.totalExpenses || 0).toFixed(2)}`;
+      document.getElementById('statPortalTotalAdvance').innerText = `₹${(st.totalAdvanceReceived || 0).toFixed(2)}`;
+
+      const catMap = st.categoryBreakdown || {};
+      document.getElementById('catValHotel').innerText = `₹${(catMap['Hotel'] || 0).toFixed(2)}`;
+      document.getElementById('catValFood').innerText = `₹${(catMap['Food'] || 0).toFixed(2)}`;
+      document.getElementById('catValTravel').innerText = `₹${(catMap['Travel'] || 0).toFixed(2)}`;
+      document.getElementById('catValRecharge').innerText = `₹${(catMap['Mobile Recharge'] || 0).toFixed(2)}`;
+      document.getElementById('catValOther').innerText = `₹${(catMap['Other Expenses'] || 0).toFixed(2)}`;
+
+      renderPortalTables(data.reports || []);
+    }
+
+    function populatePortalProjectFilter(reports) {
+      const select = document.getElementById('filterPortalProject');
+      select.innerHTML = '<option value="ALL">All Projects / Sites</option>';
+      const seen = {};
+      (reports || []).forEach(r => {
+        const val = `${r.projectNo} - ${r.siteName}`;
+        if (!seen[val]) {
+          seen[val] = true;
+          const opt = document.createElement('option');
+          opt.value = r.projectNo;
+          opt.innerText = val;
+          select.appendChild(opt);
+        }
+      });
+    }
+
+    function applyPortalFilters() {
+      if (!rawEmployeePortalData) return;
+
+      const projFilter = document.getElementById('filterPortalProject').value;
+      const fromDate = document.getElementById('filterPortalFromDate').value;
+      const toDate = document.getElementById('filterPortalToDate').value;
+      const catFilter = document.getElementById('filterPortalCategory').value;
+      const searchKeyword = document.getElementById('filterPortalSearch').value.trim().toLowerCase();
+
+      const filteredReports = [];
+
+      (rawEmployeePortalData.reports || []).forEach(rep => {
+        if (projFilter !== "ALL" && rep.projectNo !== projFilter) return;
+
+        const matchingDays = [];
+        (rep.days || []).forEach(day => {
+          if (fromDate && day.date < fromDate) return;
+          if (toDate && day.date > toDate) return;
+
+          const matchingItems = (day.items || []).filter(item => {
+            if (catFilter !== "ALL" && item.category !== catFilter) return false;
+            if (searchKeyword) {
+              const fullText = (item.category + " " + item.description).toLowerCase();
+              if (!fullText.includes(searchKeyword)) return false;
+            }
+            return true;
+          });
+
+          if (matchingItems.length > 0 || (!catFilter && !searchKeyword)) {
+            matchingDays.push({
+              ...day,
+              items: matchingItems
+            });
+          }
+        });
+
+        if (matchingDays.length > 0) {
+          filteredReports.push({
+            ...rep,
+            days: matchingDays
+          });
+        }
+      });
+
+      renderPortalTables(filteredReports);
+    }
+
+    function resetPortalFilters() {
+      document.getElementById('filterPortalProject').value = "ALL";
+      document.getElementById('filterPortalFromDate').value = "";
+      document.getElementById('filterPortalToDate').value = "";
+      document.getElementById('filterPortalCategory').value = "ALL";
+      document.getElementById('filterPortalSearch').value = "";
+      applyPortalFilters();
+    }
+
+    function renderPortalTables(reports) {
+      const container = document.getElementById('portalTablesContainer');
+      container.innerHTML = '';
+
+      if (!reports || reports.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-xs text-slate-500 bg-slate-950 border border-slate-800 rounded-2xl">No expense records found matching current criteria.</div>`;
+        document.getElementById('lblPortalFilteredCount').innerText = "0 Records Found";
+        return;
+      }
+
+      let totalFilteredItems = 0;
+      let totalFilteredDays = 0;
+
+      reports.forEach((rep, rIdx) => {
+        let repBillsTotal = 0;
+        let repAllowanceTotal = 0;
+        let repAdvanceTotal = 0;
+
+        const card = document.createElement('div');
+        card.className = "bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-xl";
+
+        let html = `
+          <div class="bg-gradient-to-r from-slate-900 to-slate-950 p-4 border-b border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-mono-code font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">REPORT #${rIdx + 1}</span>
+                <span class="text-xs font-bold text-white font-industrial uppercase">${rep.siteName}</span>
+                <span class="text-xs font-mono-code text-slate-400">(${rep.projectNo})</span>
+              </div>
+              <p class="text-[11px] text-slate-400 font-mono-code mt-0.5">Submitted: ${rep.timestamp}</p>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-slate-400 block font-mono-code">Report Verdict:</span>
+              <span class="text-xs font-bold font-mono-code ${rep.settlementVerdict && rep.settlementVerdict.includes('DEBIT') ? 'text-rose-400' : 'text-emerald-400'}">${rep.settlementVerdict || 'Recorded'}</span>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead class="bg-slate-900/90 text-slate-400 font-industrial uppercase text-[11px] border-b border-slate-800">
+                <tr>
+                  <th class="p-3 border-r border-slate-800">Expense Date</th>
+                  <th class="p-3 border-r border-slate-800 text-center">Daily Allowance</th>
+                  <th class="p-3 border-r border-slate-800 text-center">Advance Received</th>
+                  <th class="p-3 border-r border-slate-800 text-center">Demanded Advance</th>
+                  <th class="p-3 border-r border-slate-800">Category</th>
+                  <th class="p-3 border-r border-slate-800">Description</th>
+                  <th class="p-3 border-r border-slate-800 text-right">Amount (₹)</th>
+                  <th class="p-3 text-center">Bill Link</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 font-mono-code">
+        `;
+
+        (rep.days || []).forEach(day => {
+          totalFilteredDays++;
+          repAllowanceTotal += (day.dailyAllowance || 0);
+          repAdvanceTotal += (day.advanceReceived || 0);
+
+          const itemsToRender = (day.items && day.items.length > 0)
+            ? day.items
+            : [{ category: "Allowance Only", description: "Daily Allowance & Cash Flow Entry", amount: 0, receiptLink: "" }];
+
+          const rowSpan = itemsToRender.length;
+          totalFilteredItems += (day.items ? day.items.length : 0);
+
+          itemsToRender.forEach((item, itmIdx) => {
+            repBillsTotal += (item.amount || 0);
+            const isFirst = (itmIdx === 0);
+
+            html += `<tr class="hover:bg-slate-900/40 transition-colors">`;
+
+            if (isFirst) {
+              html += `
+                <td rowspan="${rowSpan}" class="p-3 border-r border-slate-800 font-bold text-white align-middle bg-slate-900/30">${day.date}</td>
+                <td rowspan="${rowSpan}" class="p-3 border-r border-slate-800 text-center font-bold text-slate-200 align-middle bg-slate-900/30">₹${(day.dailyAllowance || 0).toFixed(2)}</td>
+                <td rowspan="${rowSpan}" class="p-3 border-r border-slate-800 text-center font-bold text-amber-400 align-middle bg-slate-900/30">₹${(day.advanceReceived || 0).toFixed(2)}</td>
+                <td rowspan="${rowSpan}" class="p-3 border-r border-slate-800 text-center font-bold text-blue-400 align-middle bg-slate-900/30">₹${(day.demandedAdvance || 0).toFixed(2)}</td>
+              `;
+            }
+
+            const linkBtn = (item.receiptLink && item.receiptLink.startsWith('http'))
+              ? `<a href="${item.receiptLink}" target="_blank" class="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-bold inline-flex items-center gap-1 transition-all">View Receipt ↗</a>`
+              : `<span class="text-[10px] text-slate-600">No Receipt</span>`;
+
+            html += `
+              <td class="p-3 border-r border-slate-800 font-bold text-amber-400">${item.category}</td>
+              <td class="p-3 border-r border-slate-800 text-slate-300 font-sans">${item.description}</td>
+              <td class="p-3 border-r border-slate-800 text-right font-bold text-white">₹${(item.amount || 0).toFixed(2)}</td>
+              <td class="p-3 text-center">${linkBtn}</td>
+            </tr>`;
+          });
+        });
+
+        const repExpenses = repBillsTotal + repAllowanceTotal;
+
+        html += `
+              </tbody>
+              <tfoot class="bg-slate-900/95 font-mono-code font-bold text-xs border-t border-slate-800">
+                <tr>
+                  <td colspan="4" class="p-3 text-slate-400 border-r border-slate-800">
+                    REPORT TOTALS: <span class="text-white">${rep.days.length} Days Logged</span>
+                  </td>
+                  <td colspan="2" class="p-3 text-right text-slate-400 border-r border-slate-800">
+                    Bills Total: <span class="text-white">₹${repBillsTotal.toFixed(2)}</span> | DA Total: <span class="text-white">₹${repAllowanceTotal.toFixed(2)}</span>
+                  </td>
+                  <td class="p-3 text-right text-emerald-400 border-r border-slate-800">
+                    ₹${repExpenses.toFixed(2)}
+                  </td>
+                  <td class="p-3 text-center text-amber-400">
+                    Adv: ₹${repAdvanceTotal.toFixed(2)}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        `;
+
+        card.innerHTML = html;
+        container.appendChild(card);
+      });
+
+      document.getElementById('lblPortalFilteredCount').innerText = `Showing ${totalFilteredItems} bill(s) across ${totalFilteredDays} day(s)`;
+      lucide.createIcons();
+    }
+
+
     function handlePrimaryPdfDownload() {
       if (currentAppMode === 'DWR') {
         generateConsolidatedDwrPDF();
@@ -2402,6 +4333,7 @@
         generateOfficialInspectionPDF();
       }
     }
+
   </script>
 </body>
 </html>
