@@ -71,7 +71,7 @@
   <header class="sticky top-0 z-40 bg-[#070e1a]/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 shadow-xl">
     <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
       
-      <!-- Company Logo & Details -->
+      <!-- Company Official Logo & Subheading -->
       <div class="flex items-center gap-3">
         <div class="bg-white px-2.5 py-1.5 rounded-lg flex items-center shadow-md border border-slate-200">
           <img 
@@ -91,7 +91,7 @@
         </div>
       </div>
 
-      <!-- Controls: Language Selector -->
+      <!-- Language Selector -->
       <div class="flex items-center gap-2">
         <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg px-2 py-1">
           <i data-lucide="globe" class="w-4 h-4 text-amber-400 mr-1.5"></i>
@@ -125,7 +125,7 @@
     </div>
   </header>
 
-  <!-- ================= MAIN WORKSPACE CONTAINER ================= -->
+  <!-- ================= MAIN WORKSPACE ================= -->
   <main class="max-w-6xl mx-auto px-4 py-5 flex-1 w-full space-y-6">
 
     <!-- ========================================================================= -->
@@ -1729,7 +1729,7 @@
       if (direction === -1 && row.previousElementSibling) {
         container.insertBefore(row, row.previousElementSibling);
       } else if (direction === 1 && row.nextElementSibling) {
-        container.insertBefore(row, row.nextElementSibling);
+        container.insertBefore(row.nextElementSibling, row);
       }
       onSubcategorySelectionChanged();
     }
@@ -2068,7 +2068,241 @@
       lucide.createIcons();
     }
 
+    // =========================================================================
+    // 7. COMPREHENSIVE OFFICIAL FAT PDF REPORT GENERATOR
+    // =========================================================================
+    async function generateOfficialInspectionPDF() {
+      saveFatMeta();
+      saveFatExtraSections();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      const client = document.getElementById('metaClient').value.trim() || "Valued Client";
+      const serial = document.getElementById('metaSerialTag').value.trim() || "AA-PANEL-QC";
+      const po = document.getElementById('metaProjectPo').value.trim() || "PO-REF";
+      const engineer = document.getElementById('metaEngineer').value.trim() || "Aryavarta Engineer";
+      const docTitle = "FACTORY ACCEPTANCE TEST (FAT) CERTIFICATE";
+
+      doc.setTextColor(220, 38, 38);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.text("ARYAVARTA AUTOMATION", 14, 16);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text("ARYAVARTA AUTOMATION", 196, 12, { align: "right" });
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(71, 85, 105);
+      doc.text("Site & Plant Engineering Operations", 196, 16.5, { align: "right" });
+      doc.text("Chikhali, Pune - 411062, Maharashtra, India", 196, 21, { align: "right" });
+      doc.text("ISO 9001:2015 & ISO 14001:2015 Certified", 196, 25.5, { align: "right" });
+
+      doc.setFillColor(11, 25, 44);
+      doc.rect(14, 30, 182, 10, 'F');
+      doc.setTextColor(245, 158, 11);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      doc.text(docTitle, 18, 36.5);
+
+      const metaRows = [
+        [
+          { content: "Client Name:", styles: { fontStyle: 'bold' } }, client,
+          { content: "Panel Serial No:", styles: { fontStyle: 'bold' } }, serial
+        ],
+        [
+          { content: "PO / Project:", styles: { fontStyle: 'bold' } }, po,
+          { content: "Testing Engineer:", styles: { fontStyle: 'bold' } }, engineer
+        ]
+      ];
+
+      doc.autoTable({
+        startY: 42,
+        theme: 'grid',
+        body: metaRows,
+        styles: { fontSize: 8, cellPadding: 2, lineColor: [15, 23, 42], lineWidth: 0.2 }
+      });
+
+      const tableData = inspectionData.map((item, idx) => [
+        idx + 1,
+        item.subName ? `${item.subName} - ${item.title}` : item.title,
+        item.testComments || "Verified / Inspected",
+        item.status || "YES"
+      ]);
+
+      doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 4,
+        head: [['#', 'Test Parameter & Scope', 'Test Comments / Observations', 'Status']],
+        body: tableData,
+        headStyles: { fillColor: [15, 23, 42], textColor: [245, 158, 11], fontSize: 8, fontStyle: 'bold' },
+        styles: { fontSize: 7.5, cellPadding: 2, lineColor: [203, 213, 225], lineWidth: 0.2 },
+        columnStyles: {
+          0: { cellWidth: 10, halign: 'center' },
+          1: { cellWidth: 95 },
+          2: { cellWidth: 60 },
+          3: { cellWidth: 17, halign: 'center', fontStyle: 'bold' }
+        }
+      });
+
+      // SECTION: TEST INSTRUMENTS
+      const validInstruments = fatInstrumentsList.filter(i => i.instrument || i.make || i.typeNo);
+      if (validInstruments.length > 0) {
+        const instRows = validInstruments.map(i => [
+          i.instrument || "N/A", i.make || "N/A", i.typeNo || "N/A", i.calDate || "N/A", i.comments || "Valid"
+        ]);
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY + 5,
+          head: [[{ content: 'TEST INSTRUMENTS', colSpan: 5, styles: { fillColor: [11, 25, 44], textColor: [245, 158, 11], fontStyle: 'bold' } }],
+                 ['Instrument used in test', 'Manufacture:', 'Type no:', 'Calibration date:', 'Comments']],
+          body: instRows,
+          theme: 'grid',
+          headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontSize: 7.5 },
+          styles: { fontSize: 7, cellPadding: 1.8 }
+        });
+
+        const instTested = document.getElementById('instTestedBy')?.value || "N/A";
+        const instApproved = document.getElementById('instApprovedBy')?.value || "N/A";
+        const instCom = document.getElementById('instComments')?.value || "None";
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY,
+          theme: 'grid',
+          body: [
+            [{ content: `Panel tested by (Date / Company / Name / Signature): ${instTested}`, colSpan: 2 }],
+            [{ content: `Approved by (Date / Name / Signature): ${instApproved}`, colSpan: 2 }],
+            [{ content: `COMMENTS: ${instCom}`, colSpan: 2 }]
+          ],
+          styles: { fontSize: 7, cellPadding: 1.8, lineColor: [203, 213, 225] }
+        });
+      }
+
+      // SECTION: SCADA PC AND SOFTWARE LICENSE DETAILS
+      const validScada = fatScadaList.filter(s => s.pcNameIp || s.softwareName);
+      if (validScada.length > 0) {
+        const scadaRows = validScada.map(s => [
+          s.pcNameIp || "N/A", s.serviceTag || "N/A", s.softwareName || "N/A", s.licenseNo || "N/A", s.comments || "Active"
+        ]);
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY + 5,
+          head: [[{ content: 'SCADA PC And Software License Details', colSpan: 5, styles: { fillColor: [11, 25, 44], textColor: [245, 158, 11], fontStyle: 'bold' } }],
+                 ['PC name & IP address', 'Service Tag No:', 'Software Name', 'Software Licenses No:', 'Comments']],
+          body: scadaRows,
+          theme: 'grid',
+          headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontSize: 7.5 },
+          styles: { fontSize: 7, cellPadding: 1.8 }
+        });
+
+        const scadaTested = document.getElementById('scadaTestedBy')?.value || "N/A";
+        const scadaAppr = document.getElementById('scadaApprovedBy')?.value || "N/A";
+        const scadaCom = document.getElementById('scadaComments')?.value || "None";
+        const scadaFinal = document.getElementById('scadaFinalApproval')?.value || "N/A";
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY,
+          theme: 'grid',
+          body: [
+            [{ content: `PC SCADA tested by (Date / Company / Name / Signature): ${scadaTested}`, colSpan: 2 }],
+            [{ content: `Approved by (Date / Name / Signature): ${scadaAppr}`, colSpan: 2 }],
+            [{ content: `COMMENTS: ${scadaCom}`, colSpan: 2 }],
+            [{ content: `Approval (Date / Name / Signature): ${scadaFinal}`, colSpan: 2 }]
+          ],
+          styles: { fontSize: 7, cellPadding: 1.8, lineColor: [203, 213, 225] }
+        });
+      }
+
+      // SECTION: RANDOM CHECK & INSPECTION CONDUCTED BY
+      const validRandom = fatRandomCheckList.filter(r => r.testPoint);
+      if (validRandom.length > 0) {
+        const randomInsp = document.getElementById('randomInspectedBy')?.value || "N/A";
+        const randomRows = validRandom.map(r => [r.testPoint || "N/A", r.resultComments || "Verified"]);
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY + 5,
+          head: [[{ content: `Inspection conducted by (Date / Name / Signature): ${randomInsp}`, colSpan: 2, styles: { fillColor: [11, 25, 44], textColor: [245, 158, 11], fontStyle: 'bold' } }],
+                 ['Test point selected in random check', 'Result / Comments']],
+          body: randomRows,
+          theme: 'grid',
+          headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontSize: 7.5 },
+          styles: { fontSize: 7, cellPadding: 1.8 }
+        });
+
+        const randomCom = document.getElementById('randomComments')?.value || "None";
+        const randomAppr = document.getElementById('randomApproval')?.value || "N/A";
+
+        doc.autoTable({
+          startY: doc.lastAutoTable.finalY,
+          theme: 'grid',
+          body: [
+            [{ content: `COMMENTS: ${randomCom}`, colSpan: 2 }],
+            [{ content: `Approval (Date / Name / Signature): ${randomAppr}`, colSpan: 2 }]
+          ],
+          styles: { fontSize: 7, cellPadding: 1.8, lineColor: [203, 213, 225] }
+        });
+      }
+
+      // Photographic Evidence
+      let photoY = doc.lastAutoTable.finalY + 6;
+      if (photosList.length > 0) {
+        if (photoY > 215) {
+          doc.addPage();
+          photoY = 20;
+        }
+        doc.setFontSize(8.5);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(15, 23, 42);
+        doc.text(`Photographic Verification (${photosList.length} photos):`, 14, photoY);
+        photoY += 4;
+
+        const imgW = 88;
+        const imgH = 48;
+        const colGap = 6;
+        const rowGap = 5;
+
+        for (let i = 0; i < photosList.length; i++) {
+          const col = i % 2;
+          const posX = 14 + col * (imgW + colGap);
+
+          if (col === 0 && (photoY + imgH > 270)) {
+            doc.addPage();
+            photoY = 20;
+          }
+
+          doc.addImage(photosList[i], 'JPEG', posX, photoY, imgW, imgH);
+
+          if (col === 1 || i === photosList.length - 1) {
+            photoY += imgH + rowGap;
+          }
+        }
+      }
+
+      let sigY = (photoY > 235) ? (doc.addPage(), 35) : Math.max(photoY + 8, 235);
+      doc.setDrawColor(203, 213, 225);
+      doc.line(14, sigY, 90, sigY);
+      doc.line(120, sigY, 196, sigY);
+
+      if (engineerSigPad && !engineerSigPad.isEmpty()) {
+        doc.addImage(engineerSigPad.toDataURL(), 'PNG', 14, sigY - 16, 50, 14);
+      }
+      if (clientSigPad && !clientSigPad.isEmpty()) {
+        doc.addImage(clientSigPad.toDataURL(), 'PNG', 120, sigY - 16, 50, 14);
+      }
+
+      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("Aryavarta Testing Engineer", 14, sigY + 4);
+      doc.text("Client / Inspector Representative", 120, sigY + 4);
+
+      doc.save(`Aryavarta_FAT_${serial}_Certificate.pdf`);
+    }
+
+    // =========================================================================
     // 12. SYNC ROUTING & PDF DISPATCH
+    // =========================================================================
     async function syncInspectionToGoogleSheet() {
       if (currentAppMode === 'EXPENSES') return syncExpensesToGoogleSheet();
       if (currentAppMode === 'PORTAL') return loadEmployeeStatement();
